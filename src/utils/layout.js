@@ -5,7 +5,7 @@ export function getBoxLayout(data) {
   graph.setGraph({});
   // eslint-disable-next-line
   graph.setDefaultEdgeLabel(() => { return {}; });
-  // get bf
+  // get bf for all
   if ('bf' in data) {
     for (let i = 0; i < data.bf.length; i += 1) {
       // eslint-disable-next-line
