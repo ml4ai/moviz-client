@@ -1,6 +1,6 @@
-# moviz-vue
+# moviz
 
-> moviz frontend
+> moviz client version
 
 ## Build Setup
 
