@@ -2,6 +2,8 @@
 
 > moviz client version
 
+Try [`Online Demo`](https://hconhisway.github.io/moviz-client/#/).
+
 ## Environment Setup
 
 * node.js version: 20.1.0

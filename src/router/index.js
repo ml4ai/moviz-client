@@ -12,5 +12,5 @@ export default new Router({
       component: Moviz,
     },
   ],
-  mode: 'history',
+  mode: 'hash',
 });
