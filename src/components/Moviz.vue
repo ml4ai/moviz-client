@@ -3,12 +3,15 @@
   <div class="d-flex justify-content-start">
     <!-- <button class="btn btn-primary" @click="fetchData">upload</button> -->
     <div class="button-spacing"></div> <!-- 添加间距 -->
-    <select v-model="selectedOption" @change="fetchData" class="my-select">
+    <select v-model="selectedOption" @change="fetchData" class="my-select" placeholder="Select">
       <option v-for="option in options" :value="option.value" :key="option.value">
         {{ option.text }}
       </option>
     </select>
-    <button class="btn btn-primary" @click="downloadSVG" >download</button>
+    <div><p> Or </p></div>
+    <input type="text" v-model="url" class="url-input" placeholder="Input URL of JSON file here."/>
+    <button class="btn btn-primary" @click="submitUrl">Submit</button>
+    <button class="btn btn-primary download-button" @click="downloadSVG" >downloadSVG</button>
   </div>
     <div class="row">
       <div id="svg-container" :style="blockStyle">
@@ -28,6 +31,7 @@ import { drawBox } from '../utils/drawBox';
 export default {
   data() {
     return {
+      url: '',
       blockStyle: {
         backgroundColor: 'rgba(255, 255, 120, 0.5)',
         height: '90vh',
@@ -49,28 +53,12 @@ export default {
       d3.selectAll('g').remove();
       axios.get(this.selectedOption)
         .then((response) => {
-          // const svgContainer = d3.select('#svg-container');
-          // const containerWidth = parseInt(svgContainer.style('width'), 1000);
-          // const containerHeight = parseInt(svgContainer.style('height'), 1000);
-          // const svg = d3.select('svg');
-          // svg.attr('width', containerWidth);
-          // svg.attr('height', containerHeight);
           const jsonData = response.data;
           const graphData = jsonData.modules[0];
           const fn0 = graphData.fn;
           const fnS = graphData.fn_array;
-          // eslint-disable-next-line
-          console.log(fn0);
-          // eslint-disable-next-line
-          console.log(fnS);
           const layout = getBoxLayout(fn0);
           drawBox(layout, fnS, 0);
-          // const G = getLayout();
-          // eslint-disable-next-line
-          // console.log(layout);
-          // const svgString = response.data;
-          // getLayout(svgString);
-          // this.svgData = svgString;
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -94,6 +82,24 @@ export default {
       downloadLink.click();
       document.body.removeChild(downloadLink);
     },
+    submitUrl() {
+      this.excuteFunction(this.url);
+    },
+    excuteFunction(url) {
+      axios.get(url)
+        .then((response) => {
+          const jsonData = response.data;
+          const graphData = jsonData.modules[0];
+          const fn0 = graphData.fn;
+          const fnS = graphData.fn_array;
+          const layout = getBoxLayout(fn0);
+          drawBox(layout, fnS, 0);
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.error(error);
+        });
+    },
   },
 };
 </script>
@@ -111,5 +117,25 @@ export default {
     border-radius: 5px;
     border: 1px solid #ccc;
     margin-right: 20px; /* 这将在下拉框和其他元素之间添加一些间距 */
+}
+
+.url-input {
+    /* 输入框的样式 */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    width: 400px;
+    overflow-x: auto;
+    margin-left: 20px; /* 这将在下拉框和其他元素之间添加一些间距 */
+}
+
+p {
+  margin-bottom: -10px;
+  font-size: 27px;
+  font-family: Arial, sans-serif;
+}
+
+.download-button {
+  margin-left: 300px;
 }
 </style>
