@@ -37,4 +37,4 @@ Todo
 
 ## Bugs to Fix
 
-Please click on the nodes of the same layer from top to bottom, otherwise the layout order will be wrong. This is a bug that needs to be fixed by modifying the tree layout algorithm.
+auto zoom to match screen size

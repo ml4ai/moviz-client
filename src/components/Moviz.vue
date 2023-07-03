@@ -16,7 +16,7 @@
     <div class="row">
       <div id="svg-container" :style="blockStyle">
         <div class="version-text">
-          Current Supported Version:
+          Current Supported Skema Version:
           <span class="highlight">0.1.6</span>
         </div>
         <div class="version-text">

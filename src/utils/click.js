@@ -137,6 +137,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
     }
   });
   const flexLayout = flextree.flextree({ spacing: spaceX });
+  console.log(hierarchies);
   const tree = flexLayout.hierarchy(hierarchies);
   var treeData = flexLayout(tree);
   treeData.each(d => {
@@ -174,7 +175,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
   
   const locationTransform = [differenceX, differenceY];
   drawLines(sourceid, "frame" + newLabel, locationTransform, body_num, newLabel, color);
-  console.log(locationTransform);
+  // console.log(locationTransform);
   d3.selectAll('g').each(function(d, i){
     let nodeID = d3.select(this).attr('id').replace("boxid", "");
     if (nodeID.split('_').length === 2){
@@ -308,6 +309,7 @@ function getChildren(hierarchies, childrens) {
         else if (node === element.path[element.path.length - 1]) {
             if (children.hasOwnProperty("children")) {
                 children.children.push(element);
+                sortByOName(children.children);
             } else {
                 children.children = [ element ];
             }
@@ -341,12 +343,12 @@ function findChildrenAtSameLevel(arr) {
 }
 
 function drawLines(sourceid, targetid, locationTransform, body_num_source, body_num_target, color) {
-  console.log("sourceid, ", sourceid);
-  console.log("targetid, ", targetid);
-  console.log("locationTransform, ", locationTransform);
-  console.log("body_num_source, ", body_num_source);
-  console.log("body_num_target, ", body_num_target);
-  console.log("color, ", color);
+  // console.log("sourceid, ", sourceid);
+  // console.log("targetid, ", targetid);
+  // console.log("locationTransform, ", locationTransform);
+  // console.log("body_num_source, ", body_num_source);
+  // console.log("body_num_target, ", body_num_target);
+  // console.log("color, ", color);
 
 
   const sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width'));
@@ -418,12 +420,12 @@ function drawLines(sourceid, targetid, locationTransform, body_num_source, body_
 }
 
 function updateLines(sourceid, targetid, locationTransform, body_num_source, body_num_target, color, lineID) {
-  console.log("sourceid, ", sourceid);
-  console.log("targetid, ", targetid);
-  console.log("locationTransform, ", locationTransform);
-  console.log("body_num_source, ", body_num_source);
-  console.log("body_num_target, ", body_num_target);
-  console.log("color, ", color);
+  // console.log("sourceid, ", sourceid);
+  // console.log("targetid, ", targetid);
+  // console.log("locationTransform, ", locationTransform);
+  // console.log("body_num_source, ", body_num_source);
+  // console.log("body_num_target, ", body_num_target);
+  // console.log("color, ", color);
 
   const sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width'));
   const sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height')) / 2;
@@ -509,6 +511,27 @@ function arraysAreEqual(array1, array2) {
 
   return true;
 }
+
+function sortByOName(arr) {
+  return arr.sort((a, b) => {
+      const aNums = a.oName.split('-').map(Number);
+      const bNums = b.oName.split('-').map(Number);
+
+      // 根据数字依次进行比较
+      for(let i = 0; i < aNums.length; i++) {
+          if (aNums[i] < bNums[i]) {
+              return -1;
+          } else if (aNums[i] > bNums[i]) {
+              return 1;
+          }
+          // 如果相等，继续比较下一个数字
+      }
+
+      // 如果所有数字都相等，返回0表示不需要改变顺序
+      return 0;
+  });
+}
+
   // const curvePath = d3.path();
   // curvePath.moveTo(sourceX, sourceY);
   // curvePath.bezierCurveTo(
