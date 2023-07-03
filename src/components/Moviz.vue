@@ -15,7 +15,14 @@
   </div>
     <div class="row">
       <div id="svg-container" :style="blockStyle">
-        <!-- <div class="svg-container" v-if="svgData" v-html="svgData"></div> -->
+        <div class="version-text">
+          Current Supported Version:
+          <span class="highlight">0.1.6</span>
+        </div>
+        <div class="version-text">
+          Current File Version:
+          <span class="highlight">{{ skemaVersion }}</span>
+        </div>
         <svg id="mainsvg" width="2000" height="2000"></svg>
       </div>
     </div>
@@ -31,6 +38,7 @@ import { drawBox } from '../utils/drawBox';
 export default {
   data() {
     return {
+      skemaVersion: '',
       url: '',
       blockStyle: {
         backgroundColor: 'rgba(255, 255, 120, 0.5)',
@@ -54,6 +62,7 @@ export default {
       axios.get(this.selectedOption)
         .then((response) => {
           const jsonData = response.data;
+          this.skemaVersion = jsonData.schema_version;
           const graphData = jsonData.modules[0];
           const fn0 = graphData.fn;
           const fnS = graphData.fn_array;
@@ -89,6 +98,7 @@ export default {
       axios.get(url)
         .then((response) => {
           const jsonData = response.data;
+          this.skemaVersion = jsonData.schema_version;
           const graphData = jsonData.modules[0];
           const fn0 = graphData.fn;
           const fnS = graphData.fn_array;
@@ -137,5 +147,14 @@ p {
 
 .download-button {
   margin-left: 300px;
+}
+
+.version-text {
+  font-size: 27px;
+  font-family: Arial, sans-serif;
+}
+
+.highlight {
+  color: red;
 }
 </style>
