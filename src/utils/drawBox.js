@@ -268,36 +268,6 @@ function drawLPrimitive_full(node, nodeId, g, color, ranksep) {
   }
 }
 
-function drawLiteral_full(node, nodeId, g, color, ranksep) {
-  g.append("rect")
-  .attr("id", nodeId)
-  .attr("x", node.x - node.width / 2)
-  .attr("y", node.y - node.height / 2 + ranksep)
-  .attr("width", node.width)
-  .attr("height", node.height - ranksep * 2)
-  .style("fill", "none")
-  .style("stroke", color)
-  .style("stroke-width", 2);
-  if (node.label !== undefined){
-    g.append("text") // 添加节点的label
-    .attr("x", node.x)
-    .attr("y", node.y)
-    .attr("text-anchor", "middle")
-    .attr("dominant-baseline", "middle")
-    .style("font-size", "12px")
-    .text(node.label);
-  }
-  if (node.value !== undefined){
-    g.append("text") // 添加节点的label
-    .attr("x", node.x)
-    .attr("y", node.y)
-    .attr("text-anchor", "middle")
-    .attr("dominant-baseline", "middle")
-    .style("font-size", "30px")
-    .text(node.value.value);
-  }
-}
-
 function drawLPrimitive_nfull(node, nodeId, g, color, ranksep) {
   g.append("rect")
   .attr("id", nodeId)
