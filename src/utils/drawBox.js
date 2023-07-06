@@ -40,256 +40,27 @@ export function drawBox(layout, fnS, body_num) {
       if (isBfNode) {
         if (node.fullBox){
             if (node.type == "FUNCTION") {
-              let clicked = false;
-              const selection = g.append("rect")
-              .attr("id", nodeId)
-              .attr("x", node.x - node.width / 2)
-              .attr("y", node.y - node.height / 2 + ranksep)
-              .attr("width", node.width)
-              .attr("height", node.height - ranksep * 2)
-              .attr("rx", 15)
-              .attr("ry", 15)
-              .style("fill", "rgba(0, 0, 255, 0)")
-              .style("stroke", "green")
-              .style("cursor", "pointer")
-              .style("stroke-width", 5);
-              if (node.label !== undefined){
-                g.append("text") // 添加节点的label
-                .attr("x", node.x)
-                .attr("y", node.y)
-                .attr("text-anchor", "middle")
-                .attr("dominant-baseline", "middle")
-                .style("font-size", "12px")
-                .text(node.label);
-              }
-              if (node.body !== undefined) {
-                selection.on("click", function(){
-                  handleClick(fnS, node.body, body_num, nodeId, "green", clicked);
-                  clicked = !clicked;
-                });
-              }
+              drawBFs_full(node, nodeId, g, "green", ranksep, fnS, body_num);
             } else if (node.type == "EXPRESSION") {
-              let clicked = false;
-              const selection = g.append("rect")
-              .attr("id", nodeId)
-              .attr("x", node.x - node.width / 2)
-              .attr("y", node.y - node.height / 2 + ranksep)
-              .attr("width", node.width)
-              .attr("height", node.height - ranksep * 2)
-              .attr("rx", 15)
-              .attr("ry", 15)
-              .style("fill", "rgba(0, 0, 255, 0)")
-              .style("stroke", "purple")
-              .style("cursor", "pointer")
-              .style("stroke-width", 5);
-              if (node.label !== undefined){
-                g.append("text") // 添加节点的label
-                .attr("x", node.x)
-                .attr("y", node.y)
-                .attr("text-anchor", "middle")
-                .attr("dominant-baseline", "middle")
-                .style("font-size", "12px")
-                .text(node.label);
-              }
-              if (node.body !== undefined) {
-                selection.on("click", function(){
-                  handleClick(fnS, node.body, body_num, nodeId, "purple", clicked);
-                  clicked = !clicked;
-                });
-              }
+              drawBFs_full(node, nodeId, g, "purple", ranksep, fnS, body_num);
             } else if (node.type == "LITERAL") {
-              g.append("rect")
-              .attr("id", nodeId)
-              .attr("x", node.x - node.width / 2)
-              .attr("y", node.y - node.height / 2 + ranksep)
-              .attr("width", node.width)
-              .attr("height", node.height )
-              .style("fill", "none")
-              .style("stroke", "red")
-              .style("stroke-width", 5);
-              if (node.label !== undefined){
-                g.append("text") // 添加节点的label
-                .attr("x", node.x)
-                .attr("y", node.y)
-                .attr("text-anchor", "middle")
-                .attr("dominant-baseline", "middle")
-                .style("font-size", "12px")
-                .text(node.label);
-              }
-              if (node.value !== undefined){
-                g.append("text") // 添加节点的label
-                .attr("x", node.x)
-                .attr("y", node.y)
-                .attr("text-anchor", "middle")
-                .attr("dominant-baseline", "middle")
-                .style("font-size", "30px")
-                .text(node.value.value);
-              }
+              drawLiteral_full(node, nodeId, g, "red", ranksep);
             } else if (node.type == "LANGUAGE_PRIMITIVE") {
-              g.append("rect")
-              .attr("id", nodeId)
-              .attr("x", node.x - node.width / 2)
-              .attr("y", node.y - node.height / 2 + ranksep)
-              .attr("width", node.width)
-              .attr("height", node.height - ranksep * 2)
-              .style("fill", "none")
-              .style("stroke", "red")
-              .style("stroke-width", 5);
-              if (node.label !== undefined){
-                g.append("text") // 添加节点的label
-                .attr("x", node.x)
-                .attr("y", node.y)
-                .attr("text-anchor", "middle")
-                .attr("dominant-baseline", "middle")
-                .style("font-size", "20px")
-                .text(node.label);
-              }
-              if (node.value !== undefined){
-                g.append("text") // 添加节点的label
-                .attr("x", node.x)
-                .attr("y", node.y)
-                .attr("text-anchor", "middle")
-                .attr("dominant-baseline", "middle")
-                .style("font-size", "30px")
-                .text(node.value.value);
-              }
+              drawLPrimitive_full(node, nodeId, g, "red", ranksep);
             }
         } else {
           if (node.type == "FUNCTION") {
-            let clicked = false;
-            const selection = g.append("rect")
-            .attr("id", nodeId)
-            .attr("x", node.x - node.width / 2)
-            .attr("y", node.y - node.height / 2 - ranksep)
-            .attr("width", node.width)
-            .attr("height", node.height)
-            .attr("rx", 15)
-            .attr("ry", 15)
-            .style("fill", "rgba(0, 0, 255, 0)")
-            .style("cursor", "pointer")
-            .style("stroke", "green")
-            .style("stroke-width", 5);
-            if (node.label !== undefined){
-              g.append("text") // 添加节点的label
-              .attr("x", node.x)
-              .attr("y", node.y)
-              .attr("text-anchor", "middle")
-              .attr("dominant-baseline", "middle")
-              .style("font-size", "12px")
-              .text(node.label);
-            }
-            if (node.body !== undefined) {
-              selection.on("click", function(){
-                handleClick(fnS, node.body, body_num, nodeId, "green", clicked);
-                clicked = !clicked;
-              });
-            }
+            drawBFs_nfull(node, nodeId, g, "green", ranksep, fnS, body_num);
           } else if (node.type == "EXPRESSION") {
-            let clicked = false;
-            const selection = g.append("rect")
-            .attr("id", nodeId)
-            .attr("x", node.x - node.width / 2)
-            .attr("y", node.y - node.height / 2 - ranksep)
-            .attr("width", node.width)
-            .attr("height", node.height)
-            .attr("rx", 15)
-            .attr("ry", 15)
-            .style("fill", "rgba(0, 0, 255, 0)")
-            .style("cursor", "pointer")
-            .style("stroke", "purple")
-            .style("stroke-width", 5);
-            if (node.label !== undefined){
-              g.append("text") // 添加节点的label
-              .attr("x", node.x)
-              .attr("y", node.y)
-              .attr("text-anchor", "middle")
-              .attr("dominant-baseline", "middle")
-              .style("font-size", "12px")
-              .text(node.label);
-            }
-            if (node.body !== undefined) {
-              selection.on("click", function(){
-                handleClick(fnS, node.body, body_num, nodeId, "purple", clicked);
-                clicked = !clicked;
-              });
-            }
+            drawBFs_nfull(node, nodeId, g, "purple", ranksep, fnS, body_num);
           } else if (node.type == "LITERAL") {
-            g.append("rect")
-            .attr("id", nodeId)
-            .attr("x", node.x - node.width / 2 + ranksep / 2)
-            .attr("y", node.y - node.height / 2 - ranksep)
-            .attr("width", node.width - ranksep)
-            .attr("height", node.height)
-            .style("fill", "none")
-            .style("stroke", "red")
-            .style("stroke-width", 2);
-            if (node.label !== undefined){
-              g.append("text") // 添加节点的label
-              .attr("x", node.x)
-              .attr("y", node.y)
-              .attr("text-anchor", "middle")
-              .attr("dominant-baseline", "middle")
-              .style("font-size", "12px")
-              .text(node.label);
-            }
-            if (node.value !== undefined){
-              g.append("text") // 添加节点的label
-              .attr("x", node.x)
-              .attr("y", node.y - ranksep * 1.2)
-              .attr("text-anchor", "middle")
-              .attr("dominant-baseline", "middle")
-              .style("font-size", "30px")
-              .text(node.value.value);
-            }
+            drawLiteral_nfull(node, nodeId, g, "red", ranksep);
           } else if (node.type == "LANGUAGE_PRIMITIVE") {
-            g.append("rect")
-            .attr("id", nodeId)
-            .attr("x", node.x - node.width / 2)
-            .attr("y", node.y - node.height / 2 - ranksep)
-            .attr("width", node.width)
-            .attr("height", node.height)
-            .style("fill", "none")
-            .style("stroke", "red")
-            .style("stroke-width", 5);
-            if (node.label !== undefined){
-              g.append("text") // 添加节点的label
-              .attr("x", node.x)
-              .attr("y", node.y)
-              .attr("text-anchor", "middle")
-              .attr("dominant-baseline", "middle")
-              .style("font-size", "12px")
-              .text(node.label);
-            }
-            if (node.value !== undefined){
-              g.append("text") // 添加节点的label
-              .attr("x", node.x)
-              .attr("y", node.y)
-              .attr("text-anchor", "middle")
-              .attr("dominant-baseline", "middle")
-              .style("font-size", "30px")
-              .text(node.value.value);
-            }
+            drawLPrimitive_nfull(node, nodeId, g, "red", ranksep);
           }
         }
       } else if (isPofNode || isPifNode || isOpiNode || isOpoNode) {
-        g.append("rect")
-          .attr("id", nodeId)
-          .attr("x", node.x - node.width / 2)
-          .attr("y", node.y - node.height / 2)
-          .attr("width", node.width)
-          .attr("height", node.height)
-          .style("fill", "white")
-          .style("stroke", "black")
-          .style("stroke-width", 2);
-          if (node.label !== undefined){
-            g.append("text") // 添加节点的label
-            .attr("x", node.x)
-            .attr("y", node.y)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "middle")
-            .style("font-size", "27px")
-            .text(node.label);
-          }
+        drawPorts(node, nodeId, g, "black");
       }
     }
   
@@ -337,106 +108,338 @@ export function drawBox(layout, fnS, body_num) {
 
     if ('opo-0' in nodes && 'opi-0' in nodes){
       if (layout.meta.type === "MODULE"){
-        // 绘制外框
-        g.append("rect", ":first-child")
-        .attr("id", "frame" + body_num)
-        .attr("x", bbox.x - padding)
-        .attr("y", bbox.y - padding + ranksep)
-        .attr("rx", 15)
-        .attr("ry", 15)
-        .attr("width", width - padding * 2)
-        .attr("height", height - padding * 2 - ranksep * 2)
-        .style("fill", "none")
-        .style("stroke", "gray")
-        .style("stroke-width", 5)
-        .lower();
+        drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "gray", body_num);
       } else if (layout.meta.type === "EXPRESSION") {
-        // 绘制外框
-        g.append("rect", ":first-child")
-        .attr("id", "frame" + body_num)
-        .attr("x", bbox.x - padding)
-        .attr("y", bbox.y - padding + ranksep)
-        .attr("rx", 15)
-        .attr("ry", 15)
-        .attr("width", width - padding * 2)
-        .attr("height", height - padding * 2 - ranksep * 2)
-        .style("fill", "none")
-        .style("stroke", "purple")
-        .style("stroke-width", 5)
-        .lower();
+        drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "purple", body_num);
       } else if (layout.meta.type === "FUNCTION") {
-        // 绘制外框
-        g.append("rect", ":first-child")
-        .attr("id", "frame" + body_num)
-        .attr("x", bbox.x - padding)
-        .attr("y", bbox.y - padding + ranksep)
-        .attr("rx", 15)
-        .attr("ry", 15)
-        .attr("width", width - padding * 2)
-        .attr("height", height - padding * 2 - ranksep * 2)
-        .style("fill", "none")
-        .style("stroke", "green")
-        .style("stroke-width", 5)
-        .lower();
+        drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "green", body_num);
+      }
+    } else if ('opo-0' in nodes && !('opi-0' in nodes)) {
+      if (layout.meta.type === "MODULE"){
+        drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "gray", body_num);
+      } else if (layout.meta.type === "EXPRESSION") {
+        drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "purple", body_num);
+      } else if (layout.meta.type === "FUNCTION") {
+        drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "green", body_num);
+      }
+    } else if (!('opo-0' in nodes) && 'opi-0' in nodes) {
+      if (layout.meta.type === "MODULE"){
+        drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "gray", body_num);
+      } else if (layout.meta.type === "EXPRESSION") {
+        drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "purple", body_num);
+      } else if (layout.meta.type === "FUNCTION") {
+        drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "green", body_num);
       }
     } else {
       if (layout.meta.type === "MODULE"){
-        // 绘制外框
-        g.append("rect", ":first-child")
-        .attr("id", "frame" + body_num)
-        .attr("x", bbox.x - padding)
-        .attr("y", bbox.y - padding)
-        .attr("rx", 15)
-        .attr("ry", 15)
-        .attr("width", width - padding * 2)
-        .attr("height", height - padding * 2)
-        .style("fill", "none")
-        .style("stroke", "gray")
-        .style("stroke-width", 5)
-        .lower();
+        drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "gray", body_num);
       } else if (layout.meta.type === "EXPRESSION") {
-        // 绘制外框
-        g.append("rect", ":first-child")
-        .attr("id", "frame" + body_num)
-        .attr("x", bbox.x - padding)
-        .attr("y", bbox.y - padding)
-        .attr("rx", 15)
-        .attr("ry", 15)
-        .attr("width", width - padding * 2)
-        .attr("height", height - padding * 2)
-        .style("fill", "none")
-        .style("stroke", "purple")
-        .style("stroke-width", 5)
-        .lower();
+        drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "purple", body_num);
       } else if (layout.meta.type === "FUNCTION") {
-        // 绘制外框
-        g.append("rect", ":first-child")
-        .attr("id", "frame" + body_num)
-        .attr("x", bbox.x - padding)
-        .attr("y", bbox.y - padding)
-        .attr("rx", 15)
-        .attr("ry", 15)
-        .attr("width", width - padding * 2)
-        .attr("height", height - padding * 2)
-        .style("fill", "none")
-        .style("stroke", "green")
-        .style("stroke-width", 5)
-        .lower();
-      }  
+        drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "green", body_num);
+      }
     }
-    
     g.attr("width", width)
       .attr("height", height)
     if (body_num === 0){
       g.attr("transform", `translate(${padding * 4},${padding * 30 - height / 2 * 0})`);
     }
-      
-
-    // // 平移所有元素以留出padding
-    // svg.selectAll("*")
-    //   .attr("transform", `translate(${padding * 2},${padding * 2})`);
-    // // 将SVG渲染到HTML页面中
-    // const svgElement = document.querySelector("svg");
-    // document.body.appendChild(svgElement);
   }
+
+function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
+  let clicked = false;
+  const selection = g.append("rect")
+  .attr("id", nodeId)
+  .attr("x", node.x - node.width / 2)
+  .attr("y", node.y - node.height / 2 + ranksep)
+  .attr("width", node.width)
+  .attr("height", node.height - ranksep * 2)
+  .attr("rx", 15)
+  .attr("ry", 15)
+  .style("fill", "rgba(0, 0, 255, 0)")
+  .style("stroke", color)
+  .style("cursor", "pointer")
+  .style("stroke-width", 5);
+  if (node.label !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "12px")
+    .text(node.label);
+  }
+  if (node.body !== undefined) {
+    selection.on("click", function(){
+      handleClick(fnS, node.body, body_num, nodeId, color, clicked);
+      clicked = !clicked;
+    });
+  }
+}
+
+function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
+  let clicked = false;
+  const selection = g.append("rect")
+  .attr("id", nodeId)
+  .attr("x", node.x - node.width / 2)
+  .attr("y", node.y - node.height / 2 - ranksep)
+  .attr("width", node.width)
+  .attr("height", node.height)
+  .attr("rx", 15)
+  .attr("ry", 15)
+  .style("fill", "rgba(0, 0, 255, 0)")
+  .style("cursor", "pointer")
+  .style("stroke", color)
+  .style("stroke-width", 5);
+  if (node.label !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "12px")
+    .text(node.label);
+  }
+  if (node.body !== undefined) {
+    selection.on("click", function(){
+      handleClick(fnS, node.body, body_num, nodeId, color, clicked);
+      clicked = !clicked;
+    });
+  }
+}
+
+function drawLiteral_full(node, nodeId, g, color, ranksep) {
+  g.append("rect")
+  .attr("id", nodeId)
+  .attr("x", node.x - node.width / 2)
+  .attr("y", node.y - node.height / 2 + ranksep)
+  .attr("width", node.width)
+  .attr("height", node.height - ranksep * 2)
+  .style("fill", "none")
+  .style("stroke", color)
+  .style("stroke-width", 2);
+  if (node.label !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "12px")
+    .text(node.label);
+  }
+  if (node.value !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "30px")
+    .text(node.value.value);
+  }
+}
+
+function drawLPrimitive_full(node, nodeId, g, color, ranksep) {
+  g.append("rect")
+  .attr("id", nodeId)
+  .attr("x", node.x - node.width / 2)
+  .attr("y", node.y - node.height / 2 + ranksep)
+  .attr("width", node.width)
+  .attr("height", node.height - ranksep * 2)
+  .style("fill", "none")
+  .style("stroke", color)
+  .style("stroke-width", 5);
+  if (node.label !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "20px")
+    .text(node.label);
+  }
+  if (node.value !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "30px")
+    .text(node.value.value);
+  }
+}
+
+function drawLiteral_full(node, nodeId, g, color, ranksep) {
+  g.append("rect")
+  .attr("id", nodeId)
+  .attr("x", node.x - node.width / 2)
+  .attr("y", node.y - node.height / 2 + ranksep)
+  .attr("width", node.width)
+  .attr("height", node.height - ranksep * 2)
+  .style("fill", "none")
+  .style("stroke", color)
+  .style("stroke-width", 2);
+  if (node.label !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "12px")
+    .text(node.label);
+  }
+  if (node.value !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "30px")
+    .text(node.value.value);
+  }
+}
+
+function drawLPrimitive_nfull(node, nodeId, g, color, ranksep) {
+  g.append("rect")
+  .attr("id", nodeId)
+  .attr("x", node.x - node.width / 2)
+  .attr("y", node.y - node.height / 2 - ranksep)
+  .attr("width", node.width)
+  .attr("height", node.height)
+  .style("fill", "none")
+  .style("stroke", color)
+  .style("stroke-width", 5);
+  if (node.label !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "12px")
+    .text(node.label);
+  }
+  if (node.value !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "30px")
+    .text(node.value.value);
+  }
+}
+
+function drawLiteral_nfull(node, nodeId, g, color, ranksep) {
+  g.append("rect")
+  .attr("id", nodeId)
+  .attr("x", node.x - node.width / 2 + ranksep / 2)
+  .attr("y", node.y - node.height / 2 - ranksep)
+  .attr("width", node.width - ranksep)
+  .attr("height", node.height)
+  .style("fill", "none")
+  .style("stroke", color)
+  .style("stroke-width", 2);
+  if (node.label !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "12px")
+    .text(node.label);
+  }
+  if (node.value !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y - ranksep * 1.2)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "30px")
+    .text(node.value.value);
+  }
+}
+
+function drawPorts(node, nodeId, g, color) {
+  g.append("rect")
+    .attr("id", nodeId)
+    .attr("x", node.x - node.width / 2)
+    .attr("y", node.y - node.height / 2)
+    .attr("width", node.width)
+    .attr("height", node.height)
+    .style("fill", "white")
+    .style("stroke", color)
+    .style("stroke-width", 2);
+    if (node.label !== undefined){
+      g.append("text") // 添加节点的label
+      .attr("x", node.x)
+      .attr("y", node.y)
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .style("font-size", "27px")
+      .text(node.label);
+    }
+}
+
+function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_num) {
+  // 绘制外框
+  g.append("rect", ":first-child")
+  .attr("id", "frame" + body_num)
+  .attr("x", bbox.x - padding)
+  .attr("y", bbox.y - padding + ranksep)
+  .attr("rx", 15)
+  .attr("ry", 15)
+  .attr("width", width - padding * 2)
+  .attr("height", height - padding * 2 - ranksep * 2)
+  .style("fill", "none")
+  .style("stroke", color)
+  .style("stroke-width", 5)
+  .lower();
+}
+
+function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, body_num) {
+  // 绘制外框
+  g.append("rect", ":first-child")
+    .attr("id", "frame" + body_num)
+    .attr("x", bbox.x - padding)
+    .attr("y", bbox.y - padding - ranksep / 10)
+    .attr("rx", 15)
+    .attr("ry", 15)
+    .attr("width", width - padding * 2)
+    .attr("height", height - padding * 2 - ranksep)
+    .style("fill", "none")
+    .style("stroke", color)
+    .style("stroke-width", 5)
+    .lower();
+}
+
+function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_num) {
+  // 绘制外框
+  g.append("rect", ":first-child")
+    .attr("id", "frame" + body_num)
+    .attr("x", bbox.x - padding)
+    .attr("y", bbox.y - padding + ranksep * 2)
+    .attr("rx", 15)
+    .attr("ry", 15)
+    .attr("width", width - padding * 2)
+    .attr("height", height - padding * 2 - ranksep)
+    .style("fill", "none")
+    .style("stroke", color)
+    .style("stroke-width", 5)
+    .lower();
+}
+
+function drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, color, body_num) {
+  // 绘制外框
+  g.append("rect", ":first-child")
+    .attr("id", "frame" + body_num)
+    .attr("x", bbox.x - padding)
+    .attr("y", bbox.y - padding)
+    .attr("rx", 15)
+    .attr("ry", 15)
+    .attr("width", width - padding * 2)
+    .attr("height", height - padding * 2)
+    .style("fill", "none")
+    .style("stroke", color)
+    .style("stroke-width", 5)
+    .lower();
+}
   
