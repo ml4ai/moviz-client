@@ -214,7 +214,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
       nodeID = nodeID.split('_')[0];
       d3.select(this)
         .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
-        .style("opacity", 0.7);
+        .style("opacity", 0.38);
     } else {
       if (nodeID === newLabel) {
         d3.select(this)
