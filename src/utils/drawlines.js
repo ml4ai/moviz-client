@@ -2,13 +2,14 @@
 import * as d3 from "d3";
 
 export function drawLines(sourceid, targetid, locationTransform, body_num_source, body_num_target, color) {
-    console.log("sourceid, ", sourceid);
-    console.log("targetid, ", targetid);
-    console.log("locationTransform, ", locationTransform);
-    console.log("body_num_source, ", body_num_source);
-    console.log("body_num_target, ", body_num_target);
-    console.log("color, ", color);
+    // console.log("sourceid, ", sourceid);
+    // console.log("targetid, ", targetid);
+    // console.log("locationTransform, ", locationTransform);
+    // console.log("body_num_source, ", body_num_source);
+    // console.log("body_num_target, ", body_num_target);
+    // console.log("color, ", color);
   
+    d3.select("#boxid" + body_num_source).select("#" + sourceid).attr("data-opened", "true");
     const sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width'));
     const sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height')) / 2;
     const targetX1 = Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
@@ -166,6 +167,38 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
     .attr("d", area2)
     .attr('id', 'path2')
     .attr("fill", color);
+
+    d3.select("#boxid" + body_num_source).selectAll("rect").each(function(d,i){
+      const currentNode = d3.select(this);
+      const currentNodeId = currentNode.attr("id");
+      if (currentNodeId !== sourceid) {
+        const currentNodeBody = currentNode.attr("data-body");
+        if (currentNodeBody !== undefined && currentNodeBody !== null && currentNodeBody === body_num_target.split('-')[1] ) {
+          currentNode.attr("data-opened", true);
+          const sourceXforSL = Number(currentNode.attr('x')) + Number(currentNode.attr('width'));
+          const sourceYforSL = Number(currentNode.attr('y')) + Number(currentNode.attr('height')) / 2;
+          const targetXforSL= Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
+          const targetYforSL = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1] + Number(d3.select("#" + targetid).attr('height')) / 2;
+          g.append("circle")
+            .attr("cx", targetXforSL)
+            .attr("cy", targetYforSL)
+            .attr("r", 7)  // 设置圆的半径
+            .attr("fill", color);  // 设置圆的颜色
+
+          g.append("line")
+            .attr("x1", sourceXforSL)
+            .attr("y1", sourceYforSL)
+            .attr("x2", targetXforSL)
+            .attr("y2", targetYforSL)
+            .attr("stroke-width", 3)  // 设置线的宽度
+            .attr("stroke", color)  // 设置线的颜色
+            .attr("stroke-dasharray", "5,5")  // 设置线为虚线，"5,5"表示线段和间隔的长度
+            .attr("marker-end", "url(#arrow)")  // 设置线的终点为箭头
+            .attr("class", "arrowLine");
+        }
+      }
+    })
+
   }
   
 export function updateLines(sourceid, targetid, locationTransform, body_num_source, body_num_target, color, lineID) {
@@ -336,4 +369,39 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
     .duration(720)
     .attr("d", area2)
     .attr("fill", color);
+
+    d3.select("#boxid" + body_num_source).selectAll("rect").each(function(d,i){
+      const currentNode = d3.select(this);
+      const currentNodeId = currentNode.attr("id");
+      if (currentNodeId !== sourceid) {
+        const currentNodeBody = currentNode.attr("data-body");
+        if (currentNodeBody !== undefined && currentNodeBody !== null && currentNodeBody === body_num_target.split('-')[1] ) {
+          const sourceXforSL = Number(currentNode.attr('x')) + Number(currentNode.attr('width'));
+          const sourceYforSL = Number(currentNode.attr('y')) + Number(currentNode.attr('height')) / 2;
+          const targetXforSL= Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
+          const targetYforSL = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1] + Number(d3.select("#" + targetid).attr('height')) / 2;
+          g.select("circle")
+            .transition()
+            .duration(720)
+            .attr("cx", targetXforSL)
+            .attr("cy", targetYforSL)
+            .attr("r", 7)  // 设置圆的半径
+            .attr("fill", color);  // 设置圆的颜色
+
+          g.select("line")
+            .transition()
+            .duration(720)
+            .attr("x1", sourceXforSL)
+            .attr("y1", sourceYforSL)
+            .attr("x2", targetXforSL)
+            .attr("y2", targetYforSL)
+            .attr("stroke-width", 3)  // 设置线的宽度
+            .attr("stroke", color)  // 设置线的颜色
+            .attr("stroke-dasharray", "5,5")  // 设置线为虚线，"5,5"表示线段和间隔的长度
+            .attr("marker-end", "url(#arrow)")  // 设置线的终点为箭头
+            .attr("class", "arrowLine");
+        }
+      }
+      
+    })
 }

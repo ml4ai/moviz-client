@@ -9,9 +9,6 @@ export function drawBox(layout, fnS, body_num) {
     const ranksep = 37;
     // 绘制节点
     const nodes = layout.nodes;
-    console.log(nodes);
-    console.log("nodes");
-
     for (const nodeId in nodes) {
       const node = nodes[nodeId];
       const [type, index] = nodeId.split("-");
@@ -37,12 +34,16 @@ export function drawBox(layout, fnS, body_num) {
     let minXofAllNodes = Infinity;
     let minYofAllNodes = Infinity;
     for (const key in nodes) {
-      if (nodes[key].x < minXofAllNodes) {
-        minXofAllNodes = nodes[key].x;
-      }
-      if (nodes[key].y < minYofAllNodes) {
-        minYofAllNodes = nodes[key].y;
-      }
+      const [type, index] = key.split("-");
+      const isAuxNode = (type === "aux");
+      // if (!isAuxNode) {
+        if (nodes[key].x < minXofAllNodes) {
+          minXofAllNodes = nodes[key].x;
+        }
+        if (nodes[key].y < minYofAllNodes) {
+          minYofAllNodes = nodes[key].y;
+        }
+      // }
     }
 
     // 更新每一个子对象的 x 和 y 属性
@@ -176,6 +177,10 @@ export function drawBox(layout, fnS, body_num) {
 
 function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
   let clicked = false;
+  let node_body = null;
+  if (node.body !== undefined) {
+    node_body = node.body;
+  }
   const selection = g.append("rect")
   .attr("id", nodeId)
   .attr("x", node.x - node.width / 2)
@@ -184,6 +189,7 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
   .attr("height", node.height - ranksep * 2)
   .attr("rx", 15)
   .attr("ry", 15)
+  .attr("data-body", node_body)
   .style("fill", "rgba(0, 0, 255, 0)")
   .style("stroke", color)
   .style("cursor", "pointer")
@@ -206,6 +212,10 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
 }
 
 function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
+  let node_body = null;
+  if (node.body !== undefined) {
+    node_body = node.body;
+  }
   let clicked = false;
   const selection = g.append("rect")
   .attr("id", nodeId)
@@ -215,6 +225,7 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
   .attr("height", node.height)
   .attr("rx", 15)
   .attr("ry", 15)
+  .attr("data-body", node_body)
   .style("fill", "rgba(0, 0, 255, 0)")
   .style("cursor", "pointer")
   .style("stroke", color)

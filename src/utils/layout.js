@@ -2,7 +2,6 @@
 import * as dagre from 'dagre';
 
 export function getBoxLayout(data) {
-  console.log(data)
   const graph = new dagre.graphlib.Graph({ compound: true });
   graph.setGraph({});
   // eslint-disable-next-line
@@ -23,6 +22,7 @@ export function getBoxLayout(data) {
       const width = 1;
       const height = 1;
       graph.setNode(`aux-${nodeId}`, { auxLabel, width, height });
+      // graph.setParent(`aux-${nodeId}`, nodeId);
     }
   }
 
@@ -146,8 +146,7 @@ export function getBoxLayout(data) {
   const opiNodes = graph.nodes().filter(node => node.startsWith('opi'));
   const parentNodes = [...bfNodes, ...opoNodes, ...opiNodes];
   const superNodes = groupParentNodes(graph, parentNodes);
-  console.log(superNodes);
-  console.log('----------');
+
   // console.log(graph);
   // eslint-disable-next-line
   // console.log(graph);
@@ -184,7 +183,7 @@ export function getBoxLayout(data) {
       target: edge.w,
     });
   });
-  console.log(layout);
+  // console.log(layout);
   // set attributes for bf
   if ('bf' in data) {
     for (let i = 0; i < data.bf.length; i += 1) {
@@ -304,13 +303,25 @@ function adjustChildNodesPosition(graph, parentNodeId, deltaX, deltaY) {
   const children = graph.children(parentNodeId);
   children.forEach(childId => {
     const childNode = graph.node(childId);
+    
     childNode.x += deltaX;
     childNode.y += deltaY;
 
     if (graph.children(childId).length>0){
       adjustChildNodesPosition(graph, childId, deltaX, deltaY);
     }
+
+    if (childId.split('-')[0]==="bf") {
+      // console.log("aux-" + childId);
+      adjustAuxNodesPosition(graph, "aux-" + childId, deltaX, deltaY);
+    }
   });
+}
+
+function adjustAuxNodesPosition(graph, auxNodeId, deltaX, deltaY) {
+  const auxNode = graph.node(auxNodeId);
+  auxNode.x += deltaX;
+  auxNode.y += deltaY;
 }
 
 function arrangeSuperNodes(graph, superNodes) {
@@ -325,8 +336,8 @@ function arrangeSuperNodes(graph, superNodes) {
   const firstSuperNode = graph.node(superNodeIds[0]);
   const firstSuperNodeCenterX = firstSuperNode.x + 100;
   firstSuperNode.x += 100;
-  currentY = firstSuperNode.y - 100;
-  adjustChildNodesPosition(graph, superNodeIds[0], 100, -100);
+  currentY = firstSuperNode.y;
+  adjustChildNodesPosition(graph, superNodeIds[0], 100, 0);
 
   // 从第二个超级节点开始遍历，调整其位置
   for (let i = 1; i < superNodeIds.length; i++) {

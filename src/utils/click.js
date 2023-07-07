@@ -9,8 +9,12 @@ import * as d3 from "d3";
 export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
   const transitionTime1 = 920;
   const transitionTime2 = 720;
-  const transitionTime3 = 720;
-  if (clicked) {
+  const transitionTime3 = 200;
+  const openFlag = d3.select("#boxid" + String(body_num)).select("#" + String(sourceid));
+  console.log(openFlag.attr("data-opened"));
+  if (openFlag.attr("data-opened") !== "false" && (clicked || openFlag.attr("data-opened") === "true")) {
+    openFlag.attr("data-opened", "false");
+    d3.select("#boxid" + String(body_num)).selectAll("[data-opened='true']").attr("data-opened", "false");
     d3.selectAll('g').each(function(d,i){
       let GID = d3.select(this).attr('id').replace('line', '').replace('boxid', '');
       const deleteLabel = String(body_num) + '-' + String(body);
@@ -176,10 +180,6 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
         let newTransArray = [];
         newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 - treeLayout[sourceGID][3] / 2];
         
-        // console.log(sourceGID);
-        // console.log(transformArray);
-        // console.log("----------");
-        // console.log(newTransArray);
         if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
           const a01 = d3.select(this).attr('sourceid');
           const a02 = d3.select(this).attr('targetid');
@@ -188,7 +188,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
           const a05 = d3.select(this).attr('body_num_target');
           const a06 = d3.select(this).attr('color');
           const new03 = [Number(a03[0]) + newTransArray[0] - transformArray[0], Number(a03[1]) + newTransArray[1] - transformArray[1]];
-          d3.select("#" + lineID).selectAll('path').remove();
+          // d3.select("#" + lineID).selectAll('*').remove();
           updateLines(a01, a02, new03, a04, a05, a06, lineID);
         }
       }
@@ -206,6 +206,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
           const a05 = d3.select(this).attr('body_num_target');
           const a06 = d3.select(this).attr('color');
           const new03 = [Number(a03[0]) + newTransArray[0] - transformArray[0], Number(a03[1]) + newTransArray[1] - transformArray[1]];
+          // d3.select("#" + lineID).selectAll('*').remove();
           updateLines(a01, a02, new03, a04, a05, a06, lineID);
         }
       }
