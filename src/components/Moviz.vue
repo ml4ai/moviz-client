@@ -52,6 +52,7 @@ export default {
         { text: 'exp1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp1/FN_0.1.6/exp1--Gromet-FN-auto.json' },
         { text: 'exp2', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp2/FN_0.1.6/exp2--Gromet-FN-auto.json' },
         { text: 'exp3', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp3/FN_0.1.6/exp3--Gromet-FN-auto.json' },
+        { text: 'fun_default1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun_default1/FN_0.1.6/fun_default1--Gromet-FN-auto.json' },
         { text: 'assign_operator1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/assign_operator1/FN_0.1.6/assign_operator1--Gromet-FN-auto.json' },
       ],
     };

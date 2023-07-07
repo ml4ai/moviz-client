@@ -9,20 +9,15 @@ export function drawBox(layout, fnS, body_num) {
     const ranksep = 37;
     // 绘制节点
     const nodes = layout.nodes;
+    console.log(nodes);
+    console.log("nodes");
+
     for (const nodeId in nodes) {
       const node = nodes[nodeId];
       const [type, index] = nodeId.split("-");
-      const isBfNode = (type === "bf");
-      const isPofNode = (type === "pof");
-      const isPifNode = (type === "pif");
-      const isAuxNode = (type === "aux");
       const isOpoNode = (type === 'opo');
       const isOpiNode = (type === 'opi');
-  
-      if (isAuxNode) {
-        continue; // 不绘制aux前缀的节点
-      }
-  
+
       if (isOpiNode) {
         const minValue = Math.min(...Object.values(layout.nodes).map(obj => obj.y));
         if (node.y !== minValue){
@@ -35,6 +30,39 @@ export function drawBox(layout, fnS, body_num) {
         if (node.y !== maxValue){
           node.y = maxValue + 50 + ranksep;
         }
+      }
+    }
+
+    // 获取 x 和 y 的最小值
+    let minXofAllNodes = Infinity;
+    let minYofAllNodes = Infinity;
+    for (const key in nodes) {
+      if (nodes[key].x < minXofAllNodes) {
+        minXofAllNodes = nodes[key].x;
+      }
+      if (nodes[key].y < minYofAllNodes) {
+        minYofAllNodes = nodes[key].y;
+      }
+    }
+
+    // 更新每一个子对象的 x 和 y 属性
+    for (const key in nodes) {
+      nodes[key].x = nodes[key].x - minXofAllNodes + 10;
+      nodes[key].y -= minYofAllNodes;
+    }
+
+    for (const nodeId in nodes) {
+      const node = nodes[nodeId];
+      const [type, index] = nodeId.split("-");
+      const isBfNode = (type === "bf");
+      const isPofNode = (type === "pof");
+      const isPifNode = (type === "pif");
+      const isAuxNode = (type === "aux");
+      const isOpoNode = (type === 'opo');
+      const isOpiNode = (type === 'opi');
+  
+      if (isAuxNode) {
+        continue; // 不绘制aux前缀的节点
       }
 
       if (isBfNode) {
@@ -99,7 +127,7 @@ export function drawBox(layout, fnS, body_num) {
     });
 
     // 调整SVG大小
-    const padding = 20; // 设置padding的大小
+    const padding = 22.5; // 设置padding的大小
 
     // const svgElement = document.querySelector("svg");
     const bbox = g.node().getBBox();
@@ -139,10 +167,10 @@ export function drawBox(layout, fnS, body_num) {
         drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "green", body_num);
       }
     }
-    g.attr("width", width)
-      .attr("height", height)
+    g.attr("width", g.node().getBBox().width)
+      .attr("height", g.node().getBBox().height)
     if (body_num === 0){
-      g.attr("transform", `translate(${padding * 4},${padding * 30 - height / 2 * 0})`);
+      g.attr("transform", `translate(${padding * 4},${padding * 30 - g.node().getBBox().height / 2 * 1})`);
     }
   }
 
@@ -194,7 +222,7 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
   if (node.label !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x)
-    .attr("y", node.y)
+    .attr("y", node.y - node.height / 4 - ranksep / 2)
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "12px")

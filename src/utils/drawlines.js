@@ -2,12 +2,12 @@
 import * as d3 from "d3";
 
 export function drawLines(sourceid, targetid, locationTransform, body_num_source, body_num_target, color) {
-    // console.log("sourceid, ", sourceid);
-    // console.log("targetid, ", targetid);
-    // console.log("locationTransform, ", locationTransform);
-    // console.log("body_num_source, ", body_num_source);
-    // console.log("body_num_target, ", body_num_target);
-    // console.log("color, ", color);
+    console.log("sourceid, ", sourceid);
+    console.log("targetid, ", targetid);
+    console.log("locationTransform, ", locationTransform);
+    console.log("body_num_source, ", body_num_source);
+    console.log("body_num_target, ", body_num_target);
+    console.log("color, ", color);
   
     const sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width'));
     const sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height')) / 2;

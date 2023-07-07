@@ -101,9 +101,9 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
   }
   body_num = String(body_num);
   const layout = getBoxLayout(fnS[body-1]);
-  const spaceX = 20;
-  const spaceY = 80;
-  const padding = 80;
+  const spaceX = 80;
+  const spaceY = 85;
+  const padding = 90;
   const newLabel = String(body_num) + '-' + String(body); // new body_num
   drawBox(layout, fnS, newLabel);
   var hierarchies = {};
@@ -149,7 +149,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
   });
   var treeLayout = {};
   treeData.each(d => {
-    treeLayout[d.data.oName] = [d.x, d.y, d.data.size[1], d.data.size[0] * 0];
+    treeLayout[d.data.oName] = [d.x, d.y, d.data.size[1], d.data.size[0] * 1];
   });
   const nodeNames = Object.keys(treeLayout);
   const locationDrift = {};
@@ -157,7 +157,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
   if (nodesCoLevel.length !== 0) {
       nodesCoLevel.forEach(d => {
         d.forEach(d2 => {
-          locationDrift[d2] = d.length;
+          locationDrift[d2] = 1;
         })
       });
   }
