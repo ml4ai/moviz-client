@@ -152,28 +152,11 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
     treeLayout[d.data.oName] = [d.x, d.y, d.data.size[1], d.data.size[0] * 1];
   });
   const nodeNames = Object.keys(treeLayout);
-  const locationDrift = {};
-  const nodesCoLevel = findChildrenAtSameLevel(nodeNames);
-  if (nodesCoLevel.length !== 0) {
-      nodesCoLevel.forEach(d => {
-        d.forEach(d2 => {
-          locationDrift[d2] = 1;
-        })
-      });
-  }
+
   console.log(treeLayout);
-  console.log(locationDrift);
   console.log()
   let differenceX = treeLayout[newLabel][0] - treeLayout[body_num][0];
   let differenceY = treeLayout[newLabel][1] - treeLayout[newLabel][3] / 2 - (treeLayout[body_num][1] - treeLayout[body_num][3] / 2);
-  if (JSON.stringify(locationDrift) === '{}' || (!body_num in locationDrift && !newLabel in locationDrift)){
-  } else if (body_num in locationDrift && newLabel in locationDrift) {
-    differenceY = differenceY + (locationDrift[newLabel] - 1) * 5 * spaceX - (locationDrift[body_num] - 1) * 5 * spaceX;
-  } else if (body_num in locationDrift && !(newLabel in locationDrift)) {
-    differenceY = differenceY - (locationDrift[body_num] - 1) * 5 * spaceX;
-  } else if (!(body_num in locationDrift) && newLabel in locationDrift){
-    differenceY = differenceY + (locationDrift[newLabel] - 1) * 5 * spaceX;
-  }
   
   const locationTransform = [differenceX, differenceY];
   drawLines(sourceid, "frame" + newLabel, locationTransform, body_num, newLabel, color);
@@ -191,12 +174,8 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
         const translateValues = translatePart.split(",");
         const transformArray = translateValues.map(Number);
         let newTransArray = [];
-        if (JSON.stringify(locationDrift) === '{}' || !(sourceGID in locationDrift)) {
-          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 - treeLayout[sourceGID][3] / 2];
-        } else {
-          const yDrift = locationDrift[sourceGID] - 1;
-          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 - treeLayout[sourceGID][3] / 2 + yDrift * spaceX * 5];
-        }
+        newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 - treeLayout[sourceGID][3] / 2];
+        
         // console.log(sourceGID);
         // console.log(transformArray);
         // console.log("----------");
@@ -218,13 +197,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
         const translateValues = translatePart.split(",");
         const transformArray = translateValues.map(Number);
         let newTransArray = [];
-        if (JSON.stringify(locationDrift) === '{}' || !(targetGID in locationDrift)) {
-          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 - treeLayout[targetGID][3] / 2];
-        } else {
-          const yDrift = locationDrift[targetGID] - 1;
-          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 - treeLayout[targetGID][3] / 2 + yDrift * spaceX * 5];
-        }
-
+        newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 - treeLayout[targetGID][3] / 2];
         if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
           const a01 = d3.select(this).attr('sourceid');
           const a02 = d3.select(this).attr('targetid');
@@ -239,49 +212,23 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
       
       nodeID = nodeID.replace("line", "");
       nodeID = nodeID.split('_')[0];
-      if (JSON.stringify(locationDrift) === '{}' || !(nodeID in locationDrift)) {
-        d3.select(this)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
-          .style("opacity", 0.7);
-      } else {
-        const yDrift = locationDrift[nodeID] - 1;
-        d3.select(this)
-        .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2 + yDrift * spaceX * 5})`)
+      d3.select(this)
+        .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
         .style("opacity", 0.7);
-      }
     } else {
       if (nodeID === newLabel) {
-        if (JSON.stringify(locationDrift) === '{}' || !(nodeID in locationDrift)) {
-          d3.select(this)
-            .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
-            .attr("opacity", 0);
-          d3.select(this)
-            .transition()
-            .duration(transitionTime1)
-            .style("opacity", 1);
-        } else {
-          const yDrift = locationDrift[nodeID] - 1;
-          d3.select(this)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2 + yDrift * spaceX * 5})`)
+        d3.select(this)
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
           .attr("opacity", 0);
-          d3.select(this)
-            .transition()
-            .duration(transitionTime1)
-            .style("opacity", 1);
-        }
+        d3.select(this)
+          .transition()
+          .duration(transitionTime1)
+          .style("opacity", 1);
       } else {
-        if (JSON.stringify(locationDrift) === '{}' || !(nodeID in locationDrift)) {
-          d3.select(this)
-            .transition()
-            .duration(transitionTime2)
-            .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`);
-        } else {
-          const yDrift = locationDrift[nodeID] - 1;
-          d3.select(this)
-            .transition()
-            .duration(transitionTime2)
-            .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2 + yDrift * spaceX * 5})`);
-        }
+        d3.select(this)
+          .transition()
+          .duration(transitionTime2)
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`);
       }
     }
   }
