@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as d3 from "d3";
 import { handleClick } from "./click";
+import { handleClickCond } from "./clickCond";
 
 export function drawBox(layout, fnS, body_num) {
     // 创建SVG元素
@@ -9,6 +10,8 @@ export function drawBox(layout, fnS, body_num) {
     const ranksep = 37;
     // 绘制节点
     const nodes = layout.nodes;
+    let opoNodeFlag = false;
+    let opiNodeFlag = false;
     for (const nodeId in nodes) {
       const node = nodes[nodeId];
       const [type, index] = nodeId.split("-");
@@ -19,6 +22,7 @@ export function drawBox(layout, fnS, body_num) {
         const minValue = Math.min(...Object.values(layout.nodes).map(obj => obj.y));
         if (node.y !== minValue){
           node.y = minValue - 50 - ranksep;
+          opiNodeFlag = true;
         }
       }
 
@@ -26,6 +30,27 @@ export function drawBox(layout, fnS, body_num) {
         const maxValue = Math.max(...Object.values(layout.nodes).map(obj => obj.y));
         if (node.y !== maxValue){
           node.y = maxValue + 50 + ranksep;
+          opoNodeFlag = true;
+        }
+      }
+    }
+    for (const nodeId in nodes) {
+      const node = nodes[nodeId];
+      const [type, index] = nodeId.split("-");
+      const isOpoNode = (type === 'opo');
+      const isOpiNode = (type === 'opi');
+
+      if (isOpiNode) {
+        const minValue = Math.min(...Object.values(layout.nodes).map(obj => obj.y));
+        if (opiNodeFlag){
+          node.y = minValue;
+        }
+      }
+
+      if (isOpoNode) {
+        const maxValue = Math.max(...Object.values(layout.nodes).map(obj => obj.y));
+        if (opoNodeFlag){
+          node.y = maxValue;
         }
       }
     }
@@ -51,7 +76,7 @@ export function drawBox(layout, fnS, body_num) {
       nodes[key].x = nodes[key].x - minXofAllNodes + 10;
       nodes[key].y -= minYofAllNodes;
     }
-
+    console.log(nodes);
     for (const nodeId in nodes) {
       const node = nodes[nodeId];
       const [type, index] = nodeId.split("-");
@@ -61,6 +86,9 @@ export function drawBox(layout, fnS, body_num) {
       const isAuxNode = (type === "aux");
       const isOpoNode = (type === 'opo');
       const isOpiNode = (type === 'opi');
+      const isBcNode = (type === "bc");
+      const isPocNode = (type === "poc");
+      const isPicNode = (type === "pic");
   
       if (isAuxNode) {
         continue; // 不绘制aux前缀的节点
@@ -88,7 +116,14 @@ export function drawBox(layout, fnS, body_num) {
             drawLPrimitive_nfull(node, nodeId, g, "red", ranksep);
           }
         }
-      } else if (isPofNode || isPifNode || isOpiNode || isOpoNode) {
+      } else if (isBcNode) {
+        if (node.fullBox){
+          drawBCs_full(node, nodeId, g, "orange", ranksep, fnS, body_num);
+        } else {
+          drawBCs_nfull(node, nodeId, g, "orange", ranksep, fnS, body_num);
+        }
+      }
+      else if (isPofNode || isPifNode || isOpiNode || isOpoNode || isPicNode || isPocNode) {
         drawPorts(node, nodeId, g, "black");
       }
     }
@@ -142,6 +177,8 @@ export function drawBox(layout, fnS, body_num) {
         drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "purple", body_num);
       } else if (layout.meta.type === "FUNCTION") {
         drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "green", body_num);
+      } else if (layout.meta.type === "PREDICATE") {
+        drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "orange", body_num);
       }
     } else if ('opo-0' in nodes && !('opi-0' in nodes)) {
       if (layout.meta.type === "MODULE"){
@@ -150,6 +187,8 @@ export function drawBox(layout, fnS, body_num) {
         drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "purple", body_num);
       } else if (layout.meta.type === "FUNCTION") {
         drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "green", body_num);
+      } else if (layout.meta.type === "PREDICATE") {
+        drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "orange", body_num);
       }
     } else if (!('opo-0' in nodes) && 'opi-0' in nodes) {
       if (layout.meta.type === "MODULE"){
@@ -158,6 +197,8 @@ export function drawBox(layout, fnS, body_num) {
         drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "purple", body_num);
       } else if (layout.meta.type === "FUNCTION") {
         drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "green", body_num);
+      } else if (layout.meta.type === "PREDICATE") {
+        drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "orange", body_num);
       }
     } else {
       if (layout.meta.type === "MODULE"){
@@ -166,6 +207,8 @@ export function drawBox(layout, fnS, body_num) {
         drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "purple", body_num);
       } else if (layout.meta.type === "FUNCTION") {
         drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "green", body_num);
+      } else if (layout.meta.type === "PREDICATE") {
+        drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "orange", body_num);
       }
     }
     g.attr("width", g.node().getBBox().width)
@@ -190,6 +233,7 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
   .attr("rx", 15)
   .attr("ry", 15)
   .attr("data-body", node_body)
+  .attr("data-opened", "neo")
   .style("fill", "rgba(0, 0, 255, 0)")
   .style("stroke", color)
   .style("cursor", "pointer")
@@ -212,6 +256,79 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
 }
 
 function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
+  let node_body = null;
+  if (node.body !== undefined) {
+    node_body = node.body;
+  }
+  let clicked = false;
+  const selection = g.append("rect")
+  .attr("id", nodeId)
+  .attr("x", node.x - node.width / 2)
+  .attr("y", node.y - node.height / 2 - ranksep)
+  .attr("width", node.width)
+  .attr("height", node.height)
+  .attr("rx", 15)
+  .attr("ry", 15)
+  .attr("data-body", node_body)
+  .attr("data-opened", "neo")
+  .style("fill", "rgba(0, 0, 255, 0)")
+  .style("cursor", "pointer")
+  .style("stroke", color)
+  .style("stroke-width", 5);
+  if (node.label !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y - node.height / 4 - ranksep / 2)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "12px")
+    .text(node.label);
+  }
+  if (node.body !== undefined) {
+    selection.on("click", function(){
+      handleClick(fnS, node.body, body_num, nodeId, color, clicked);
+      clicked = !clicked;
+    });
+  }
+}
+
+function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
+  let clicked = false;
+  let node_body_cond = null;
+  if (node.condition !== undefined) {
+    node_body_cond = node.condition;
+  }
+  const selection = g.append("rect")
+  .attr("id", nodeId)
+  .attr("x", node.x - node.width / 2)
+  .attr("y", node.y - node.height / 2 + ranksep)
+  .attr("width", node.width)
+  .attr("height", node.height - ranksep * 2)
+  .attr("rx", 15)
+  .attr("ry", 15)
+  .attr("data-body", node_body_cond)
+  .style("fill", "rgba(0, 0, 255, 0)")
+  .style("stroke", color)
+  .style("cursor", "pointer")
+  .style("stroke-width", 5);
+  if (node.label !== undefined){
+    g.append("text") // 添加节点的label
+    .attr("x", node.x)
+    .attr("y", node.y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "12px")
+    .text(node.label);
+  }
+  if (node.condition !== undefined) {
+    selection.on("click", function(){
+      handleClickCond(fnS, node.condition, node.body_if, node.body_else, body_num, nodeId, color, clicked);
+      clicked = !clicked;
+    });
+  }
+}
+
+function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
   let node_body = null;
   if (node.body !== undefined) {
     node_body = node.body;

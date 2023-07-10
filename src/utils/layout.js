@@ -118,6 +118,104 @@ export function getBoxLayout(data) {
     }
   }
 
+  // set bc
+  if ('bc' in data) {
+    for (let i = 0; i < data.bc.length; i += 1) {
+      // eslint-disable-next-line
+      const node = data.bc[i];
+      const nodeId = `bc-${i}`;
+      const label = node.name;
+      const type = node.function_type;
+      const value = node.value;
+      const condition = node.condition;
+      const body_if = node.body_if;
+      const body_else = node.body_else;
+      graph.setNode(nodeId, { label, value, type, condition, body_if, body_else });
+      // add auxi node for each bc
+      const auxLabel = 'aux';
+      const width = 1;
+      const height = 1;
+      graph.setNode(`aux-${nodeId}`, { auxLabel, width, height });
+      // graph.setParent(`aux-${nodeId}`, nodeId);
+    }
+  }
+
+  // set pic
+  if ('pic' in data) {
+    for (let i = 0; i < data.pic.length; i += 1) {
+      const node = data.pic[i];
+      const nodeId = `pic-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      graph.setNode(nodeId, { label, width, height });
+      graph.setParent(nodeId, `bc-${node.box - 1}`);
+    }
+  }
+
+  // set poc
+  if ('poc' in data) {
+    for (let i = 0; i < data.poc.length; i += 1) {
+      const node = data.poc[i];
+      const nodeId = `poc-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      graph.setNode(nodeId, { label, width, height });
+      graph.setParent(nodeId, `bc-${node.box - 1}`);
+    }
+  }
+
+  // set wfc
+  if ('wfc' in data) {
+    for (let i = 0; i < data.wfc.length; i += 1) {
+      const edge = data.wfc[i];
+      const srcNodeId = `pic-${edge.src - 1}`;
+      const tgtNodeId = `pof-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set wcf
+  if ('wcf' in data) {
+    for (let i = 0; i < data.wcf.length; i += 1) {
+      const edge = data.wcf[i];
+      const srcNodeId = `pif-${edge.src - 1}`;
+      const tgtNodeId = `poc-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set wcc
+  if ('wcc' in data) {
+    for (let i = 0; i < data.wcc.length; i += 1) {
+      const edge = data.wcc[i];
+      const srcNodeId = `pic-${edge.src - 1}`;
+      const tgtNodeId = `poc-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set edges wcopi
+  if ('wcopi' in data) {
+    for (let i = 0; i < data.wcopi.length; i += 1) {
+      const edge = data.wcopi[i];
+      const srcNodeId = `pic-${edge.src - 1}`;
+      const tgtNodeId = `opi-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set edges wcopo
+  if ('wcopo' in data) {
+    for (let i = 0; i < data.wcopo.length; i += 1) {
+      const edge = data.wcopo[i];
+      const srcNodeId = `opo-${edge.src - 1}`;
+      const tgtNodeId = `poc-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
   // add auxi edges
   if ('pif' in data) {
     for (let i = 0; i < data.pif.length; i += 1) {
@@ -141,10 +239,33 @@ export function getBoxLayout(data) {
       }
     }
   }
+  if ('pic' in data) {
+    for (let i = 0; i < data.pic.length; i += 1) {
+      const nodeID = `pic-${i}`;
+      const picNode = data.pic[i];
+      const auxID = `aux-bc-${picNode.box - 1}`;
+      const hasIncomingEdges = graph.predecessors(nodeID).length > 0;
+      if (!hasIncomingEdges) {
+        graph.setEdge(auxID, nodeID);
+      }
+    }
+  }
+  if ('poc' in data) {
+    for (let i = 0; i < data.poc.length; i += 1) {
+      const nodeID = `poc-${i}`;
+      const pocNode = data.poc[i];
+      const auxID = `aux-bc-${pocNode.box - 1}`;
+      const hasOutgoingEdges = graph.successors(nodeID).length > 0;
+      if (!hasOutgoingEdges) {
+        graph.setEdge(nodeID, auxID);
+      }
+    }
+  }
   const bfNodes = graph.nodes().filter(node => node.startsWith('bf'));
+  const bcNodes = graph.nodes().filter(node => node.startsWith('bc'));
   const opoNodes = graph.nodes().filter(node => node.startsWith('opo'));
   const opiNodes = graph.nodes().filter(node => node.startsWith('opi'));
-  const parentNodes = [...bfNodes, ...opoNodes, ...opiNodes];
+  const parentNodes = [...bcNodes,...bfNodes, ...opoNodes, ...opiNodes];
   const superNodes = groupParentNodes(graph, parentNodes);
 
   // console.log(graph);
@@ -163,6 +284,7 @@ export function getBoxLayout(data) {
     nodes: {},
     edges: [],
   };
+  console.log(data);
   graph.nodes().forEach((nodeId) => {
     const node = graph.node(nodeId);
     layout.nodes[nodeId] = {
@@ -174,6 +296,9 @@ export function getBoxLayout(data) {
       type: node.type,
       value: node.value,
       body: node.body,
+      condition: node.condition,
+      body_if: node.body_if,
+      body_else: node.body_else
     };
   });
   graph.edges().forEach((edge, i) => {
@@ -198,6 +323,22 @@ export function getBoxLayout(data) {
         }
       } else {
         layout.nodes[bfNodeId].fullBox = false;
+      }
+    }
+  }
+  if ('bc' in data) {
+    for (let i = 0; i < data.bf.length; i += 1) {
+      const bcNodeId = `bc-${i}`;
+      if (('pic' in data) && ('poc' in data)) {
+        const pocNode = data.poc.find(node => node.box === i + 1);
+        const picNode = data.pic.find(node => node.box === i + 1);
+        if (pocNode && picNode) {
+          layout.nodes[bcNodeId].fullBox = true;
+        } else {
+          layout.nodes[bcNodeId].fullBox = false;
+        }
+      } else {
+        layout.nodes[bcNodeId].fullBox = false;
       }
     }
   }
@@ -312,6 +453,11 @@ function adjustChildNodesPosition(graph, parentNodeId, deltaX, deltaY) {
     }
 
     if (childId.split('-')[0]==="bf") {
+      // console.log("aux-" + childId);
+      adjustAuxNodesPosition(graph, "aux-" + childId, deltaX, deltaY);
+    }
+
+    if (childId.split('-')[0]==="bc") {
       // console.log("aux-" + childId);
       adjustAuxNodesPosition(graph, "aux-" + childId, deltaX, deltaY);
     }

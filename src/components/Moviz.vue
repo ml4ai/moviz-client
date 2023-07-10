@@ -47,6 +47,7 @@ export default {
       },
       selectedOption: null,
       options: [
+        { text: 'cond1', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/cond1--Gromet-FN-auto.json' },
         { text: 'fun1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun1/FN_0.1.6/fun1--Gromet-FN-auto.json' },
         { text: 'fun4', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun4/FN_0.1.6/fun4--Gromet-FN-auto.json' },
         { text: 'exp1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp1/FN_0.1.6/exp1--Gromet-FN-auto.json' },

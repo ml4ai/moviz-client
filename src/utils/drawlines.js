@@ -9,7 +9,7 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
     // console.log("body_num_target, ", body_num_target);
     // console.log("color, ", color);
   
-    d3.select("#boxid" + body_num_source).select("#" + sourceid).attr("data-opened", "true");
+    // d3.select("#boxid" + body_num_source).select("#" + sourceid).attr("data-opened", "true");
     const sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width'));
     const sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height')) / 2;
     const targetX1 = Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
@@ -404,4 +404,82 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
       }
       
     })
+}
+
+export function drawLinesDashArrow(treeLayout, sourceID, targetID, color, label) {
+  // d3.select("#boxid" + body_num_source).select("#" + sourceid).attr("data-opened", "true");
+  const sourceFrame = "frame" + sourceID;
+  const targetFrame = "frame" + targetID;
+  const dx = treeLayout[targetID][0] - treeLayout[sourceID][0] - Number(d3.select("#" + sourceFrame).attr('width'));
+  const dy = treeLayout[targetID][1] - treeLayout[sourceID][1];
+  const sourceX = Number(d3.select("#" + sourceFrame).attr('x')) + Number(d3.select("#" + sourceFrame).attr('width'));
+  const sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height')) / 2;
+  const targetX = sourceX + dx;
+  const targetY = sourceY + dy;
+  const g = d3.select('svg').append("g").attr('id', 'line' + String(sourceID) + '_' + String(targetID)).attr("line-type", "dashed");
+  const paddingL = 17;
+  g.append("defs")
+    .append("marker")
+    .attr("id", "arrow")
+    .attr("markerWidth", 5)  // 原来的一半
+    .attr("markerHeight", 3.5)  // 原来的一半
+    .attr("refX", 5)  // 调整参考点以适应新的大小
+    .attr("refY", 1.75)  // 调整参考点以适应新的大小
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M0,0 L5,1.75 L0,3.5 Z")  // 缩小箭头的路径
+  .style("fill", "gray");
+  g.append("line")
+    .attr("x1", sourceX)
+    .attr("y1", sourceY)
+    .attr("x2", targetX)
+    .attr("y2", targetY)
+    .attr("stroke-width", 5)  // 设置线的宽度
+    .attr("stroke", color)  // 设置线的颜色
+    .attr("stroke-dasharray", "5,5")  // 设置线为虚线，"5,5"表示线段和间隔的长度
+    .attr("marker-end", "url(#arrow)")  // 设置线的终点为箭头
+    .attr("class", "arrowLine");
+  let midX = (sourceX + targetX) / 2 - 45;
+  let midY = (sourceY + targetY) / 2 - 5;
+  g.append("text")
+    .attr("x", midX)
+    .attr("y", midY)
+    .text(label)
+    .style("font-size", "30px")  // 设置字体大小
+    .style("fill", "black");  // 设置字体颜色
+}
+
+export function updateLinesDashArrow(treeLayout, sourceID, targetID, color, label, lineID) {
+  // d3.select("#boxid" + body_num_source).select("#" + sourceid).attr("data-opened", "true");
+  const sourceFrame = "frame" + sourceID;
+  const targetFrame = "frame" + targetID;
+  const dx = treeLayout[targetID][0] - treeLayout[sourceID][0] - Number(d3.select("#" + sourceFrame).attr('width'));
+  const dy = treeLayout[targetID][1] - treeLayout[sourceID][1];
+  const sourceX = Number(d3.select("#" + sourceFrame).attr('x')) + Number(d3.select("#" + sourceFrame).attr('width'));
+  const sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height')) / 2;
+  const targetX = sourceX + dx;
+  const targetY = sourceY + dy;
+  const g = d3.select('svg').select("#" + lineID);
+  g.select("line")
+    .transition()
+    .duration(720)
+    .attr("x1", sourceX)
+    .attr("y1", sourceY)
+    .attr("x2", targetX)
+    .attr("y2", targetY)
+    .attr("stroke-width", 5)  // 设置线的宽度
+    .attr("stroke", color)  // 设置线的颜色
+    .attr("stroke-dasharray", "5,5")  // 设置线为虚线，"5,5"表示线段和间隔的长度
+    .attr("marker-end", "url(#arrow)")  // 设置线的终点为箭头
+    .attr("class", "arrowLine");
+  let midX = (sourceX + targetX) / 2 - 45;
+  let midY = (sourceY + targetY) / 2 - 5;
+  g.select("text")
+    .transition()
+    .duration(720)
+    .attr("x", midX)
+    .attr("y", midY)
+    .text(label)
+    .style("font-size", "30px")  // 设置字体大小
+    .style("fill", "black");  // 设置字体颜色
 }

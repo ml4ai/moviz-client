@@ -1,23 +1,22 @@
 /* eslint-disable */
 import { drawBox } from "./drawBox";
-import { drawLines, updateLines, updateLinesDashArrow } from "./drawlines";
+import { drawLines, updateLines, drawLinesDashArrow, updateLinesDashArrow } from "./drawlines";
 import { getBoxLayout, getTreeLayout } from "./layout";
 import { arraysAreEqual, loopOverHierarchy, getChildren, findChildrenAtSameLevel } from "./utilities";
 import * as flextree from "d3-flextree"
 import * as d3 from "d3";
 
-export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
+export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourceid, color, clicked) {
   const transitionTime1 = 920;
   const transitionTime2 = 720;
   const transitionTime3 = 200;
   const openFlag = d3.select("#boxid" + String(body_num)).select("#" + String(sourceid));
-  // console.log(openFlag.attr("data-opened"));
   if (clicked || openFlag.attr("data-opened") === "true") {
     // openFlag.attr("data-opened", "false");
     d3.select("#boxid" + String(body_num)).selectAll("[data-opened='true']").attr("data-opened", "false");
     d3.selectAll('g').each(function(d,i){
       let GID = d3.select(this).attr('id').replace('line', '').replace('boxid', '');
-      const deleteLabel = String(body_num) + '-' + String(body);
+      const deleteLabel = String(body_num) + '-' + String(cond);
       const deleteParts = deleteLabel.split('-');
       // delete edges
       if (GID.split('_').length === 2){
@@ -104,12 +103,18 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
     return;
   }
   body_num = String(body_num);
-  const layout = getBoxLayout(fnS[body-1]);
+  const layoutCond = getBoxLayout(fnS[cond-1]);
+  const layoutIf = getBoxLayout(fnS[body_if-1]);
+  const layoutElse = getBoxLayout(fnS[body_else-1]);
   const spaceX = 80;
   const spaceY = 100;
   const padding = 90;
-  const newLabel = String(body_num) + '-' + String(body); // new body_num
-  drawBox(layout, fnS, newLabel);
+  const newLabelCond = String(body_num) + '-' + String(cond); // new body_num for Cond
+  const newLabelIf = String(newLabelCond) + '-' + String(body_if); // new body_num for if
+  const newLabelElse = String(newLabelCond) + '-' + String(body_else); // new body_num for else
+  drawBox(layoutCond, fnS, newLabelCond);
+  drawBox(layoutIf, fnS, newLabelIf);
+  drawBox(layoutElse, fnS, newLabelElse);
   var hierarchies = {};
   const childrens = [];
   const gs = d3.selectAll('g').each(function(d, i){
@@ -143,6 +148,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
     }
   });
   const flexLayout = flextree.flextree({ spacing: spaceX });
+  console.log(hierarchies);
   const tree = flexLayout.hierarchy(hierarchies);
   var treeData = flexLayout(tree);
   treeData.each(d => {
@@ -157,31 +163,16 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
   const nodeNames = Object.keys(treeLayout);
 
   console.log(treeLayout);
-  let differenceX = treeLayout[newLabel][0] - treeLayout[body_num][0];
-  let differenceY = treeLayout[newLabel][1] - treeLayout[newLabel][3] / 2 - (treeLayout[body_num][1] - treeLayout[body_num][3] / 2);
+  console.log()
+  let differenceX = treeLayout[newLabelCond][0] - treeLayout[body_num][0];
+  let differenceY = treeLayout[newLabelCond][1] - treeLayout[newLabelCond][3] / 2 - (treeLayout[body_num][1] - treeLayout[body_num][3] / 2);
   
   const locationTransform = [differenceX, differenceY];
-  drawLines(sourceid, "frame" + newLabel, locationTransform, body_num, newLabel, color);
+  drawLines(sourceid, "frame" + newLabelCond, locationTransform, body_num, newLabelCond, color);
+  drawLinesDashArrow(treeLayout, newLabelCond, newLabelIf, "black", "TRUE");
+  drawLinesDashArrow(treeLayout, newLabelCond, newLabelElse, "black", "FALSE");
+
   // console.log(locationTransform);
-  d3.selectAll('g').each(function(d, i){
-    let nodeID = d3.select(this).attr('id').replace("boxid", "");
-    if (nodeID.split('_').length !==2) {
-      if (nodeID === newLabel) {
-        d3.select(this)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
-          .attr("opacity", 0);
-        d3.select(this)
-          .transition()
-          .duration(transitionTime1)
-          .style("opacity", 1);
-      } else {
-        d3.select(this)
-          .transition()
-          .duration(transitionTime2)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`);
-      }
-    }
-  })
   d3.selectAll('g').each(function(d, i){
     let nodeID = d3.select(this).attr('id').replace("boxid", "");
     if (nodeID.split('_').length === 2){
@@ -191,7 +182,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
         const targetGID = nodeID.replace("line", "").split('_')[1];
         const sourceTransString = d3.select("#boxid" + sourceGID).attr('transform');
         const targetTransString = d3.select("#boxid" + targetGID).attr('transform');
-        if (sourceTransString!==null && sourceGID != newLabel){
+        if (sourceTransString!==null && sourceGID != newLabelCond){
           const translatePart = sourceTransString.slice(10, -1);
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
@@ -201,25 +192,31 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const a01 = d3.select(this).attr('sourceid');
             const a02 = d3.select(this).attr('targetid');
+            let a03 = d3.select(this).attr('locationTransform').split(',');
             const a04 = d3.select(this).attr('body_num_source');
             const a05 = d3.select(this).attr('body_num_target');
             const a06 = d3.select(this).attr('color');
+            // const new03 = [Number(a03[0]) + newTransArray[0] - transformArray[0], Number(a03[1]) + newTransArray[1] - transformArray[1]];
+            // d3.select("#" + lineID).selectAll('*').remove();
             updateLines(a01, a02, locationTransformForThis, a04, a05, a06, lineID);
           }
         }
-        if (targetTransString!==null && targetGID != newLabel){
+        if (targetTransString!==null && targetGID != newLabelCond){
           const translatePart = targetTransString.slice(10, -1);
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
           let newTransArray = [];
-          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - treeLayout[targetGID][3] / 2 - (treeLayout[sourceGID][1] - treeLayout[sourceGID][3] / 2)];
           newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 - treeLayout[targetGID][3] / 2];
+          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - treeLayout[targetGID][3] / 2 - (treeLayout[sourceGID][1] - treeLayout[sourceGID][3] / 2)];
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const a01 = d3.select(this).attr('sourceid');
             const a02 = d3.select(this).attr('targetid');
+            let a03 = d3.select(this).attr('locationTransform').split(',');
             const a04 = d3.select(this).attr('body_num_source');
             const a05 = d3.select(this).attr('body_num_target');
             const a06 = d3.select(this).attr('color');
+            // const new03 = [Number(a03[0]) + newTransArray[0] - transformArray[0], Number(a03[1]) + newTransArray[1] - transformArray[1]];
+            // d3.select("#" + lineID).selectAll('*').remove();
             updateLines(a01, a02, locationTransformForThis, a04, a05, a06, lineID);
           }
         }
@@ -235,7 +232,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
         const targetGID = nodeID.replace("line", "").split('_')[1];
         const sourceTransString = d3.select("#boxid" + sourceGID).attr('transform');
         const targetTransString = d3.select("#boxid" + targetGID).attr('transform');
-        if (sourceTransString!==null && sourceGID != newLabel) {
+        if (sourceTransString!==null && sourceGID != newLabelCond) {
           const translatePart = sourceTransString.slice(10, -1);
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
@@ -246,7 +243,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
             updateLinesDashArrow(treeLayout, sourceGID, targetGID, "black", line_label, lineID);
           }
         }
-        if (targetTransString!==null && targetGID != newLabel){
+        if (targetTransString!==null && targetGID != newLabelCond){
           const translatePart = targetTransString.slice(10, -1);
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
@@ -260,10 +257,26 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
         nodeID = nodeID.replace("line", "");
         nodeID = nodeID.split('_')[0];
         d3.select(this)
+          // .transition()
+          // .duration(720)
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`);
+      }
+    } else {
+      if (nodeID === newLabelCond || nodeID === newLabelElse || nodeID === newLabelIf) {
+        d3.select(this)
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
+          .attr("opacity", 0);
+        d3.select(this)
           .transition()
-          .duration(720)
+          .duration(transitionTime1)
+          .style("opacity", 1);
+      } else {
+        d3.select(this)
+          .transition()
+          .duration(transitionTime2)
           .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`);
       }
     }
-  })
+  }
+  )
 }

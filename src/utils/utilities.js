@@ -20,27 +20,30 @@ export function loopOverHierarchy(d, callback) {
   }
 
 export function getChildren(hierarchies, childrens) {
-  var children = hierarchies;
-  var zoomin = 2;
+  console.log(childrens);
   childrens.forEach(function(element){
-  element.path.forEach(function(node){
-    if (Number(node) !== 0) {
-        if (node !== element.path[element.path.length - 1] && zoomin === element.path.length - 1) {
-            const filterChild = children.children.filter(function(item){
-                return Number(item.name) === Number(node);
-            })[0]
-            zoomin += 1
-            children = filterChild;
-        }
-        else if (node === element.path[element.path.length - 1]) {
-            if (children.hasOwnProperty("children")) {
-                children.children.push(element);
-                sortByOName(children.children);
-            } else {
-                children.children = [ element ];
+    var children = hierarchies;
+    var zoomin = 2;
+    element.path.forEach(function(node){
+        if (Number(node) !== 0) {
+            if (zoomin <= element.path.length - 1) {
+                // debugger
+                const filterChild = children.children.filter(function(item){
+                    return Number(item.name) === Number(node);
+                })[0]
+                zoomin += 1
+                children = filterChild;
+            }
+            else if (node === element.path[element.path.length - 1]) {
+                // debugger
+                if (children.hasOwnProperty("children")) {
+                    children.children.push(element);
+                    sortByOName(children.children);
+                } else {
+                    children.children = [ element ];
+                }
             }
         }
-    }
   })
 })
 }
