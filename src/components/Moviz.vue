@@ -23,7 +23,9 @@
           Current File Version:
           <span class="highlight">{{ skemaVersion }}</span>
         </div>
-        <svg id="mainsvg" width="4000" height="2000"></svg>
+        <svg id="mainsvg" width="4000" height="4000" viewBox="0 0 4000 4000">
+          <g id="sumGroup"></g>
+        </svg>
       </div>
     </div>
   </div>
@@ -47,7 +49,7 @@ export default {
       },
       selectedOption: null,
       options: [
-        { text: 'for1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/for1/FN_0.1.6/for1--Gromet-FN-auto.json' },
+        { text: 'while1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/while1/FN_0.1.6/while1--Gromet-FN-auto.json' },
         { text: 'cond1', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/cond1--Gromet-FN-auto.json' },
         { text: 'fun1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun1/FN_0.1.6/fun1--Gromet-FN-auto.json' },
         { text: 'fun4', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun4/FN_0.1.6/fun4--Gromet-FN-auto.json' },
