@@ -5,8 +5,8 @@ import { handleClickCond, handleClickLoop } from "./clickCond";
 
 export function drawBox(layout, fnS, body_num) {
     // 创建SVG元素
-    const svg = d3.select("#mainsvg")
-    const g = svg.append("g").attr('id', "boxid" + String(body_num));
+    const svg = d3.select("#mainsvg");
+    const g = svg.append("g").attr('id', "boxid" + String(body_num)).attr("class", "drawer");
     const ranksep = 37;
     // 绘制节点
     const nodes = layout.nodes;

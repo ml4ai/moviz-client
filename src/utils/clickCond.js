@@ -14,7 +14,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
   if (clicked || openFlag.attr("data-opened") === "true") {
     // openFlag.attr("data-opened", "false");
     d3.select("#boxid" + String(body_num)).selectAll("[data-opened='true']").attr("data-opened", "false");
-    d3.selectAll('g').each(function(d,i){
+    d3.selectAll('.drawer').each(function(d,i){
       let GID = d3.select(this).attr('id').replace('line', '').replace('boxid', '');
       const deleteLabel = String(body_num) + '-' + String(cond);
       const deleteParts = deleteLabel.split('-');
@@ -117,7 +117,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
   drawBox(layoutElse, fnS, newLabelElse);
   var hierarchies = {};
   const childrens = [];
-  const gs = d3.selectAll('g').each(function(d, i){
+  const gs = d3.selectAll('.drawer').each(function(d, i){
     const nodeID = d3.select(this).attr('id').replace("boxid", "");
     if (nodeID.split('_').length !== 2) {
       const routes = nodeID.split("-");
@@ -173,7 +173,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
   drawLinesDashArrow(treeLayout, newLabelCond, newLabelElse, "black", "FALSE");
 
   // console.log(locationTransform);
-  d3.selectAll('g').each(function(d, i){
+  d3.selectAll('.drawer').each(function(d, i){
     let nodeID = d3.select(this).attr('id').replace("boxid", "");
     if (nodeID.split('_').length === 2){
       if (d3.select(this).attr("line-type") !== "dashed") {
@@ -290,7 +290,7 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
   if (clicked || openFlag.attr("data-opened") === "true") {
     // openFlag.attr("data-opened", "false");
     d3.select("#boxid" + String(body_num)).selectAll("[data-opened='true']").attr("data-opened", "false");
-    d3.selectAll('g').each(function(d,i){
+    d3.selectAll('.drawer').each(function(d,i){
       let GID = d3.select(this).attr('id').replace('line', '').replace('boxid', '');
       const deleteLabel = String(body_num) + '-' + String(cond);
       const deleteParts = deleteLabel.split('-');
@@ -379,9 +379,10 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
     return;
   }
   body_num = String(body_num);
-  const layoutCond = getBoxLayout(fnS[cond-1]);
-  const layoutPre = getBoxLayout(fnS[pre-1]);
-  const layoutBody = getBoxLayout(fnS[body-1]);
+  let layoutCond;
+  let layoutPre;
+  let layoutBody;
+  let layoutPost;
   // const layoutPost = getBoxLayout(fnS[post-1]);
   const spaceX = 80;
   const spaceY = 100;
@@ -390,14 +391,28 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
   const newLabelPre = String(newLabelCond) + '-' + String(pre); // new body_num for pre
   const newLabelBody = String(newLabelCond) + '-' + String(body); // new body_num for body
   const newLabelPost = String(newLabelCond) + '-' + String(post); // new body_num for post
-  console.log(layoutCond);
-  drawBox(layoutCond, fnS, newLabelCond);
-  drawBox(layoutPre, fnS, newLabelPre);
-  drawBox(layoutBody, fnS, newLabelBody);
+  if (cond!==undefined) {
+    layoutCond = getBoxLayout(fnS[cond-1]);
+    drawBox(layoutCond, fnS, newLabelCond);
+  }
+  if (pre!==undefined) {
+    layoutPre = getBoxLayout(fnS[pre-1]);
+    drawBox(layoutPre, fnS, newLabelPre);
+  }
+  if (body!==undefined) {
+    layoutBody = getBoxLayout(fnS[body-1]);
+    drawBox(layoutBody, fnS, newLabelBody);
+  }
+  if (post!==undefined) {
+    layoutPost = getBoxLayout(fnS[post-1]);
+    drawBox(layoutPost, fnS, newLabelPost);
+  }
+  
+  
   // drawBox(layoutPost, fnS, newLabelPost);
   var hierarchies = {};
   const childrens = [];
-  const gs = d3.selectAll('g').each(function(d, i){
+  const gs = d3.selectAll('.drawer').each(function(d, i){
     const nodeID = d3.select(this).attr('id').replace("boxid", "");
     if (nodeID.split('_').length !== 2) {
       const routes = nodeID.split("-");
@@ -449,12 +464,18 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
   
   const locationTransform = [differenceX, differenceY];
   drawLines(sourceid, "frame" + newLabelCond, locationTransform, body_num, newLabelCond, color);
-  drawLinesDashArrow(treeLayout, newLabelCond, newLabelPre, "black", "PRE");
-  drawLinesDashArrow(treeLayout, newLabelCond, newLabelBody, "black", "WHILE TRUE");
-  // drawLinesDashArrow(treeLayout, newLabelCond, newLabelPost, "black", "POST");
+  if (pre!==undefined) {
+    drawLinesDashArrow(treeLayout, newLabelCond, newLabelPre, "black", "PRE");
+  }
+  if (body!==undefined) {
+    drawLinesDashArrow(treeLayout, newLabelCond, newLabelBody, "black", "WHILE TRUE");
+  }
+  if (post!==undefined) {
+    drawLinesDashArrow(treeLayout, newLabelCond, newLabelPost, "black", "POST");
+  }
 
   // console.log(locationTransform);
-  d3.selectAll('g').each(function(d, i){
+  d3.selectAll('.drawer').each(function(d, i){
     let nodeID = d3.select(this).attr('id').replace("boxid", "");
     if (nodeID.split('_').length === 2){
       if (d3.select(this).attr("line-type") !== "dashed") {

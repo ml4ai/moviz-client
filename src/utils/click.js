@@ -15,7 +15,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
   if (clicked || openFlag.attr("data-opened") === "true") {
     // openFlag.attr("data-opened", "false");
     d3.select("#boxid" + String(body_num)).selectAll("[data-opened='true']").attr("data-opened", "false");
-    d3.selectAll('g').each(function(d,i){
+    d3.selectAll('.drawer').each(function(d,i){
       let GID = d3.select(this).attr('id').replace('line', '').replace('boxid', '');
       const deleteLabel = String(body_num) + '-' + String(body);
       const deleteParts = deleteLabel.split('-');
@@ -112,7 +112,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
   drawBox(layout, fnS, newLabel);
   var hierarchies = {};
   const childrens = [];
-  const gs = d3.selectAll('g').each(function(d, i){
+  const gs = d3.selectAll('.drawer').each(function(d, i){
     const nodeID = d3.select(this).attr('id').replace("boxid", "");
     if (nodeID.split('_').length !== 2) {
       const routes = nodeID.split("-");
@@ -163,7 +163,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
   const locationTransform = [differenceX, differenceY];
   drawLines(sourceid, "frame" + newLabel, locationTransform, body_num, newLabel, color);
   // console.log(locationTransform);
-  d3.selectAll('g').each(function(d, i){
+  d3.selectAll('.drawer').each(function(d, i){
     let nodeID = d3.select(this).attr('id').replace("boxid", "");
     if (nodeID.split('_').length !==2) {
       if (nodeID === newLabel) {
@@ -182,7 +182,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
       }
     }
   })
-  d3.selectAll('g').each(function(d, i){
+  d3.selectAll('.drawer').each(function(d, i){
     let nodeID = d3.select(this).attr('id').replace("boxid", "");
     if (nodeID.split('_').length === 2){
       if (d3.select(this).attr("line-type") !== "dashed") {

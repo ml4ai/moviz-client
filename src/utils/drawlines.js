@@ -33,7 +33,7 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
     controlPoint22.x = sourceX + 0.75 * 0.8 * dx2;
     controlPoint22.y = sourceY + 0.75 * 1.0 * dy2;
   
-    const g = d3.select('svg').append("g").attr('id', 'line' + String(body_num_source) + '_' + String(body_num_target));
+    const g = d3.select('svg').append("g").attr('id', 'line' + String(body_num_source) + '_' + String(body_num_target)).attr('class', 'drawer');
   
     const paddingL = 17;
 
@@ -416,7 +416,7 @@ export function drawLinesDashArrow(treeLayout, sourceID, targetID, color, label)
   const sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height')) / 2;
   const targetX = sourceX + dx;
   const targetY = sourceY + dy;
-  const g = d3.select('svg').append("g").attr('id', 'line' + String(sourceID) + '_' + String(targetID)).attr("line-type", "dashed");
+  const g = d3.select('svg').append("g").attr('id', 'line' + String(sourceID) + '_' + String(targetID)).attr("line-type", "dashed").attr('class', 'drawer');
   const paddingL = 17;
   g.append("defs")
     .append("marker")
