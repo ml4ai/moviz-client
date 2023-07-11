@@ -1,8 +1,9 @@
 /* eslint-disable */
 import * as dagre from 'dagre';
+import cloneDeep from 'lodash/cloneDeep';
 
 export function getBoxLayout(data) {
-  const graph = new dagre.graphlib.Graph({ compound: true });
+  let graph = new dagre.graphlib.Graph({ compound: true });
   graph.setGraph({});
   // eslint-disable-next-line
   graph.setDefaultEdgeLabel(() => { return {}; });
@@ -216,6 +217,124 @@ export function getBoxLayout(data) {
     }
   }
 
+  if ('bl' in data) {
+    for (let i = 0; i < data.bl.length; i += 1) {
+      // eslint-disable-next-line
+      const node = data.bl[i];
+      const nodeId = `bl-${i}`;
+      const label = node.name;
+      const type = node.function_type;
+      const value = node.value;
+      const condition = node.condition;
+      const pre = node.pre;
+      const body = node.body;
+      const post = node.post;
+      graph.setNode(nodeId, { label, value, type, condition, pre, body, post });
+      // add auxi node for each bl
+      const auxLabel = 'aux';
+      const width = 1;
+      const height = 1;
+      graph.setNode(`aux-${nodeId}`, { auxLabel, width, height });
+      // graph.setParent(`aux-${nodeId}`, nodeId);
+    }
+  }
+
+  // set pil
+  if ('pil' in data) {
+    for (let i = 0; i < data.pil.length; i += 1) {
+      const node = data.pil[i];
+      const nodeId = `pil-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      graph.setNode(nodeId, { label, width, height });
+      graph.setParent(nodeId, `bl-${node.box - 1}`);
+    }
+  }
+
+  // set pol
+  if ('pol' in data) {
+    for (let i = 0; i < data.pol.length; i += 1) {
+      const node = data.pol[i];
+      const nodeId = `pol-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      graph.setNode(nodeId, { label, width, height });
+      graph.setParent(nodeId, `bl-${node.box - 1}`);
+    }
+  }
+
+  // set wfl
+  if ('wfl' in data) {
+    for (let i = 0; i < data.wfl.length; i += 1) {
+      const edge = data.wfl[i];
+      const srcNodeId = `pil-${edge.src - 1}`;
+      const tgtNodeId = `pof-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set wcl
+  if ('wcl' in data) {
+    for (let i = 0; i < data.wcl.length; i += 1) {
+      const edge = data.wcl[i];
+      const srcNodeId = `pil-${edge.src - 1}`;
+      const tgtNodeId = `poc-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set wlopi
+  if ('wlopi' in data) {
+    for (let i = 0; i < data.wlopi.length; i += 1) {
+      const edge = data.wlopi[i];
+      const srcNodeId = `pil-${edge.src - 1}`;
+      const tgtNodeId = `opi-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set wll
+  if ('wll' in data) {
+    for (let i = 0; i < data.wll.length; i += 1) {
+      const edge = data.wll[i];
+      const srcNodeId = `pil-${edge.src - 1}`;
+      const tgtNodeId = `pol-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set wlf
+  if ('wlf' in data) {
+    for (let i = 0; i < data.wlf.length; i += 1) {
+      const edge = data.wlf[i];
+      const srcNodeId = `pif-${edge.src - 1}`;
+      const tgtNodeId = `pol-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set wlc
+  if ('wlc' in data) {
+    for (let i = 0; i < data.wlc.length; i += 1) {
+      const edge = data.wlc[i];
+      const srcNodeId = `pic-${edge.src - 1}`;
+      const tgtNodeId = `pol-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
+  // set wlopo
+  if ('wlopo' in data) {
+    for (let i = 0; i < data.wlopo.length; i += 1) {
+      const edge = data.wlopo[i];
+      const srcNodeId = `opo-${edge.src - 1}`;
+      const tgtNodeId = `pol-${edge.tgt - 1}`;
+      graph.setEdge(srcNodeId, tgtNodeId);
+    }
+  }
+
   // add auxi edges
   if ('pif' in data) {
     for (let i = 0; i < data.pif.length; i += 1) {
@@ -261,20 +380,47 @@ export function getBoxLayout(data) {
       }
     }
   }
+  if ('pil' in data) {
+    for (let i = 0; i < data.pil.length; i += 1) {
+      const nodeID = `pil-${i}`;
+      const pilNode = data.pil[i];
+      const auxID = `aux-bl-${pilNode.box - 1}`;
+      const hasIncomingEdges = graph.predecessors(nodeID).length > 0;
+      if (!hasIncomingEdges) {
+        graph.setEdge(auxID, nodeID);
+      }
+    }
+  }
+  if ('pol' in data) {
+    for (let i = 0; i < data.pol.length; i += 1) {
+      const nodeID = `pol-${i}`;
+      const polNode = data.pol[i];
+      const auxID = `aux-bl-${polNode.box - 1}`;
+      const hasOutgoingEdges = graph.successors(nodeID).length > 0;
+      if (!hasOutgoingEdges) {
+        graph.setEdge(nodeID, auxID);
+      }
+    }
+  }
   const bfNodes = graph.nodes().filter(node => node.startsWith('bf'));
   const bcNodes = graph.nodes().filter(node => node.startsWith('bc'));
+  const blNodes = graph.nodes().filter(node => node.startsWith('bl'));
   const opoNodes = graph.nodes().filter(node => node.startsWith('opo'));
   const opiNodes = graph.nodes().filter(node => node.startsWith('opi'));
-  const parentNodes = [...bcNodes,...bfNodes, ...opoNodes, ...opiNodes];
-  const superNodes = groupParentNodes(graph, parentNodes);
-
+  const parentNodes = [...bcNodes, ...bfNodes, ...blNodes];
+  const graph_aux = cloneDeep(graph);
+  const superNodes = groupParentNodes(graph_aux, parentNodes);
+  if (Object.keys(superNodes).length>1) {
+    graph = graph_aux;
+  }
   // console.log(graph);
   // eslint-disable-next-line
   // console.log(graph);
   // execute layout calculation
   graph.setGraph({ ranksep: 30, rankdir: 'BT' });
   dagre.layout(graph);
-
+  console.log(graph);
+  console.log(superNodes);
   if (Object.keys(superNodes).length>1) {
     arrangeSuperNodes(graph,superNodes);
   }
@@ -298,7 +444,9 @@ export function getBoxLayout(data) {
       body: node.body,
       condition: node.condition,
       body_if: node.body_if,
-      body_else: node.body_else
+      body_else: node.body_else,
+      pre: node.pre,
+      post: node.post
     };
   });
   graph.edges().forEach((edge, i) => {
@@ -327,7 +475,7 @@ export function getBoxLayout(data) {
     }
   }
   if ('bc' in data) {
-    for (let i = 0; i < data.bf.length; i += 1) {
+    for (let i = 0; i < data.bc.length; i += 1) {
       const bcNodeId = `bc-${i}`;
       if (('pic' in data) && ('poc' in data)) {
         const pocNode = data.poc.find(node => node.box === i + 1);
@@ -339,6 +487,22 @@ export function getBoxLayout(data) {
         }
       } else {
         layout.nodes[bcNodeId].fullBox = false;
+      }
+    }
+  }
+  if ('bl' in data) {
+    for (let i = 0; i < data.bl.length; i += 1) {
+      const blNodeId = `bl-${i}`;
+      if (('pil' in data) && ('pol' in data)) {
+        const polNode = data.pol.find(node => node.box === i + 1);
+        const pilNode = data.pil.find(node => node.box === i + 1);
+        if (polNode && pilNode) {
+          layout.nodes[blNodeId].fullBox = true;
+        } else {
+          layout.nodes[blNodeId].fullBox = false;
+        }
+      } else {
+        layout.nodes[blNodeId].fullBox = false;
       }
     }
   }
@@ -461,6 +625,11 @@ function adjustChildNodesPosition(graph, parentNodeId, deltaX, deltaY) {
       // console.log("aux-" + childId);
       adjustAuxNodesPosition(graph, "aux-" + childId, deltaX, deltaY);
     }
+
+    if (childId.split('-')[0]==="bl") {
+      // console.log("aux-" + childId);
+      adjustAuxNodesPosition(graph, "aux-" + childId, deltaX, deltaY);
+    }
   });
 }
 
@@ -473,7 +642,7 @@ function adjustAuxNodesPosition(graph, auxNodeId, deltaX, deltaY) {
 function arrangeSuperNodes(graph, superNodes) {
   const nodeSpacing = 50; // 超级节点之间的间距
   let currentY = 0;
-
+  console.log(graph);
   // 根据超级节点创建顺序进行排序
   const superNodeIds = Object.keys(superNodes);
   superNodeIds.sort((a, b) => parseInt(a.split('-')[2]) - parseInt(b.split('-')[2]));
@@ -501,6 +670,10 @@ function arrangeSuperNodes(graph, superNodes) {
     superNode.x += deltaX;
     superNode.y += deltaY;
 
+    const moveFlag = false;
+    // graph.children(superNodeId).forEach(childId => {
+    //   if (childId.split)
+    // })
     // 更新超级节点的子节点的坐标
     adjustChildNodesPosition(graph, superNodeId, deltaX, deltaY);
 

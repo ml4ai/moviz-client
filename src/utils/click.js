@@ -2,7 +2,7 @@
 import { drawBox } from "./drawBox";
 import { drawLines, updateLines, updateLinesDashArrow } from "./drawlines";
 import { getBoxLayout, getTreeLayout } from "./layout";
-import { arraysAreEqual, loopOverHierarchy, getChildren, findChildrenAtSameLevel } from "./utilities";
+import { arraysAreEqual, loopOverHierarchy, getChildren, findChildrenAtSameLevel, autoTranslate } from "./utilities";
 import * as flextree from "d3-flextree"
 import * as d3 from "d3";
 
@@ -266,4 +266,9 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
       }
     }
   })
+  let t = d3.transition().duration(1200);
+  t.end().then(() => {
+    // 在这里进行平移和缩放
+    autoTranslate();
+});
 }
