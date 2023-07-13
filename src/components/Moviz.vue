@@ -23,7 +23,7 @@
           Current File Version:
           <span class="highlight">{{ skemaVersion }}</span>
         </div>
-        <svg id="mainsvg" width="4000" height="4000" viewBox="0 0 4000 4000">
+        <svg id="mainsvg" width="30000" height="6000">
           <g id="sumGroup"></g>
         </svg>
       </div>
@@ -49,6 +49,8 @@ export default {
       },
       selectedOption: null,
       options: [
+        { text: 'Clay1', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/get_beta--Gromet-FN-auto2.json' },
+        { text: 'core_dynamics', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/core_dynamics_pack2.json' },
         { text: 'while1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/while1/FN_0.1.6/while1--Gromet-FN-auto.json' },
         { text: 'cond1', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/cond1--Gromet-FN-auto.json' },
         { text: 'fun1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun1/FN_0.1.6/fun1--Gromet-FN-auto.json' },

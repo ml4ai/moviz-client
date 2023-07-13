@@ -3,7 +3,7 @@ import { drawBox } from "./drawBox";
 import { drawLines, updateLines, updateLinesDashArrow } from "./drawlines";
 import { getBoxLayout, getTreeLayout } from "./layout";
 import { arraysAreEqual, loopOverHierarchy, getChildren, findChildrenAtSameLevel, autoTranslate } from "./utilities";
-import * as flextree from "d3-flextree"
+import flextree from "./flextree";
 import * as d3 from "d3";
 
 export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
@@ -142,7 +142,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
       d.size = d._size.slice().reverse();
     }
   });
-  const flexLayout = flextree.flextree({ spacing: spaceX });
+  const flexLayout = flextree({ spacing: spaceX });
   const tree = flexLayout.hierarchy(hierarchies);
   var treeData = flexLayout(tree);
   treeData.each(d => {

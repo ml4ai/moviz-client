@@ -421,7 +421,7 @@ export function getBoxLayout(data) {
   dagre.layout(graph);
   console.log(graph);
   console.log(superNodes);
-  if (Object.keys(superNodes).length>1) {
+  if (Object.keys(superNodes).length>1000) {
     arrangeSuperNodes(graph,superNodes);
   }
 
