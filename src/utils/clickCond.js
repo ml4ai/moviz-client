@@ -103,9 +103,12 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
     return;
   }
   body_num = String(body_num);
+  let layoutElse;
   const layoutCond = getBoxLayout(fnS[cond-1]);
   const layoutIf = getBoxLayout(fnS[body_if-1]);
-  const layoutElse = getBoxLayout(fnS[body_else-1]);
+  if (body_else!==undefined) {
+    layoutElse = getBoxLayout(fnS[body_else-1]);
+  }
   const spaceX = 80;
   const spaceY = 100;
   const padding = 90;
@@ -114,7 +117,9 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
   const newLabelElse = String(newLabelCond) + '-' + String(body_else); // new body_num for else
   drawBox(layoutCond, fnS, newLabelCond);
   drawBox(layoutIf, fnS, newLabelIf);
-  drawBox(layoutElse, fnS, newLabelElse);
+  if (body_else!==undefined) {
+    drawBox(layoutElse, fnS, newLabelElse);
+  }
   var hierarchies = {};
   const childrens = [];
   const gs = d3.selectAll('.drawer').each(function(d, i){
@@ -170,8 +175,10 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
   const locationTransform = [differenceX, differenceY];
   drawLines(sourceid, "frame" + newLabelCond, locationTransform, body_num, newLabelCond, color);
   drawLinesDashArrow(treeLayout, newLabelCond, newLabelIf, "black", "TRUE");
-  drawLinesDashArrow(treeLayout, newLabelCond, newLabelElse, "black", "FALSE");
-
+  if (layoutElse!==undefined) {
+    drawLinesDashArrow(treeLayout, newLabelCond, newLabelElse, "black", "FALSE");
+  }
+  
   // console.log(locationTransform);
   d3.selectAll('.drawer').each(function(d, i){
     let nodeID = d3.select(this).attr('id').replace("boxid", "");

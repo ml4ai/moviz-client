@@ -407,12 +407,12 @@ export function getBoxLayout(data) {
   const blNodes = graph.nodes().filter(node => node.startsWith('bl'));
   const opoNodes = graph.nodes().filter(node => node.startsWith('opo'));
   const opiNodes = graph.nodes().filter(node => node.startsWith('opi'));
-  const parentNodes = [...bcNodes, ...bfNodes, ...blNodes];
-  const graph_aux = cloneDeep(graph);
-  const superNodes = groupParentNodes(graph_aux, parentNodes);
-  if (Object.keys(superNodes).length>1) {
-    graph = graph_aux;
-  }
+  // const parentNodes = [...bcNodes, ...bfNodes, ...blNodes];
+  // const graph_aux = cloneDeep(graph);
+  // const superNodes = groupParentNodes(graph_aux, parentNodes);
+  // if (Object.keys(superNodes).length>1) {
+  //   graph = graph_aux;
+  // }
   // console.log(graph);
   // eslint-disable-next-line
   // console.log(graph);
@@ -420,10 +420,10 @@ export function getBoxLayout(data) {
   graph.setGraph({ ranksep: 30, rankdir: 'BT' });
   dagre.layout(graph);
   console.log(graph);
-  console.log(superNodes);
-  if (Object.keys(superNodes).length>1000) {
-    arrangeSuperNodes(graph,superNodes);
-  }
+  // console.log(superNodes);
+  // if (Object.keys(superNodes).length>1000) {
+  //   arrangeSuperNodes(graph,superNodes);
+  // }
 
   // get layout result
   const layout = {
