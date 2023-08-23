@@ -23,7 +23,7 @@
           Current File Version:
           <span class="highlight">{{ skemaVersion }}</span>
         </div>
-        <svg id="mainsvg" width="30000" height="6000">
+        <svg id="mainsvg" width="1200" height="1000" overflow="visible">
           <g id="sumGroup"></g>
         </svg>
       </div>
@@ -68,6 +68,15 @@ export default {
       d3.selectAll('g').remove();
       axios.get(this.selectedOption)
         .then((response) => {
+          function handleZoom(e) {
+            d3.select('svg g')
+              .attr('transform', e.transform);
+          }
+          const svg = d3.select('svg');
+          svg.append('g').attr('id', 'sumGroup');
+          const zoom = d3.zoom()
+            .on('zoom', handleZoom);
+          svg.call(zoom);
           const jsonData = response.data;
           this.skemaVersion = jsonData.schema_version;
           const graphData = jsonData.modules[0];

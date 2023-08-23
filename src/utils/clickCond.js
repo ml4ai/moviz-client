@@ -286,7 +286,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
     }
   }
   )
-  autoTranslate();
+  // autoTranslate();
 }
 
 export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, color, clicked) {
@@ -588,5 +588,5 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
     }
   }
   )
-  autoTranslate();
+  // autoTranslate();
 }

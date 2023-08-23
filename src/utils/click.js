@@ -266,9 +266,9 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
       }
     }
   })
-  let t = d3.transition().duration(1200);
-  t.end().then(() => {
-    // 在这里进行平移和缩放
-    autoTranslate();
-});
+//   let t = d3.transition().duration(1200);
+//   t.end().then(() => {
+//     // 在这里进行平移和缩放
+//     autoTranslate();
+// });
 }

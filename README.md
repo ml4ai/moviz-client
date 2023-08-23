@@ -36,5 +36,3 @@ Currently Moviz is fetching data(the json file) directly from [`skema`](https://
 Todo
 
 ## Bugs to Fix
-
-auto zoom to match screen size
