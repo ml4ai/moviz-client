@@ -2,6 +2,7 @@
 import * as d3 from "d3";
 import { handleClick } from "./click";
 import { handleClickCond, handleClickLoop } from "./clickCond";
+import { computeBoundingRectangle } from "./utilities"
 
 export function drawBox(layout, fnS, body_num) {
     // 创建SVG元素
@@ -57,7 +58,7 @@ export function drawBox(layout, fnS, body_num) {
         }
       }
     }
-    console.log(nodes);
+    
 
     // 获取 x 和 y 的最小值
     let minXofAllNodes = Infinity;
@@ -77,10 +78,12 @@ export function drawBox(layout, fnS, body_num) {
 
     // 更新每一个子对象的 x 和 y 属性
     for (const key in nodes) {
-      nodes[key].x = nodes[key].x - minXofAllNodes + 50;
+      nodes[key].x = nodes[key].x - minXofAllNodes;
       nodes[key].y -= minYofAllNodes;
     }
-    console.log(nodes);
+
+    const bbox = computeBoundingRectangle(nodes);
+    console.log(bbox,"bbox")
     for (const nodeId in nodes) {
       const node = nodes[nodeId];
       const [type, index] = nodeId.split("-");
@@ -100,13 +103,13 @@ export function drawBox(layout, fnS, body_num) {
       if (isAuxNode) {
         continue; // 不绘制aux前缀的节点
       }
-
+      const bboxO = bbox;
       if (isBfNode) {
         if (node.fullBox){
             if (node.type == "FUNCTION") {
-              drawBFs_full(node, nodeId, g, "green", ranksep, fnS, body_num);
+              drawBFs_full(node, nodeId, g, "green", ranksep, fnS, body_num, bbox);
             } else if (node.type == "EXPRESSION") {
-              drawBFs_full(node, nodeId, g, "purple", ranksep, fnS, body_num);
+              drawBFs_full(node, nodeId, g, "purple", ranksep, fnS, body_num, bbox);
             } else if (node.type == "LITERAL") {
               drawLiteral_full(node, nodeId, g, "red", ranksep);
             } else if (node.type == "LANGUAGE_PRIMITIVE") {
@@ -114,9 +117,9 @@ export function drawBox(layout, fnS, body_num) {
             }
         } else {
           if (node.type == "FUNCTION") {
-            drawBFs_nfull(node, nodeId, g, "green", ranksep, fnS, body_num);
+            drawBFs_nfull(node, nodeId, g, "green", ranksep, fnS, body_num, bbox);
           } else if (node.type == "EXPRESSION") {
-            drawBFs_nfull(node, nodeId, g, "purple", ranksep, fnS, body_num);
+            drawBFs_nfull(node, nodeId, g, "purple", ranksep, fnS, body_num, bbox);
           } else if (node.type == "LITERAL") {
             drawLiteral_nfull(node, nodeId, g, "red", ranksep);
           } else if (node.type == "LANGUAGE_PRIMITIVE") {
@@ -125,22 +128,21 @@ export function drawBox(layout, fnS, body_num) {
         }
       } else if (isBcNode) {
         if (node.fullBox){
-          drawBCs_full(node, nodeId, g, "orange", ranksep, fnS, body_num);
+          drawBCs_full(node, nodeId, g, "orange", ranksep, fnS, body_num, bbox);
         } else {
-          drawBCs_nfull(node, nodeId, g, "orange", ranksep, fnS, body_num);
+          drawBCs_nfull(node, nodeId, g, "orange", ranksep, fnS, body_num, bbox);
         }
       } else if (isBlNode) {
         if (node.fullBox){
-          drawBLs_full(node, nodeId, g, "blue", ranksep, fnS, body_num);
+          drawBLs_full(node, nodeId, g, "blue", ranksep, fnS, body_num, bbox);
         } else {
-          drawBLs_nfull(node, nodeId, g, "blue", ranksep, fnS, body_num);
+          drawBLs_nfull(node, nodeId, g, "blue", ranksep, fnS, body_num, bbox);
         }
       }
       else if (isPofNode || isPifNode || isOpiNode || isOpoNode || isPicNode || isPocNode || isPilNode || isPolNode) {
         drawPorts(node, nodeId, g, "black");
       }
     }
-  
     // 绘制箭头
     g.append("defs")
       .append("marker")
@@ -178,8 +180,6 @@ export function drawBox(layout, fnS, body_num) {
     // 调整SVG大小
     const padding = 22.5; // 设置padding的大小
 
-    // const svgElement = document.querySelector("svg");
-    const bbox = g.node().getBBox();
     const width = bbox.width + padding * 4;
     const height = bbox.height + padding * 4;
 
@@ -231,11 +231,17 @@ export function drawBox(layout, fnS, body_num) {
     }
   }
 
-function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
+function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   let clicked = false;
   let node_body = null;
   if (node.body !== undefined) {
     node_body = node.body;
+  }
+  const outerX = bbox.x + bbox.width / 2;
+  const outerY = bbox.y + bbox.height / 2;
+  let direction = "right";
+  if ( bbox.x - outerX > 300) {
+    direction = "down";
   }
   const selection = g.append("rect")
   .attr("id", nodeId)
@@ -262,18 +268,24 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
   }
   if (node.body !== undefined) {
     selection.on("click", function(){
-      handleClick(fnS, node.body, body_num, nodeId, color, clicked);
+      handleClick(fnS, node.body, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
     });
   }
 }
 
-function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
+function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "right") {
   let node_body = null;
   if (node.body !== undefined) {
     node_body = node.body;
   }
   let clicked = false;
+  const outerX = bbox.x + bbox.width / 2;
+  const outerY = bbox.y + bbox.height / 2;
+  let direction = "right";
+  if ( bbox.x - outerX > 300) {
+    direction = "down";
+  }
   const selection = g.append("rect")
   .attr("id", nodeId)
   .attr("x", node.x - node.width / 2)
@@ -299,17 +311,23 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
   }
   if (node.body !== undefined) {
     selection.on("click", function(){
-      handleClick(fnS, node.body, body_num, nodeId, color, clicked);
+      handleClick(fnS, node.body, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
     });
   }
 }
 
-function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
+function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   let clicked = false;
   let node_body_cond = null;
   if (node.condition !== undefined) {
     node_body_cond = node.condition;
+  }
+  const outerX = bbox.x + bbox.width / 2;
+  const outerY = bbox.y + bbox.height / 2;
+  let direction = "right";
+  if ( bbox.x - outerX > 300) {
+    direction = "down";
   }
   const selection = g.append("rect")
   .attr("id", nodeId)
@@ -335,18 +353,24 @@ function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
   }
   if (node.condition !== undefined) {
     selection.on("click", function(){
-      handleClickCond(fnS, node.condition, node.body_if, node.body_else, body_num, nodeId, color, clicked);
+      handleClickCond(fnS, node.condition, node.body_if, node.body_else, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
     });
   }
 }
 
-function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
+function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   let node_body = null;
   if (node.body !== undefined) {
     node_body = node.body;
   }
   let clicked = false;
+  const outerX = bbox.x + bbox.width / 2;
+  const outerY = bbox.y + bbox.height / 2;
+  let direction = "right";
+  if ( bbox.x - outerX > 300) {
+    direction = "down";
+  }
   const selection = g.append("rect")
   .attr("id", nodeId)
   .attr("x", node.x - node.width / 2)
@@ -371,17 +395,23 @@ function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
   }
   if (node.body !== undefined) {
     selection.on("click", function(){
-      handleClick(fnS, node.body, body_num, nodeId, color, clicked);
+      handleClickCond(fnS, node.condition, node.body_if, node.body_else, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
     });
   }
 }
 
-function drawBLs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
+function drawBLs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   let clicked = false;
   let node_body_cond = null;
   if (node.condition !== undefined) {
     node_body_cond = node.condition;
+  }
+  const outerX = bbox.x + bbox.width / 2;
+  const outerY = bbox.y + bbox.height / 2;
+  let direction = "right";
+  if ( bbox.x - outerX > 300) {
+    direction = "down";
   }
   const selection = g.append("rect")
   .attr("id", nodeId)
@@ -407,18 +437,24 @@ function drawBLs_full(node, nodeId, g, color, ranksep, fnS, body_num) {
   }
   if (node.condition !== undefined) {
     selection.on("click", function(){
-      handleClickLoop(fnS, node.condition, node.pre, node.body, node.post, body_num, nodeId, color, clicked);
+      handleClickLoop(fnS, node.condition, node.pre, node.body, node.post, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
     });
   }
 }
 
-function drawBLs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
+function drawBLs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   let node_body = null;
   if (node.body !== undefined) {
     node_body = node.body;
   }
   let clicked = false;
+  const outerX = bbox.x + bbox.width / 2;
+  const outerY = bbox.y + bbox.height / 2;
+  let direction = "right";
+  if ( bbox.x - outerX > 300) {
+    direction = "down";
+  }
   const selection = g.append("rect")
   .attr("id", nodeId)
   .attr("x", node.x - node.width / 2)
@@ -443,7 +479,7 @@ function drawBLs_nfull(node, nodeId, g, color, ranksep, fnS, body_num) {
   }
   if (node.body !== undefined) {
     selection.on("click", function(){
-      handleClickLoop(fnS, node.body, body_num, nodeId, color, clicked);
+      handleClickLoop(fnS, node.body, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
     });
   }

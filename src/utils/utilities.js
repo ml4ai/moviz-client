@@ -131,6 +131,73 @@ export function autoTranslate() {
         // 保持平移不变，应用缩放
         return `translate(${originalX}, ${originalY})`;
     });
+}
+
+export function computeBoundingRectangle(shapes) {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    const ranksep = 37;
     
-    
+    for (const key in shapes) {
+        const node = shapes[key];
+        const [type, index] = key.split("-");
+        const isBfNode = (type === "bf");
+        const isPofNode = (type === "pof");
+        const isPifNode = (type === "pif");
+        const isAuxNode = (type === "aux");
+        const isOpoNode = (type === 'opo');
+        const isOpiNode = (type === 'opi');
+        const isBcNode = (type === "bc");
+        const isPocNode = (type === "poc");
+        const isPicNode = (type === "pic");
+        const isBlNode = (type === "bl");
+        const isPolNode = (type === "pol");
+        const isPilNode = (type === "pil");
+        if (isBfNode||isBcNode||isBlNode) {
+            if (node.type == "LITERAL") {
+                if (node.fullBox) {
+                    minX = Math.min(minX, node.x - node.width / 2);
+                    minY = Math.min(minY, node.y - node.height / 2 + ranksep);
+                    maxX = Math.max(maxX, node.x + node.width / 2);
+                    maxY = Math.max(maxY, node.y + node.height / 2 - ranksep);
+                } else {
+                    minX = Math.min(minX, node.x - node.width / 2 + ranksep / 2);
+                    minY = Math.min(minY, node.y - node.height / 2 - ranksep);
+                    maxX = Math.max(maxX, node.x + node.width / 2 - ranksep / 2);
+                    maxY = Math.max(maxY, node.y + node.height / 2 - ranksep);
+                }
+            } else {
+                if (node.fullBox) {
+                    minX = Math.min(minX, node.x - node.width / 2);
+                    minY = Math.min(minY, node.y - node.height / 2 + ranksep);
+                    maxX = Math.max(maxX, node.x + node.width / 2);
+                    maxY = Math.max(maxY, node.y + node.height / 2 - ranksep);
+                } else {
+                    minX = Math.min(minX, node.x - node.width / 2);
+                    minY = Math.min(minY, node.y - node.height / 2 - ranksep);
+                    maxX = Math.max(maxX, node.x + node.width / 2);
+                    maxY = Math.max(maxY, node.y + node.height / 2 - ranksep);
+                }
+            }
+        } else if (isPofNode || isPifNode || isOpiNode || isOpoNode || isPicNode || isPocNode || isPilNode || isPolNode) {
+            minX = Math.min(minX, node.x - node.width / 2);
+            minY = Math.min(minY, node.y - node.height / 2);
+            maxX = Math.max(maxX, node.x + node.width / 2);
+            maxY = Math.max(maxY, node.y + node.height / 2);
+        }
+       
+    }
+    return {
+        x: minX,
+        y: minY,
+        width: maxX - minX,
+        height: maxY - minY
+    };
+}
+
+
+export function getMultiTree(hierarchies, nodeposition) {
+
 }

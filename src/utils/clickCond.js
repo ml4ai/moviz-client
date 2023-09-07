@@ -6,7 +6,7 @@ import { arraysAreEqual, loopOverHierarchy, getChildren, findChildrenAtSameLevel
 import * as flextree from "d3-flextree"
 import * as d3 from "d3";
 
-export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourceid, color, clicked) {
+export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourceid, color, clicked, direction) {
   const transitionTime1 = 920;
   const transitionTime2 = 720;
   const transitionTime3 = 200;
@@ -289,7 +289,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
   // autoTranslate();
 }
 
-export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, color, clicked) {
+export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, color, clicked, direction) {
   const transitionTime1 = 920;
   const transitionTime2 = 720;
   const transitionTime3 = 200;

@@ -783,16 +783,4 @@ export function getTreeLayout(data) {
   });
 
   dagre.layout(g);
-  // eslint-disable-next-line
-  // console.log(g);
-  // // eslint-disable-next-line
-  // console.log(g.edges());
-
-  // const svg = d3.select('.svg-container').append('svg');
-  // // eslint-disable-next-line
-  // const inner = svg.append('g');
-  // // eslint-disable-next-line
-  // const render = new dagreD3.render();
-  // // eslint-disable-next-line
-  // render(inner, g);
 }

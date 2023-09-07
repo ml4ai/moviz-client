@@ -6,7 +6,7 @@ import { arraysAreEqual, loopOverHierarchy, getChildren, findChildrenAtSameLevel
 import flextree from "./flextree";
 import * as d3 from "d3";
 
-export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
+export function handleClick(fnS, body, body_num, sourceid, color, clicked, direction) {
   const transitionTime1 = 920;
   const transitionTime2 = 720;
   const transitionTime3 = 200;
@@ -142,6 +142,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
       d.size = d._size.slice().reverse();
     }
   });
+  console.log(hierarchies, "hierarchies");
   const flexLayout = flextree({ spacing: spaceX });
   const tree = flexLayout.hierarchy(hierarchies);
   var treeData = flexLayout(tree);
@@ -266,9 +267,4 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked) {
       }
     }
   })
-//   let t = d3.transition().duration(1200);
-//   t.end().then(() => {
-//     // 在这里进行平移和缩放
-//     autoTranslate();
-// });
 }

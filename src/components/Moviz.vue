@@ -43,7 +43,7 @@ export default {
       skemaVersion: '',
       url: '',
       blockStyle: {
-        backgroundColor: 'rgba(255, 255, 120, 0.5)',
+        backgroundColor: 'rgba(255, 255, 120, 0)',
         height: '90vh',
         width: '100%',
       },
