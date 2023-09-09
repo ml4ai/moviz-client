@@ -7,6 +7,7 @@ import flextree from "./flextree";
 import * as d3 from "d3";
 
 export function handleClick(fnS, body, body_num, sourceid, color, clicked, direction) {
+  console.log(direction, "direction");
   const transitionTime1 = 920;
   const transitionTime2 = 720;
   const transitionTime3 = 200;

@@ -197,6 +197,43 @@ export function computeBoundingRectangle(shapes) {
     };
 }
 
+export function getOuterBox(bbox, padding, ranksep, nodes) {
+    let x;
+    let y;
+    let width;
+    let height;
+    if ('opo-0' in nodes && 'opi-0' in nodes){
+        // full
+        x = bbox.x - padding;
+        y = bbox.y - padding + ranksep;
+        width = bbox.width + 2 * padding;
+        height = bbox.height + 2 * padding - 2* ranksep;
+    } else if ('opo-0' in nodes && !('opi-0' in nodes)) {
+        // bottom
+        x = bbox.x - padding;
+        y = bbox.y - padding - ranksep / 10;
+        width = bbox.width + 2 * padding;
+        height = bbox.height + 2 * padding - ranksep;
+    } else if (!('opo-0' in nodes) && 'opi-0' in nodes) {
+        // top
+        x = bbox.x - padding;
+        y = bbox.y - padding + ranksep * 2;
+        width = bbox.width + 2 * padding;
+        height = bbox.height + 2 * padding - ranksep;
+    } else {
+        // empty
+        x = bbox.x - padding;
+        y = bbox.y - padding;
+        width = bbox.width + 2 * padding;
+        height = bbox.height + 2 * padding;
+    }
+    return {
+        x,
+        y,
+        width,
+        height
+    };
+}
 
 export function getMultiTree(hierarchies, nodeposition) {
 

@@ -2,7 +2,7 @@
 import * as d3 from "d3";
 import { handleClick } from "./click";
 import { handleClickCond, handleClickLoop } from "./clickCond";
-import { computeBoundingRectangle } from "./utilities"
+import { computeBoundingRectangle, getOuterBox } from "./utilities"
 
 export function drawBox(layout, fnS, body_num) {
     // 创建SVG元素
@@ -10,6 +10,7 @@ export function drawBox(layout, fnS, body_num) {
     const svg = d3.select("#mainsvg").select("#sumGroup");
     const g = svg.append("g").attr('id', "boxid" + String(body_num)).attr("class", "drawer");
     const ranksep = 37;
+    const padding = 22.5; // 设置padding的大小
     // 绘制节点
     const nodes = layout.nodes;
     let opoNodeFlag = false;
@@ -83,6 +84,7 @@ export function drawBox(layout, fnS, body_num) {
     }
 
     const bbox = computeBoundingRectangle(nodes);
+    const realOuterBox = getOuterBox(bbox, padding, ranksep, nodes);
     console.log(bbox,"bbox")
     for (const nodeId in nodes) {
       const node = nodes[nodeId];
@@ -107,9 +109,9 @@ export function drawBox(layout, fnS, body_num) {
       if (isBfNode) {
         if (node.fullBox){
             if (node.type == "FUNCTION") {
-              drawBFs_full(node, nodeId, g, "green", ranksep, fnS, body_num, bbox);
+              drawBFs_full(node, nodeId, g, "green", ranksep, fnS, body_num, realOuterBox);
             } else if (node.type == "EXPRESSION") {
-              drawBFs_full(node, nodeId, g, "purple", ranksep, fnS, body_num, bbox);
+              drawBFs_full(node, nodeId, g, "purple", ranksep, fnS, body_num, realOuterBox);
             } else if (node.type == "LITERAL") {
               drawLiteral_full(node, nodeId, g, "red", ranksep);
             } else if (node.type == "LANGUAGE_PRIMITIVE") {
@@ -117,9 +119,9 @@ export function drawBox(layout, fnS, body_num) {
             }
         } else {
           if (node.type == "FUNCTION") {
-            drawBFs_nfull(node, nodeId, g, "green", ranksep, fnS, body_num, bbox);
+            drawBFs_nfull(node, nodeId, g, "green", ranksep, fnS, body_num, realOuterBox);
           } else if (node.type == "EXPRESSION") {
-            drawBFs_nfull(node, nodeId, g, "purple", ranksep, fnS, body_num, bbox);
+            drawBFs_nfull(node, nodeId, g, "purple", ranksep, fnS, body_num, realOuterBox);
           } else if (node.type == "LITERAL") {
             drawLiteral_nfull(node, nodeId, g, "red", ranksep);
           } else if (node.type == "LANGUAGE_PRIMITIVE") {
@@ -128,15 +130,15 @@ export function drawBox(layout, fnS, body_num) {
         }
       } else if (isBcNode) {
         if (node.fullBox){
-          drawBCs_full(node, nodeId, g, "orange", ranksep, fnS, body_num, bbox);
+          drawBCs_full(node, nodeId, g, "orange", ranksep, fnS, body_num, realOuterBox);
         } else {
-          drawBCs_nfull(node, nodeId, g, "orange", ranksep, fnS, body_num, bbox);
+          drawBCs_nfull(node, nodeId, g, "orange", ranksep, fnS, body_num, realOuterBox);
         }
       } else if (isBlNode) {
         if (node.fullBox){
-          drawBLs_full(node, nodeId, g, "blue", ranksep, fnS, body_num, bbox);
+          drawBLs_full(node, nodeId, g, "blue", ranksep, fnS, body_num, realOuterBox);
         } else {
-          drawBLs_nfull(node, nodeId, g, "blue", ranksep, fnS, body_num, bbox);
+          drawBLs_nfull(node, nodeId, g, "blue", ranksep, fnS, body_num, realOuterBox);
         }
       }
       else if (isPofNode || isPifNode || isOpiNode || isOpoNode || isPicNode || isPocNode || isPilNode || isPolNode) {
@@ -178,7 +180,6 @@ export function drawBox(layout, fnS, body_num) {
     });
 
     // 调整SVG大小
-    const padding = 22.5; // 设置padding的大小
 
     const width = bbox.width + padding * 4;
     const height = bbox.height + padding * 4;
@@ -237,10 +238,16 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   if (node.body !== undefined) {
     node_body = node.body;
   }
-  const outerX = bbox.x + bbox.width / 2;
-  const outerY = bbox.y + bbox.height / 2;
+  const outerRight = bbox.x + bbox.width;
+  const outerBottom = bbox.y + bbox.height;
+  const innerRight = node.x + node.width / 2;
+  const innerBottom = node.y + node.height / 2 - ranksep;
+  console.log(outerRight, "outerRight");
+  console.log(outerBottom, "outerBottom");
+  console.log(innerBottom, "innerBottom");
+  console.log(innerRight, "innerRight");
   let direction = "right";
-  if ( bbox.x - outerX > 300) {
+  if ( (outerRight - innerRight) > (outerBottom - innerBottom) + 120) {
     direction = "down";
   }
   const selection = g.append("rect")
@@ -280,10 +287,12 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "r
     node_body = node.body;
   }
   let clicked = false;
-  const outerX = bbox.x + bbox.width / 2;
-  const outerY = bbox.y + bbox.height / 2;
+  const outerRight = bbox.x + bbox.width;
+  const outerBottom = bbox.y + bbox.height;
+  const innerRight = node.x + node.width / 2;
+  const innerBottom = node.y + node.height / 2 - ranksep;
   let direction = "right";
-  if ( bbox.x - outerX > 300) {
+  if ( (outerRight - innerRight) > (outerBottom - innerBottom) + 120) {
     direction = "down";
   }
   const selection = g.append("rect")
@@ -323,10 +332,12 @@ function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   if (node.condition !== undefined) {
     node_body_cond = node.condition;
   }
-  const outerX = bbox.x + bbox.width / 2;
-  const outerY = bbox.y + bbox.height / 2;
+  const outerRight = bbox.x + bbox.width;
+  const outerBottom = bbox.y + bbox.height;
+  const innerRight = node.x + node.width / 2;
+  const innerBottom = node.y + node.height / 2 - ranksep;
   let direction = "right";
-  if ( bbox.x - outerX > 300) {
+  if ( (outerRight - innerRight) > (outerBottom - innerBottom) + 120) {
     direction = "down";
   }
   const selection = g.append("rect")
@@ -365,10 +376,12 @@ function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     node_body = node.body;
   }
   let clicked = false;
-  const outerX = bbox.x + bbox.width / 2;
-  const outerY = bbox.y + bbox.height / 2;
+  const outerRight = bbox.x + bbox.width;
+  const outerBottom = bbox.y + bbox.height;
+  const innerRight = node.x + node.width / 2;
+  const innerBottom = node.y + node.height / 2 - ranksep;
   let direction = "right";
-  if ( bbox.x - outerX > 300) {
+  if ( (outerRight - innerRight) > (outerBottom - innerBottom) + 120) {
     direction = "down";
   }
   const selection = g.append("rect")
@@ -407,10 +420,12 @@ function drawBLs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   if (node.condition !== undefined) {
     node_body_cond = node.condition;
   }
-  const outerX = bbox.x + bbox.width / 2;
-  const outerY = bbox.y + bbox.height / 2;
+  const outerRight = bbox.x + bbox.width;
+  const outerBottom = bbox.y + bbox.height;
+  const innerRight = node.x + node.width / 2;
+  const innerBottom = node.y + node.height / 2 - ranksep;
   let direction = "right";
-  if ( bbox.x - outerX > 300) {
+  if ( (outerRight - innerRight) > (outerBottom - innerBottom) + 120) {
     direction = "down";
   }
   const selection = g.append("rect")
@@ -449,10 +464,12 @@ function drawBLs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     node_body = node.body;
   }
   let clicked = false;
-  const outerX = bbox.x + bbox.width / 2;
-  const outerY = bbox.y + bbox.height / 2;
+  const outerRight = bbox.x + bbox.width;
+  const outerBottom = bbox.y + bbox.height;
+  const innerRight = node.x + node.width / 2;
+  const innerBottom = node.y + node.height / 2 - ranksep;
   let direction = "right";
-  if ( bbox.x - outerX > 300) {
+  if ( (outerRight - innerRight) > (outerBottom - innerBottom) + 120) {
     direction = "down";
   }
   const selection = g.append("rect")
