@@ -10,6 +10,15 @@
     </select>
     <div><p> Or </p></div>
     <input type="text" v-model="url" class="url-input" placeholder="Input URL of JSON file here."/>
+    <input
+      type="file"
+      ref="fileInput"
+      @change="handleFileChange"
+      style="display: none;"
+    />
+    <button @click="triggerFileInput">
+      选择文件
+    </button>
     <button class="btn btn-primary" @click="submitUrl">Submit</button>
     <button class="btn btn-primary download-button" @click="downloadSVG" >downloadSVG</button>
   </div>
@@ -47,6 +56,7 @@ export default {
         height: '90vh',
         width: '100%',
       },
+      selectedFile: null,
       selectedOption: null,
       options: [
         { text: 'Clay1', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/get_beta--Gromet-FN-auto2.json' },
@@ -56,7 +66,7 @@ export default {
         { text: 'fun1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun1/FN_0.1.6/fun1--Gromet-FN-auto.json' },
         { text: 'fun4', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun4/FN_0.1.6/fun4--Gromet-FN-auto.json' },
         { text: 'exp1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp1/FN_0.1.6/exp1--Gromet-FN-auto.json' },
-        { text: 'exp2', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp2/FN_0.1.6/exp2--Gromet-FN-auto.json' },
+        { text: 'exp2', value: 'https://gist.githubusercontent.com/jastier/76f7566ac44265707d892a252d8f85ab/raw/2be498c5fb369635725e9e6b493732a5c181ac65/first_matlab.json' },
         { text: 'exp3', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp3/FN_0.1.6/exp3--Gromet-FN-auto.json' },
         { text: 'fun_default1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun_default1/FN_0.1.6/fun_default1--Gromet-FN-auto.json' },
         { text: 'assign_operator1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/assign_operator1/FN_0.1.6/assign_operator1--Gromet-FN-auto.json' },
@@ -89,6 +99,41 @@ export default {
           // eslint-disable-next-line
           console.error(error);
         });
+    },
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+    handleFileChange(event) {
+      this.selectedFile = event.target.files[0];
+
+      if (this.selectedFile) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          function handleZoom(zoomasd) {
+            d3.select('svg g')
+              .attr('transform', zoomasd.transform);
+          }
+          try {
+            const jsonData = JSON.parse(e.target.result);
+            const svg = d3.select('svg');
+            svg.append('g').attr('id', 'sumGroup');
+            const zoom = d3.zoom()
+              .on('zoom', handleZoom);
+            svg.call(zoom);
+            this.skemaVersion = jsonData.schema_version;
+            const graphData = jsonData.modules[0];
+            const fn0 = graphData.fn;
+            const fnS = graphData.fn_array;
+            const layout = getBoxLayout(fn0);
+            drawBox(layout, fnS, 0);
+          } catch (error) {
+            // eslint-disable-next-line
+            console.error('Error parsing JSON:', error);
+          }
+        };
+
+        reader.readAsText(this.selectedFile); // 读取文件内容为文本
+      }
     },
     downloadSVG() {
       // 获取 SVG 元素

@@ -13,13 +13,13 @@ export function arraysAreEqual(array1, array2) {
     return true;
 }
 
-export function loopOverHierarchy(d, callback) {
+function loopOverHierarchy(d, callback) {
     callback(d);
     if (d.children) d.children.forEach(c => loopOverHierarchy(c, callback));
     if (d._children) d._children.forEach(c => loopOverHierarchy(c, callback));
   }
 
-export function getChildren(hierarchies, childrens) {
+function getChildren(hierarchies, childrens) {
   console.log(childrens);
   childrens.forEach(function(element){
     var children = hierarchies;
@@ -156,6 +156,9 @@ export function computeBoundingRectangle(shapes) {
         const isPolNode = (type === "pol");
         const isPilNode = (type === "pil");
         if (isBfNode||isBcNode||isBlNode) {
+            if(node.width===undefined || node.height===undefined){
+                continue;
+            }
             if (node.type == "LITERAL") {
                 if (node.fullBox) {
                     minX = Math.min(minX, node.x - node.width / 2);
@@ -187,7 +190,6 @@ export function computeBoundingRectangle(shapes) {
             maxX = Math.max(maxX, node.x + node.width / 2);
             maxY = Math.max(maxY, node.y + node.height / 2);
         }
-       
     }
     return {
         x: minX,
@@ -235,6 +237,41 @@ export function getOuterBox(bbox, padding, ranksep, nodes) {
     };
 }
 
-export function getMultiTree(hierarchies, nodeposition) {
-
+export function getHierarchy(spaceY) {
+    var hierarchies = {};
+    const childrens = [];
+    const gs = d3.selectAll('.drawer').each(function(d, i){
+        const nodeID = d3.select(this).attr('id').replace("boxid", "");
+        const direction = d3.select(this).attr('direction');
+        if (nodeID.split('_').length !== 2) {
+        const routes = nodeID.split("-");
+        const currentID = routes[routes.length - 1];
+        if (currentID==='0') {
+            hierarchies.name = Number(currentID);
+            hierarchies.oName = nodeID;
+            hierarchies.path = routes;
+            hierarchies.size = [Number(d3.select(this).attr('width')) + spaceY, Number(d3.select(this).attr('height'))];
+            hierarchies.direction = direction;
+        } else {
+            const temp = {}
+            temp.name = Number(currentID);
+            temp.size = [Number(d3.select(this).attr('width')) + spaceY, Number(d3.select(this).attr('height'))];
+            temp.path = routes;
+            temp.oName = nodeID;
+            temp.direction = direction;
+            childrens.push(temp);
+        }
+        }
+    })
+    childrens.sort(function(a,b){
+        return a.path.length - b.path.length;
+    })
+    getChildren(hierarchies, childrens);
+    loopOverHierarchy(hierarchies, d => {
+        if (Array.isArray(d.size)) {
+        if (!d._size) d._size = d.size.slice();
+        d.size = d._size.slice().reverse();
+        }
+    });
+    return hierarchies;
 }

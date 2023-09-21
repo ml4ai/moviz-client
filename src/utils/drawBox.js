@@ -4,11 +4,11 @@ import { handleClick } from "./click";
 import { handleClickCond, handleClickLoop } from "./clickCond";
 import { computeBoundingRectangle, getOuterBox } from "./utilities"
 
-export function drawBox(layout, fnS, body_num) {
+export function drawBox(layout, fnS, body_num, directionO = "right") {
     // 创建SVG元素
     // debugger
     const svg = d3.select("#mainsvg").select("#sumGroup");
-    const g = svg.append("g").attr('id', "boxid" + String(body_num)).attr("class", "drawer");
+    const g = svg.append("g").attr('id', "boxid" + String(body_num)).attr("class", "drawer").attr("direction", directionO);
     const ranksep = 37;
     const padding = 22.5; // 设置padding的大小
     // 绘制节点
@@ -82,10 +82,9 @@ export function drawBox(layout, fnS, body_num) {
       nodes[key].x = nodes[key].x - minXofAllNodes;
       nodes[key].y -= minYofAllNodes;
     }
-
     const bbox = computeBoundingRectangle(nodes);
     const realOuterBox = getOuterBox(bbox, padding, ranksep, nodes);
-    console.log(bbox,"bbox")
+    console.log(bbox,"bbox");
     for (const nodeId in nodes) {
       const node = nodes[nodeId];
       const [type, index] = nodeId.split("-");

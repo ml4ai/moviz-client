@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as d3 from "d3";
 
-export function drawLines(sourceid, targetid, locationTransform, body_num_source, body_num_target, color) {
+export function drawLines(sourceid, targetid, locationTransform, body_num_source, body_num_target, color, direction) {
     // console.log("sourceid, ", sourceid);
     // console.log("targetid, ", targetid);
     // console.log("locationTransform, ", locationTransform);
@@ -10,20 +10,20 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
     // console.log("color, ", color);
   
     // d3.select("#boxid" + body_num_source).select("#" + sourceid).attr("data-opened", "true");
-    const sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width'));
-    const sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height')) / 2;
-    const targetX1 = Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
-    const targetX2= Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
-    const targetY1 = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1];
-    const targetY2 = Number(d3.select("#" + targetid).attr('y')) + Number(d3.select("#" + targetid).attr('height')) + locationTransform[1];
-    const dx1 = targetX1 - sourceX;
-    const dy1 = targetY1 - sourceY;
-    const dx2 = targetX2 - sourceX;
-    const dy2 = targetY2 - sourceY;
-    const controlPoint11 = {};
-    const controlPoint12 = {};
-    const controlPoint21 = {};
-    const controlPoint22 = {};
+    let sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width'));
+    let sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height')) / 2;
+    let targetX1 = Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
+    let targetX2= Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
+    let targetY1 = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1];
+    let targetY2 = Number(d3.select("#" + targetid).attr('y')) + Number(d3.select("#" + targetid).attr('height')) + locationTransform[1];
+    let dx1 = targetX1 - sourceX;
+    let dy1 = targetY1 - sourceY;
+    let dx2 = targetX2 - sourceX;
+    let dy2 = targetY2 - sourceY;
+    let controlPoint11 = {};
+    let controlPoint12 = {};
+    let controlPoint21 = {};
+    let controlPoint22 = {};
     controlPoint11.x = sourceX + 0.25 * 1.5 * dx1;
     controlPoint11.y = sourceY + 0.25 * 1.2 * dy1;
     controlPoint12.x = sourceX + 0.75 * 0.8 * dx1;
@@ -32,6 +32,31 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
     controlPoint21.y = sourceY + 0.25 * 1.2 * dy2;
     controlPoint22.x = sourceX + 0.75 * 0.8 * dx2;
     controlPoint22.y = sourceY + 0.75 * 1.0 * dy2;
+
+    if (direction === "down") {
+      sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width')) / 2;
+      sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height'));
+      targetX1 = Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
+      targetX2= Number(d3.select("#" + targetid).attr('x')) + locationTransform[0] + Number(d3.select("#" + targetid).attr('width'));
+      targetY1 = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1];
+      targetY2 = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1];
+      dx1 = targetX1 - sourceX;
+      dy1 = targetY1 - sourceY;
+      dx2 = targetX2 - sourceX;
+      dy2 = targetY2 - sourceY;
+      controlPoint11 = {};
+      controlPoint12 = {};
+      controlPoint21 = {};
+      controlPoint22 = {};
+      controlPoint11.x = sourceX + 0.25 * 1.5 * dx1;
+      controlPoint11.y = sourceY + 0.25 * 1.2 * dy1;
+      controlPoint12.x = sourceX + 0.75 * 0.8 * dx1;
+      controlPoint12.y = sourceY + 0.75 * 1.0 * dy1;
+      controlPoint21.x = sourceX + 0.25 * 1.5 * dx2;
+      controlPoint21.y = sourceY + 0.25 * 1.2 * dy2;
+      controlPoint22.x = sourceX + 0.75 * 0.8 * dx2;
+      controlPoint22.y = sourceY + 0.75 * 1.0 * dy2;
+    }
   
     const g = d3.select('svg').select('#sumGroup').append("g").attr('id', 'line' + String(body_num_source) + '_' + String(body_num_target)).attr('class', 'drawer');
   
@@ -58,6 +83,22 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
       {x: targetX2, y: targetY2 - paddingL}
     ];
 
+    if (direction==="down") {
+      data1 = [
+        {x: sourceX, y: sourceY},
+        {x: controlPoint11.x, y: controlPoint11.y},
+        {x: controlPoint12.x, y: controlPoint12.y},
+        {x: targetX1 + paddingL, y: targetY1}
+      ];
+  
+      data2 = [
+        {x: sourceX, y: sourceY},
+        {x: controlPoint21.x, y: controlPoint21.y},
+        {x: controlPoint22.x, y: controlPoint22.y},
+        {x: targetX2 - paddingL, y: targetY2}
+      ];
+    }
+    console.log(data1,data2);
     let lineGenerator = d3.line()
       .x(function(d) { return d.x; })
       .y(function(d) { return d.y; })
@@ -104,6 +145,23 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
     // 根据x值找到相应的数据点
     let bisect2 = d3.bisector(function(d) { return d.x; }).left;
 
+    if (direction==="down") {
+      // 创建一个线性比例尺来对应y值
+      xScale1 = d3.scaleLinear()
+      .domain(d3.extent(data1, function(d) { return d.y; }))
+      .range([0, dy1]);
+
+      // 根据y值找到相应的数据点
+      bisect1 = d3.bisector(function(d) { return d.y; }).left;
+
+      // 创建一个线性比例尺来对应y值
+      xScale2 = d3.scaleLinear()
+      .domain(d3.extent(data2, function(d) { return d.y; }))
+      .range([0, dy1]);
+
+      // 根据y值找到相应的数据点
+      bisect2 = d3.bisector(function(d) { return d.y; }).left;
+    }
     let area1 = d3.area()
       .x(function(d) { return d.x; })
       .y0( d => {
@@ -140,7 +198,7 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
         let pointBefore = points2[indexOfNode - 1];
         let pointAfter = points2[indexOfNode + 1];
         let slope = Math.abs((pointAfter.y - pointBefore.y) / (pointAfter.x - pointBefore.x));
-        let linewidth = 6 * Math.pow(((d.x - sourceX + 2) / dx1), 0.38);
+        let linewidth = 6 * Math.pow(((d.x - sourceX + 2) / dx2), 0.38);
         return d.y - Math.sqrt(1+slope**2) * linewidth;
       })
       .y1(d => {
@@ -151,10 +209,69 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
         let pointBefore = points2[indexOfNode - 1];
         let pointAfter = points2[indexOfNode + 1];
         let slope = Math.abs((pointAfter.y - pointBefore.y) / (pointAfter.x - pointBefore.x));
-        let linewidth = 6 * Math.pow(((d.x - sourceX + 2) / dx1), 0.38);
+        let linewidth = 6 * Math.pow(((d.x - sourceX + 2) / dx2), 0.38);
         return d.y + Math.sqrt(1+slope**2) * linewidth;
       })
       .curve(d3.curveBasis);
+
+    if (direction==="down") {
+      area1 = d3.area()
+        .y(function(d) { return d.y; })
+        .x0( d => {
+          const yValue = d.y;
+          let indexOfNode = bisect1(points1, xScale1.invert(yValue));
+          if(indexOfNode >= points1.length - 1) indexOfNode = points1.length - 2;
+          if(indexOfNode < 1) indexOfNode = 1;
+          let pointBefore = points1[indexOfNode - 1];
+          let pointAfter = points1[indexOfNode + 1];
+          let slope = Math.abs((pointAfter.x - pointBefore.x) / (pointAfter.y - pointBefore.y));
+          // let slope = 0;
+          let linewidth = 6 * Math.pow(((d.y - sourceY + 2) / dy1), 0.38);
+          return d.x - Math.sqrt(1+slope**2) * linewidth;
+        })
+        .x1( d => {
+          const yValue = d.y;
+          let indexOfNode = bisect1(points1, xScale1.invert(yValue));
+          if(indexOfNode >= points1.length - 1) indexOfNode = points1.length - 2;
+          if(indexOfNode < 1) indexOfNode = 1;
+          let pointBefore = points1[indexOfNode - 1];
+          let pointAfter = points1[indexOfNode + 1];
+          let slope = Math.abs((pointAfter.x - pointBefore.x) / (pointAfter.y - pointBefore.y));
+          // let slope = 0;
+          let linewidth = 6 * Math.pow(((d.y - sourceY + 2) / dy1), 0.38);
+          return d.x + Math.sqrt(1+slope**2) * linewidth;
+        })
+        .curve(d3.curveBasis);
+
+      area2 = d3.area()
+        .y(function(d) { return d.y; })
+        .x0( d => {
+          const yValue = d.y;
+          let indexOfNode = bisect2(points2, xScale2.invert(yValue));
+          if(indexOfNode >= points2.length - 1) indexOfNode = points2.length - 2;
+          if(indexOfNode < 1) indexOfNode = 1;
+          let pointBefore = points2[indexOfNode - 1];
+          let pointAfter = points2[indexOfNode + 1];
+          let slope = Math.abs((pointAfter.x - pointBefore.x) / (pointAfter.y - pointBefore.y));
+          // let slope = 0;
+          let linewidth = 6 * Math.pow(((d.y - sourceY + 2) / dy2), 0.38);
+          return d.x - Math.sqrt(1+slope**2) * linewidth;
+        })
+        .x1(d => {
+          const yValue = d.y;
+          let indexOfNode = bisect2(points2, xScale2.invert(yValue));
+          if(indexOfNode >= points2.length - 1) indexOfNode = points2.length - 2;
+          if(indexOfNode < 1) indexOfNode = 1;
+          let pointBefore = points2[indexOfNode - 1];
+          let pointAfter = points2[indexOfNode + 1];
+          let slope = Math.abs((pointAfter.x - pointBefore.x) / (pointAfter.y - pointBefore.y));
+          // let slope = 0;
+          let linewidth = 6 * Math.pow(((d.y - sourceY + 2) / dy2), 0.38);
+          return d.x + Math.sqrt(1+slope**2) * linewidth;
+        })
+        .curve(d3.curveBasis);
+    }
+    // console.log(area1,area2);
 
     let path1 = g.append("path")
     .datum(data1)
@@ -201,7 +318,7 @@ export function drawLines(sourceid, targetid, locationTransform, body_num_source
 
   }
   
-export function updateLines(sourceid, targetid, locationTransform, body_num_source, body_num_target, color, lineID) {
+export function updateLines(sourceid, targetid, locationTransform, body_num_source, body_num_target, color, lineID, direction) {
     // console.log("sourceid, ", sourceid);
     // console.log("targetid, ", targetid);
     // console.log("locationTransform, ", locationTransform);
@@ -209,20 +326,20 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
     // console.log("body_num_target, ", body_num_target);
     // console.log("color, ", color);
 
-    const sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width'));
-    const sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height')) / 2;
-    const targetX1 = Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
-    const targetX2= Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
-    const targetY1 = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1];
-    const targetY2 = Number(d3.select("#" + targetid).attr('y')) + Number(d3.select("#" + targetid).attr('height')) + locationTransform[1];
-    const dx1 = targetX1 - sourceX;
-    const dy1 = targetY1 - sourceY;
-    const dx2 = targetX2 - sourceX;
-    const dy2 = targetY2 - sourceY;
-    const controlPoint11 = {};
-    const controlPoint12 = {};
-    const controlPoint21 = {};
-    const controlPoint22 = {};
+    let sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width'));
+    let sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height')) / 2;
+    let targetX1 = Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
+    let targetX2= Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
+    let targetY1 = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1];
+    let targetY2 = Number(d3.select("#" + targetid).attr('y')) + Number(d3.select("#" + targetid).attr('height')) + locationTransform[1];
+    let dx1 = targetX1 - sourceX;
+    let dy1 = targetY1 - sourceY;
+    let dx2 = targetX2 - sourceX;
+    let dy2 = targetY2 - sourceY;
+    let controlPoint11 = {};
+    let controlPoint12 = {};
+    let controlPoint21 = {};
+    let controlPoint22 = {};
     controlPoint11.x = sourceX + 0.25 * 1.5 * dx1;
     controlPoint11.y = sourceY + 0.25 * 1.2 * dy1;
     controlPoint12.x = sourceX + 0.75 * 0.8 * dx1;
@@ -231,7 +348,30 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
     controlPoint21.y = sourceY + 0.25 * 1.2 * dy2;
     controlPoint22.x = sourceX + 0.75 * 0.8 * dx2;
     controlPoint22.y = sourceY + 0.75 * 1.0 * dy2;
-
+    if (direction === "down") {
+      sourceX = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('x')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('width')) / 2;
+      sourceY = Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('y')) + Number(d3.select("#boxid" + body_num_source).select("#" + sourceid).attr('height'));
+      targetX1 = Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
+      targetX2= Number(d3.select("#" + targetid).attr('x')) + locationTransform[0] + Number(d3.select("#" + targetid).attr('width'));
+      targetY1 = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1];
+      targetY2 = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1];
+      dx1 = targetX1 - sourceX;
+      dy1 = targetY1 - sourceY;
+      dx2 = targetX2 - sourceX;
+      dy2 = targetY2 - sourceY;
+      controlPoint11 = {};
+      controlPoint12 = {};
+      controlPoint21 = {};
+      controlPoint22 = {};
+      controlPoint11.x = sourceX + 0.25 * 1.5 * dx1;
+      controlPoint11.y = sourceY + 0.25 * 1.2 * dy1;
+      controlPoint12.x = sourceX + 0.75 * 0.8 * dx1;
+      controlPoint12.y = sourceY + 0.75 * 1.0 * dy1;
+      controlPoint21.x = sourceX + 0.25 * 1.5 * dx2;
+      controlPoint21.y = sourceY + 0.25 * 1.2 * dy2;
+      controlPoint22.x = sourceX + 0.75 * 0.8 * dx2;
+      controlPoint22.y = sourceY + 0.75 * 1.0 * dy2;
+    }
     const g = d3.select('#' + lineID);
 
     const paddingL = 17;
@@ -257,6 +397,22 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
       {x: controlPoint22.x, y: controlPoint22.y},
       {x: targetX2, y: targetY2 - paddingL}
     ];
+
+    if (direction==="down") {
+      data1 = [
+        {x: sourceX, y: sourceY},
+        {x: controlPoint11.x, y: controlPoint11.y},
+        {x: controlPoint12.x, y: controlPoint12.y},
+        {x: targetX1 + paddingL, y: targetY1}
+      ];
+  
+      data2 = [
+        {x: sourceX, y: sourceY},
+        {x: controlPoint21.x, y: controlPoint21.y},
+        {x: controlPoint22.x, y: controlPoint22.y},
+        {x: targetX2 - paddingL, y: targetY2}
+      ];
+    }
 
     let lineGenerator = d3.line()
       .x(function(d) { return d.x; })
@@ -304,6 +460,23 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
     // 根据x值找到相应的数据点
     let bisect2 = d3.bisector(function(d) { return d.x; }).left;
 
+    if (direction==="down") {
+      // 创建一个线性比例尺来对应y值
+      xScale1 = d3.scaleLinear()
+      .domain(d3.extent(data1, function(d) { return d.y; }))
+      .range([0, dy1]);
+
+      // 根据y值找到相应的数据点
+      bisect1 = d3.bisector(function(d) { return d.y; }).left;
+
+      // 创建一个线性比例尺来对应y值
+      xScale2 = d3.scaleLinear()
+      .domain(d3.extent(data2, function(d) { return d.y; }))
+      .range([0, dy1]);
+
+      // 根据y值找到相应的数据点
+      bisect2 = d3.bisector(function(d) { return d.y; }).left;
+    }
     let area1 = d3.area()
       .x(function(d) { return d.x; })
       .y0( d => {
@@ -356,6 +529,63 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
       })
       .curve(d3.curveBasis);
 
+    if (direction==="down") {
+      area1 = d3.area()
+        .y(function(d) { return d.y; })
+        .x0( d => {
+          const yValue = d.y;
+          let indexOfNode = bisect1(points1, xScale1.invert(yValue));
+          if(indexOfNode >= points1.length - 1) indexOfNode = points1.length - 2;
+          if(indexOfNode < 1) indexOfNode = 1;
+          let pointBefore = points1[indexOfNode - 1];
+          let pointAfter = points1[indexOfNode + 1];
+          let slope = Math.abs((pointAfter.x - pointBefore.x) / (pointAfter.y - pointBefore.y));
+          // let slope = 0;
+          let linewidth = 6 * Math.pow(((d.y - sourceY + 2) / dy1), 0.38);
+          return d.x - Math.sqrt(1+slope**2) * linewidth;
+        })
+        .x1( d => {
+          const yValue = d.y;
+          let indexOfNode = bisect1(points1, xScale1.invert(yValue));
+          if(indexOfNode >= points1.length - 1) indexOfNode = points1.length - 2;
+          if(indexOfNode < 1) indexOfNode = 1;
+          let pointBefore = points1[indexOfNode - 1];
+          let pointAfter = points1[indexOfNode + 1];
+          let slope = Math.abs((pointAfter.x - pointBefore.x) / (pointAfter.y - pointBefore.y));
+          // let slope = 0;
+          let linewidth = 6 * Math.pow(((d.y - sourceY + 2) / dy1), 0.38);
+          return d.x + Math.sqrt(1+slope**2) * linewidth;
+        })
+        .curve(d3.curveBasis);
+
+      area2 = d3.area()
+        .y(function(d) { return d.y; })
+        .x0( d => {
+          const yValue = d.y;
+          let indexOfNode = bisect2(points2, xScale2.invert(yValue));
+          if(indexOfNode >= points2.length - 1) indexOfNode = points2.length - 2;
+          if(indexOfNode < 1) indexOfNode = 1;
+          let pointBefore = points2[indexOfNode - 1];
+          let pointAfter = points2[indexOfNode + 1];
+          let slope = Math.abs((pointAfter.x - pointBefore.x) / (pointAfter.y - pointBefore.y));
+          // let slope = 0;
+          let linewidth = 6 * Math.pow(((d.y - sourceY + 2) / dy2), 0.38);
+          return d.x - Math.sqrt(1+slope**2) * linewidth;
+        })
+        .x1(d => {
+          const yValue = d.y;
+          let indexOfNode = bisect2(points2, xScale2.invert(yValue));
+          if(indexOfNode >= points2.length - 1) indexOfNode = points2.length - 2;
+          if(indexOfNode < 1) indexOfNode = 1;
+          let pointBefore = points2[indexOfNode - 1];
+          let pointAfter = points2[indexOfNode + 1];
+          let slope = Math.abs((pointAfter.x - pointBefore.x) / (pointAfter.y - pointBefore.y));
+          // let slope = 0;
+          let linewidth = 6 * Math.pow(((d.y - sourceY + 2) / dy2), 0.38);
+          return d.x + Math.sqrt(1+slope**2) * linewidth;
+        })
+        .curve(d3.curveBasis);
+    }
     let path1 = g.select("#path1")
     .datum(data1)
     .transition()
@@ -406,16 +636,22 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
     })
 }
 
-export function drawLinesDashArrow(treeLayout, sourceID, targetID, color, label) {
+export function drawLinesDashArrow(treeLayout, sourceID, targetID, color, label, direction) {
   // d3.select("#boxid" + body_num_source).select("#" + sourceid).attr("data-opened", "true");
   const sourceFrame = "frame" + sourceID;
   const targetFrame = "frame" + targetID;
-  const dx = treeLayout[targetID][0] - treeLayout[sourceID][0] - Number(d3.select("#" + sourceFrame).attr('width'));
-  const dy = treeLayout[targetID][1] - treeLayout[sourceID][1];
-  const sourceX = Number(d3.select("#" + sourceFrame).attr('x')) + Number(d3.select("#" + sourceFrame).attr('width'));
-  const sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height')) / 2;
-  const targetX = sourceX + dx;
-  const targetY = sourceY + dy;
+  let dx = treeLayout[targetID][0] - treeLayout[sourceID][0] - Number(d3.select("#" + sourceFrame).attr('width'));
+  let dy = treeLayout[targetID][1] - treeLayout[sourceID][1];
+  let sourceX = Number(d3.select("#" + sourceFrame).attr('x')) + Number(d3.select("#" + sourceFrame).attr('width'));
+  let sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height')) / 2;
+  let targetX = sourceX + dx;
+  let targetY = sourceY + dy;
+  if (direction==="down") {
+    sourceX = Number(d3.select("#" + sourceFrame).attr('x')) + Number(d3.select("#" + sourceFrame).attr('width')) / 2;
+    sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height'));
+    dx = treeLayout[targetID][0] - treeLayout[sourceID][0];
+    dy = treeLayout[targetID][1] - treeLayout[sourceID][1] - Number(d3.select("#" + sourceFrame).attr('height'));
+  }
   const g = d3.select('svg').select('#sumGroup').append("g").attr('id', 'line' + String(sourceID) + '_' + String(targetID)).attr("line-type", "dashed").attr('class', 'drawer');
   const paddingL = 17;
   g.append("defs")
@@ -449,16 +685,22 @@ export function drawLinesDashArrow(treeLayout, sourceID, targetID, color, label)
     .style("fill", "black");  // 设置字体颜色
 }
 
-export function updateLinesDashArrow(treeLayout, sourceID, targetID, color, label, lineID) {
+export function updateLinesDashArrow(treeLayout, sourceID, targetID, color, label, lineID, direction) {
   // d3.select("#boxid" + body_num_source).select("#" + sourceid).attr("data-opened", "true");
-  const sourceFrame = "frame" + sourceID;
-  const targetFrame = "frame" + targetID;
-  const dx = treeLayout[targetID][0] - treeLayout[sourceID][0] - Number(d3.select("#" + sourceFrame).attr('width'));
-  const dy = treeLayout[targetID][1] - treeLayout[sourceID][1];
-  const sourceX = Number(d3.select("#" + sourceFrame).attr('x')) + Number(d3.select("#" + sourceFrame).attr('width'));
-  const sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height')) / 2;
-  const targetX = sourceX + dx;
-  const targetY = sourceY + dy;
+  let sourceFrame = "frame" + sourceID;
+  let targetFrame = "frame" + targetID;
+  let dx = treeLayout[targetID][0] - treeLayout[sourceID][0] - Number(d3.select("#" + sourceFrame).attr('width'));
+  let dy = treeLayout[targetID][1] - treeLayout[sourceID][1];
+  let sourceX = Number(d3.select("#" + sourceFrame).attr('x')) + Number(d3.select("#" + sourceFrame).attr('width'));
+  let sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height')) / 2;
+  let targetX = sourceX + dx;
+  let targetY = sourceY + dy;
+  if (direction==="down") {
+    sourceX = Number(d3.select("#" + sourceFrame).attr('x')) + Number(d3.select("#" + sourceFrame).attr('width')) / 2;
+    sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height'));
+    dx = treeLayout[targetID][0] - treeLayout[sourceID][0];
+    dy = treeLayout[targetID][1] - treeLayout[sourceID][1] - Number(d3.select("#" + sourceFrame).attr('height'));
+  }
   const g = d3.select('svg').select('#sumGroup').select("#" + lineID);
   g.select("line")
     .transition()

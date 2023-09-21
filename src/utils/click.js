@@ -2,8 +2,9 @@
 import { drawBox } from "./drawBox";
 import { drawLines, updateLines, updateLinesDashArrow } from "./drawlines";
 import { getBoxLayout, getTreeLayout } from "./layout";
-import { arraysAreEqual, loopOverHierarchy, getChildren, findChildrenAtSameLevel, autoTranslate } from "./utilities";
+import { arraysAreEqual, getHierarchy, findChildrenAtSameLevel, autoTranslate } from "./utilities";
 import flextree from "./flextree";
+import getMultiTree from "./multitree";
 import * as d3 from "d3";
 
 export function handleClick(fnS, body, body_num, sourceid, color, clicked, direction) {
@@ -110,52 +111,23 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
   const spaceY = 100;
   const padding = 90;
   const newLabel = String(body_num) + '-' + String(body); // new body_num
-  drawBox(layout, fnS, newLabel);
-  var hierarchies = {};
-  const childrens = [];
-  const gs = d3.selectAll('.drawer').each(function(d, i){
-    const nodeID = d3.select(this).attr('id').replace("boxid", "");
-    if (nodeID.split('_').length !== 2) {
-      const routes = nodeID.split("-");
-      const currentID = routes[routes.length - 1];
-      if (currentID==='0') {
-          hierarchies.name = Number(currentID);
-          hierarchies.oName = nodeID;
-          hierarchies.path = routes;
-          hierarchies.size = [Number(d3.select(this).attr('width')) + spaceY, Number(d3.select(this).attr('height'))];
-      } else {
-          const temp = {}
-          temp.name = Number(currentID);
-          temp.size = [Number(d3.select(this).attr('width')) + spaceY, Number(d3.select(this).attr('height'))];
-          temp.path = routes;
-          temp.oName = nodeID;
-          childrens.push(temp);
-      }
-    }
-  })
-  childrens.sort(function(a,b){
-    return a.path.length - b.path.length;
-  })
-  getChildren(hierarchies, childrens);
-  loopOverHierarchy(hierarchies, d => {
-    if (Array.isArray(d.size)) {
-      if (!d._size) d._size = d.size.slice();
-      d.size = d._size.slice().reverse();
-    }
-  });
-  console.log(hierarchies, "hierarchies");
-  const flexLayout = flextree({ spacing: spaceX });
-  const tree = flexLayout.hierarchy(hierarchies);
-  var treeData = flexLayout(tree);
-  treeData.each(d => {
-    const x = d.x;
-    d.x = d.y;
-    d.y = x;
-  });
+  drawBox(layout, fnS, newLabel, direction);
+  var hierarchies = getHierarchy(spaceY);
   var treeLayout = {};
-  treeData.each(d => {
-    treeLayout[d.data.oName] = [d.x, d.y, d.data.size[1], d.data.size[0] * 1];
-  });
+  treeLayout = getMultiTree(hierarchies);
+  // console.log(hierarchies, "hierarchies");
+  // const flexLayout = flextree({ spacing: spaceX });
+  // const tree = flexLayout.hierarchy(hierarchies);
+  // var treeData = flexLayout(tree);
+  // treeData.each(d => {
+  //   const x = d.x;
+  //   d.x = d.y;
+  //   d.y = x;
+  // });
+  // var treeLayout = {};
+  // treeData.each(d => {
+  //   treeLayout[d.data.oName] = [d.x, d.y, d.data.size[1], d.data.size[0] * 1];
+  // });
   const nodeNames = Object.keys(treeLayout);
 
   console.log(treeLayout);
@@ -163,7 +135,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
   let differenceY = treeLayout[newLabel][1] - treeLayout[newLabel][3] / 2 - (treeLayout[body_num][1] - treeLayout[body_num][3] / 2);
   
   const locationTransform = [differenceX, differenceY];
-  drawLines(sourceid, "frame" + newLabel, locationTransform, body_num, newLabel, color);
+  drawLines(sourceid, "frame" + newLabel, locationTransform, body_num, newLabel, color, direction);
   // console.log(locationTransform);
   d3.selectAll('.drawer').each(function(d, i){
     let nodeID = d3.select(this).attr('id').replace("boxid", "");
@@ -206,7 +178,8 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
             const a04 = d3.select(this).attr('body_num_source');
             const a05 = d3.select(this).attr('body_num_target');
             const a06 = d3.select(this).attr('color');
-            updateLines(a01, a02, locationTransformForThis, a04, a05, a06, lineID);
+            const currentDirection = d3.select("#boxid" + a05).attr("direction");
+            updateLines(a01, a02, locationTransformForThis, a04, a05, a06, lineID, currentDirection);
           }
         }
         if (targetTransString!==null && targetGID != newLabel){
@@ -222,7 +195,8 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
             const a04 = d3.select(this).attr('body_num_source');
             const a05 = d3.select(this).attr('body_num_target');
             const a06 = d3.select(this).attr('color');
-            updateLines(a01, a02, locationTransformForThis, a04, a05, a06, lineID);
+            const currentDirection = d3.select("#boxid" + a05).attr("direction");
+            updateLines(a01, a02, locationTransformForThis, a04, a05, a06, lineID, currentDirection);
           }
         }
         
