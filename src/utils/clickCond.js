@@ -111,7 +111,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
     layoutElse = getBoxLayout(fnS[body_else-1]);
   }
   const spaceX = 80;
-  const spaceY = 100;
+  const spaceY = 0;
   const padding = 90;
   const newLabelCond = String(body_num) + '-' + String(cond); // new body_num for Cond
   const newLabelIf = String(newLabelCond) + '-' + String(body_if); // new body_num for if
@@ -142,7 +142,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
   console.log(treeLayout);
   console.log()
   let differenceX = treeLayout[newLabelCond][0] - treeLayout[body_num][0];
-  let differenceY = treeLayout[newLabelCond][1] - treeLayout[newLabelCond][3] / 2 - (treeLayout[body_num][1] - treeLayout[body_num][3] / 2);
+  let differenceY = treeLayout[newLabelCond][1] - (treeLayout[body_num][1]);
   
   const locationTransform = [differenceX, differenceY];
   drawLines(sourceid, "frame" + newLabelCond, locationTransform, body_num, newLabelCond, color, direction);
@@ -166,8 +166,8 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
           let newTransArray = [];
-          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 - treeLayout[sourceGID][3] / 2];
-          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - treeLayout[targetGID][3] / 2 - (treeLayout[sourceGID][1] - treeLayout[sourceGID][3] / 2)];
+          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5];
+          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - (treeLayout[sourceGID][1] )];
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const a01 = d3.select(this).attr('sourceid');
             const a02 = d3.select(this).attr('targetid');
@@ -186,8 +186,8 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
           let newTransArray = [];
-          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 - treeLayout[targetGID][3] / 2];
-          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - treeLayout[targetGID][3] / 2 - (treeLayout[sourceGID][1] - treeLayout[sourceGID][3] / 2)];
+          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 ];
+          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - (treeLayout[sourceGID][1])];
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const a01 = d3.select(this).attr('sourceid');
             const a02 = d3.select(this).attr('targetid');
@@ -205,7 +205,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
         nodeID = nodeID.replace("line", "");
         nodeID = nodeID.split('_')[0];
         d3.select(this)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5})`)
           .style("opacity", 0.38);
       } else {
         const lineID = nodeID;
@@ -218,7 +218,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
           let newTransArray = [];
-          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 - treeLayout[sourceGID][3] / 2];
+          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 ];
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const line_label = d3.select(this).select('text').text();
             const currentDirection = d3.select("#boxid" + targetGID).attr("direction");
@@ -230,7 +230,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
           let newTransArray = [];
-          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 - treeLayout[targetGID][3] / 2];
+          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 ];
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const line_label = d3.select(this).select('text').text();
             const currentDirection = d3.select("#boxid" + targetGID).attr("direction");
@@ -242,12 +242,12 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
         d3.select(this)
           // .transition()
           // .duration(720)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`);
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 })`);
       }
     } else {
       if (nodeID === newLabelCond || nodeID === newLabelElse || nodeID === newLabelIf) {
         d3.select(this)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 })`)
           .attr("opacity", 0);
         d3.select(this)
           .transition()
@@ -257,7 +257,7 @@ export function handleClickCond(fnS, cond, body_if, body_else, body_num, sourcei
         d3.select(this)
           .transition()
           .duration(transitionTime2)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`);
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 })`);
       }
     }
   }
@@ -414,7 +414,7 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
   console.log(treeLayout);
   console.log()
   let differenceX = treeLayout[newLabelCond][0] - treeLayout[body_num][0];
-  let differenceY = treeLayout[newLabelCond][1] - treeLayout[newLabelCond][3] / 2 - (treeLayout[body_num][1] - treeLayout[body_num][3] / 2);
+  let differenceY = treeLayout[newLabelCond][1] - (treeLayout[body_num][1] );
   
   const locationTransform = [differenceX, differenceY];
   drawLines(sourceid, "frame" + newLabelCond, locationTransform, body_num, newLabelCond, color, direction);
@@ -443,8 +443,8 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
           let newTransArray = [];
-          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 - treeLayout[sourceGID][3] / 2];
-          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - treeLayout[targetGID][3] / 2 - (treeLayout[sourceGID][1] - treeLayout[sourceGID][3] / 2)];
+          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 ];
+          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - (treeLayout[sourceGID][1] )];
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const a01 = d3.select(this).attr('sourceid');
             const a02 = d3.select(this).attr('targetid');
@@ -463,8 +463,8 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
           let newTransArray = [];
-          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 - treeLayout[targetGID][3] / 2];
-          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - treeLayout[targetGID][3] / 2 - (treeLayout[sourceGID][1] - treeLayout[sourceGID][3] / 2)];
+          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5];
+          const locationTransformForThis = [treeLayout[targetGID][0] - treeLayout[sourceGID][0], treeLayout[targetGID][1] - (treeLayout[sourceGID][1])];
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const a01 = d3.select(this).attr('sourceid');
             const a02 = d3.select(this).attr('targetid');
@@ -482,7 +482,7 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
         nodeID = nodeID.replace("line", "");
         nodeID = nodeID.split('_')[0];
         d3.select(this)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 })`)
           .style("opacity", 0.38);
       } else {
         const lineID = nodeID;
@@ -495,7 +495,7 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
           let newTransArray = [];
-          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 - treeLayout[sourceGID][3] / 2];
+          newTransArray = [treeLayout[sourceGID][0] + padding, treeLayout[sourceGID][1] + padding *7.5 ];
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const line_label = d3.select(this).select('text').text();
             const currentDirection = d3.select("#boxid" + targetGID).attr("direction");
@@ -507,7 +507,7 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
           const translateValues = translatePart.split(",");
           const transformArray = translateValues.map(Number);
           let newTransArray = [];
-          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 - treeLayout[targetGID][3] / 2];
+          newTransArray = [treeLayout[targetGID][0] + padding, treeLayout[targetGID][1] + padding *7.5 ];
           if (transformArray[1]!==newTransArray[1] || transformArray[0]!==newTransArray[0]) {
             const line_label = d3.select(this).select('text').text();
             const currentDirection = d3.select("#boxid" + targetGID).attr("direction");
@@ -519,12 +519,12 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
         d3.select(this)
           // .transition()
           // .duration(720)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`);
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 })`);
       }
     } else {
       if (nodeID === newLabelCond || nodeID === newLabelPre || nodeID === newLabelBody || nodeID === newLabelPost) {
         d3.select(this)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`)
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 })`)
           .attr("opacity", 0);
         d3.select(this)
           .transition()
@@ -534,7 +534,7 @@ export function handleClickLoop(fnS, cond, pre, body, post, body_num, sourceid, 
         d3.select(this)
           .transition()
           .duration(transitionTime2)
-          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 - treeLayout[nodeID][3] / 2})`);
+          .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5 })`);
       }
     }
   }

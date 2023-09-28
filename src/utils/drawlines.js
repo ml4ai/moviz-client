@@ -651,6 +651,8 @@ export function drawLinesDashArrow(treeLayout, sourceID, targetID, color, label,
     sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height'));
     dx = treeLayout[targetID][0] - treeLayout[sourceID][0];
     dy = treeLayout[targetID][1] - treeLayout[sourceID][1] - Number(d3.select("#" + sourceFrame).attr('height'));
+    targetX = sourceX + dx;
+    targetY = sourceY + dy;
   }
   const g = d3.select('svg').select('#sumGroup').append("g").attr('id', 'line' + String(sourceID) + '_' + String(targetID)).attr("line-type", "dashed").attr('class', 'drawer');
   const paddingL = 17;
@@ -700,6 +702,8 @@ export function updateLinesDashArrow(treeLayout, sourceID, targetID, color, labe
     sourceY = Number(d3.select("#" + sourceFrame).attr('y')) + Number(d3.select("#" + sourceFrame).attr('height'));
     dx = treeLayout[targetID][0] - treeLayout[sourceID][0];
     dy = treeLayout[targetID][1] - treeLayout[sourceID][1] - Number(d3.select("#" + sourceFrame).attr('height'));
+    targetX = sourceX + dx;
+    targetY = sourceY + dy;
   }
   const g = d3.select('svg').select('#sumGroup').select("#" + lineID);
   g.select("line")

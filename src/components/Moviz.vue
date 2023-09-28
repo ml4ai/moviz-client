@@ -16,17 +16,17 @@
       @change="handleFileChange"
       style="display: none;"
     />
-    <button @click="triggerFileInput">
-      选择文件
-    </button>
     <button class="btn btn-primary" @click="submitUrl">Submit</button>
+    <button @click="triggerFileInput">
+      Choose File
+    </button>
     <button class="btn btn-primary download-button" @click="downloadSVG" >downloadSVG</button>
   </div>
     <div class="row">
       <div id="svg-container" :style="blockStyle">
         <div class="version-text">
           Current Supported Skema Version:
-          <span class="highlight">0.1.6</span>
+          <span class="highlight">0.1.7</span>
         </div>
         <div class="version-text">
           Current File Version:
@@ -64,11 +64,11 @@ export default {
         { text: 'while1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/while1/FN_0.1.6/while1--Gromet-FN-auto.json' },
         { text: 'cond1', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/cond1--Gromet-FN-auto.json' },
         { text: 'fun1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun1/FN_0.1.6/fun1--Gromet-FN-auto.json' },
-        { text: 'fun4', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun4/FN_0.1.6/fun4--Gromet-FN-auto.json' },
+        { text: 'fun4', value: 'https://raw.githubusercontent.com/ml4ai/skema/adarshp/nom_error_handling/data/gromet/python/fun4/FN_0.1.6/fun4--Gromet-FN-auto.json' },
         { text: 'exp1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp1/FN_0.1.6/exp1--Gromet-FN-auto.json' },
         { text: 'exp2', value: 'https://gist.githubusercontent.com/jastier/76f7566ac44265707d892a252d8f85ab/raw/2be498c5fb369635725e9e6b493732a5c181ac65/first_matlab.json' },
         { text: 'exp3', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp3/FN_0.1.6/exp3--Gromet-FN-auto.json' },
-        { text: 'fun_default1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun_default1/FN_0.1.6/fun_default1--Gromet-FN-auto.json' },
+        { text: 'fun_default1', value: 'https://raw.githubusercontent.com/ml4ai/skema/adarshp/nom_error_handling/data/gromet/python/fun_default1/FN_0.1.6/fun_default1--Gromet-FN-auto.json' },
         { text: 'assign_operator1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/assign_operator1/FN_0.1.6/assign_operator1--Gromet-FN-auto.json' },
       ],
     };

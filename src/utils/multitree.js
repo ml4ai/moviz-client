@@ -3,6 +3,7 @@ import { tree } from "d3";
 import flextree from "./flextree";
 import cloneDeep from 'lodash/cloneDeep';
 import { layout } from "dagre";
+import { loopOverHierarchy } from "./utilities";
 
 export default function getMultiTree(hierarchies) {
     let hierarchies_copy = cloneDeep(hierarchies);
@@ -81,6 +82,7 @@ function processTree(hierarchies) {
   function findAllSubtrees(root) {
     let parentNodesRight = new Set();
     let parentNodesDown = new Set();
+    const spacing = 100;
     setParents(root, null);
     dfs(root, parentNodesRight, parentNodesDown);
     const parentNodesMix = new Set();
@@ -101,6 +103,11 @@ function processTree(hierarchies) {
                 clone.size[0] = clone.size[1];
                 clone.size[1] = clonex;
             }
+            loopOverHierarchy(clone, d => {
+                if (Array.isArray(d.size)) {
+                d.size[1] += spacing;
+                }
+            });
             const flexLayout = flextree({ spacing: 80 });
             const tree = flexLayout.hierarchy(clone);
             var treeData = flexLayout(tree);
@@ -111,53 +118,85 @@ function processTree(hierarchies) {
               });
             var treeLayout = {};
             treeData.each(d => {
-                treeLayout[d.data.oName] = [d.x, d.y, d.data.size[1], d.data.size[0] * 1];
+                treeLayout[d.data.oName] = [d.x, d.y - d.data.size[0] / 2, d.data.size[1], d.data.size[0] * 1];
             });
             const newBoundingbox = findBoundingBox(treeLayout);
-            node.size = [newBoundingbox.width, newBoundingbox.height];
-            node._size = [newBoundingbox.height, newBoundingbox.width];
+            node._size = [newBoundingbox.width, newBoundingbox.height];
+            node.size = [newBoundingbox.height, newBoundingbox.width];
+            console.log(treeLayout, "test");
             return treeLayout;
         }),
         down: Array.from(parentNodesDown).map(node => {
             let clone = cloneDeep(node);
             delete node.children;
             removeRightChildren(clone);
-            if (node.direction==="right") {
+            loopOverHierarchy(clone, d => {
+                if (Array.isArray(d.size)) {
+                if (!d._size) d._size = d.size.slice();
+                d.size = [d.size[1], d.size[0]];
+                }
+            });
+            loopOverHierarchy(clone, d => {
+                if (Array.isArray(d.size)) {
+                d.size[1] += spacing;
+                }
+            });
+            if (node.direction==="down") {
                 const clonex = clone.size[0];
                 clone.size[0] = clone.size[1];
                 clone.size[1] = clonex;
             }
-            const flexLayout = flextree({ spacing: 80 });
+            const flexLayout = flextree({ spacing: 120 });
             const tree = flexLayout.hierarchy(clone);
             var treeData = flexLayout(tree);
             var treeLayout = {};
             treeData.each(d => {
-                treeLayout[d.data.oName] = [d.x, d.y, d.data.size[0] * 1, d.data.size[1]];
+                treeLayout[d.data.oName] = [d.x - d.data.size[0] / 2, d.y, d.data.size[0] * 1, d.data.size[1]];
             });
             const newBoundingbox = findBoundingBox(treeLayout);
-            node.size = [newBoundingbox.width, newBoundingbox.height];
-            node._size = [newBoundingbox.height, newBoundingbox.width];
+            node._size = [newBoundingbox.width, newBoundingbox.height];
+            node.size = [newBoundingbox.height, newBoundingbox.width];
+            
             return treeLayout;
         }),
         mix: Array.from(parentNodesMix).map(node => {
             let cloneRight = cloneDeep(node);
             delete node.children;
             let cloneDown = cloneDeep(cloneRight);
+            loopOverHierarchy(cloneDown, d => {
+                if (Array.isArray(d.size)) {
+                if (!d._size) d._size = d.size.slice();
+                d.size = [d.size[1], d.size[0]];
+                }
+            });
+            loopOverHierarchy(cloneDown, d => {
+                if (Array.isArray(d.size)) {
+                d.size[1] += spacing;
+                }
+            });
+            loopOverHierarchy(cloneRight, d => {
+                if (Array.isArray(d.size)) {
+                d.size[1] += spacing;
+                }
+            });
             removeRightChildren(cloneDown);
             removeDownChildren(cloneRight);
-            const flexLayoutDown = flextree({ spacing: 80 });
+            const flexLayoutDown = flextree({ spacing: 120 });
             const flexLayoutRight = flextree({ spacing: 80 });
             const treeDown = flexLayoutDown.hierarchy(cloneDown);
             const treeRight = flexLayoutRight.hierarchy(cloneRight);
-            if (node.direction==="right") {
-                const cloneDownx = cloneDown.size[0];
-                cloneDown.size[0] = cloneDown.size[1];
-                cloneDown.size[1] = cloneDownx;
-            }
+            // if (node.direction==="right") {
+            //     const cloneDownx = cloneDown.size[0];
+            //     cloneDown.size[0] = cloneDown.size[1];
+            //     cloneDown.size[1] = cloneDownx;
+            // }
             if (node.direction==="down") {
                 const cloneRightx = cloneRight.size[0];
                 cloneRight.size[0] = cloneRight.size[1];
                 cloneRight.size[1] = cloneRightx;
+                const cloneDownx = cloneDown.size[0];
+                cloneDown.size[0] = cloneDown.size[1];
+                cloneDown.size[1] = cloneDownx;
             }
             var treeDataDown = flexLayoutDown(treeDown);
             var treeDataRight = flexLayoutDown(treeRight);
@@ -168,11 +207,11 @@ function processTree(hierarchies) {
               });
             var treeLayoutDown = {};
             treeDataDown.each(d => {
-                treeLayoutDown[d.data.oName] = [d.x, d.y, d.data.size[0], d.data.size[1] * 1];
+                treeLayoutDown[d.data.oName] = [d.x - d.data.size[0] / 2, d.y, d.data.size[0], d.data.size[1] * 1];
             });
             var treeLayoutRight = {};
             treeDataRight.each(d => {
-                treeLayoutRight[d.data.oName] = [d.x, d.y, d.data.size[1], d.data.size[0] * 1];
+                treeLayoutRight[d.data.oName] = [d.x, d.y - d.data.size[0] / 2, d.data.size[1], d.data.size[0] * 1];
             });
             const differenceX = treeLayoutRight[node.oName][0] - treeLayoutDown[node.oName][0];
             const differenceY = treeLayoutRight[node.oName][1] - treeLayoutDown[node.oName][1];
@@ -182,8 +221,8 @@ function processTree(hierarchies) {
             }
             const mergedLayout = { ...treeLayoutRight, ...treeLayoutDown };
             const newBoundingbox = findBoundingBox(mergedLayout);
-            node.size = [newBoundingbox.width, newBoundingbox.height];
-            node._size = [newBoundingbox.height, newBoundingbox.width];
+            node._size = [newBoundingbox.width, newBoundingbox.height];
+            node.size = [newBoundingbox.height, newBoundingbox.width];
             console.log(newBoundingbox, "test");
             return mergedLayout;
         }),

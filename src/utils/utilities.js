@@ -13,7 +13,7 @@ export function arraysAreEqual(array1, array2) {
     return true;
 }
 
-function loopOverHierarchy(d, callback) {
+export function loopOverHierarchy(d, callback) {
     callback(d);
     if (d.children) d.children.forEach(c => loopOverHierarchy(c, callback));
     if (d._children) d._children.forEach(c => loopOverHierarchy(c, callback));
