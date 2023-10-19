@@ -19,6 +19,8 @@
     "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
     "vue": "^2.5.2",
+    "vue-json-pretty": "^1.9.4",
+    "vue-json-pretty-highlight-row": "^1.7.4",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

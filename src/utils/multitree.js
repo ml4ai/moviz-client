@@ -16,12 +16,12 @@ function processTree(hierarchies) {
     do {
         let subtrees = findAllSubtrees(hierarchies);
         let currentLayout = [...subtrees.right, ...subtrees.down, ...subtrees.mix];
-        console.log(currentLayout, "current");
-        console.log(treeLayout, "currentT");
+        // console.log(currentLayout, "current");
+        // console.log(treeLayout, "currentT");
         let mergedCL = currentLayout.reduce((acc, obj) => ({...acc, ...obj}), {});
         if (hasProperties(treeLayout)) {
             const sharedNodes = getSharedKeys(treeLayout, mergedCL);
-            console.log(sharedNodes)
+            // console.log(sharedNodes)
             for (let key of sharedNodes) {
                 const nodeL = mergedCL[key];
                 const childrenRect = {};
@@ -33,8 +33,8 @@ function processTree(hierarchies) {
                 }
                 const oldBoundingBox = findBoundingBox(childrenRect);
                 // debugger
-                console.log(oldBoundingBox)
-                console.log(nodeL)
+                // console.log(oldBoundingBox)
+                // console.log(nodeL)
                 const differenceX1 = nodeL[0] - oldBoundingBox.x;
                 const differenceY1 = nodeL[1] - oldBoundingBox.y;
                 for (let keyPre  in treeLayout) {
@@ -50,7 +50,7 @@ function processTree(hierarchies) {
             treeLayout = cloneDeep(mergedCL);
         }
     } while ('children' in hierarchies);
-    console.log(treeLayout, "layout")
+    // console.log(treeLayout, "layout")
     return treeLayout;
     function hasProperties(obj) {
         for (let key in obj) {
@@ -123,7 +123,7 @@ function processTree(hierarchies) {
             const newBoundingbox = findBoundingBox(treeLayout);
             node._size = [newBoundingbox.width, newBoundingbox.height];
             node.size = [newBoundingbox.height, newBoundingbox.width];
-            console.log(treeLayout, "test");
+            // console.log(treeLayout, "test");
             return treeLayout;
         }),
         down: Array.from(parentNodesDown).map(node => {
@@ -223,7 +223,7 @@ function processTree(hierarchies) {
             const newBoundingbox = findBoundingBox(mergedLayout);
             node._size = [newBoundingbox.width, newBoundingbox.height];
             node.size = [newBoundingbox.height, newBoundingbox.width];
-            console.log(newBoundingbox, "test");
+            // console.log(newBoundingbox, "test");
             return mergedLayout;
         }),
     };

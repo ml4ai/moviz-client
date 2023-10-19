@@ -36,7 +36,7 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         }
       }
     }
-    console.log(nodes);
+    // console.log(nodes);
     for (const nodeId in nodes) {
       // const node = nodes[nodeId];
       const [type, index] = nodeId.split("-");
@@ -84,7 +84,7 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
     }
     const bbox = computeBoundingRectangle(nodes);
     const realOuterBox = getOuterBox(bbox, padding, ranksep, nodes);
-    console.log(bbox,"bbox");
+    // console.log(bbox,"bbox");
     for (const nodeId in nodes) {
       const node = nodes[nodeId];
       const [type, index] = nodeId.split("-");
@@ -241,10 +241,10 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   const outerBottom = bbox.y + bbox.height;
   const innerRight = node.x + node.width / 2;
   const innerBottom = node.y + node.height / 2 - ranksep;
-  console.log(outerRight, "outerRight");
-  console.log(outerBottom, "outerBottom");
-  console.log(innerBottom, "innerBottom");
-  console.log(innerRight, "innerRight");
+  // console.log(outerRight, "outerRight");
+  // console.log(outerBottom, "outerBottom");
+  // console.log(innerBottom, "innerBottom");
+  // console.log(innerRight, "innerRight");
   let direction = "right";
   if ( (outerRight - innerRight) > (outerBottom - innerBottom) + 120) {
     direction = "down";
@@ -644,7 +644,7 @@ function drawPorts(node, nodeId, g, color) {
 
 function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_num) {
   // 绘制外框
-  g.append("rect", ":first-child")
+  g.insert("rect", ":first-child")
   .attr("id", "frame" + body_num)
   .attr("x", bbox.x - padding)
   .attr("y", bbox.y - padding + ranksep)
@@ -652,7 +652,7 @@ function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_
   .attr("ry", 15)
   .attr("width", width - padding * 2)
   .attr("height", height - padding * 2 - ranksep * 2)
-  .style("fill", "none")
+  .style("fill", "transparent")
   .style("stroke", color)
   .style("stroke-width", 5)
   .lower();
@@ -660,7 +660,7 @@ function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_
 
 function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, body_num) {
   // 绘制外框
-  g.append("rect", ":first-child")
+  g.insert("rect", ":first-child")
     .attr("id", "frame" + body_num)
     .attr("x", bbox.x - padding)
     .attr("y", bbox.y - padding - ranksep / 10)
@@ -668,7 +668,7 @@ function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, bod
     .attr("ry", 15)
     .attr("width", width - padding * 2)
     .attr("height", height - padding * 2 - ranksep)
-    .style("fill", "none")
+    .style("fill", "transparent")
     .style("stroke", color)
     .style("stroke-width", 5)
     .lower();
@@ -676,7 +676,7 @@ function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, bod
 
 function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_num) {
   // 绘制外框
-  g.append("rect", ":first-child")
+  g.insert("rect", ":first-child")
     .attr("id", "frame" + body_num)
     .attr("x", bbox.x - padding)
     .attr("y", bbox.y - padding + ranksep * 2)
@@ -684,7 +684,7 @@ function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_n
     .attr("ry", 15)
     .attr("width", width - padding * 2)
     .attr("height", height - padding * 2 - ranksep)
-    .style("fill", "none")
+    .style("fill", "transparent")
     .style("stroke", color)
     .style("stroke-width", 5)
     .lower();
@@ -692,7 +692,7 @@ function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_n
 
 function drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, color, body_num) {
   // 绘制外框
-  g.append("rect", ":first-child")
+  g.insert("rect", ":first-child")
     .attr("id", "frame" + body_num)
     .attr("x", bbox.x - padding)
     .attr("y", bbox.y - padding)
@@ -700,7 +700,7 @@ function drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, color, body
     .attr("ry", 15)
     .attr("width", width - padding * 2)
     .attr("height", height - padding * 2)
-    .style("fill", "none")
+    .style("fill", "transparent")
     .style("stroke", color)
     .style("stroke-width", 5)
     .lower();
