@@ -58,6 +58,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import * as d3 from 'd3';
 import axios from 'axios';
 import VueJsonPretty from 'vue-json-pretty-highlight-row';
@@ -91,8 +92,8 @@ export default {
       options: [
         { text: 'Clay1', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/get_beta--Gromet-FN-auto2.json' },
         { text: 'core_dynamics', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/core_dynamics_pack2.json' },
-        { text: 'while1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/while1/FN_0.1.6/while1--Gromet-FN-auto.json' },
-        { text: 'cond1', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/cond1--Gromet-FN-auto.json' },
+        { text: 'while1', value: 'https://raw.githubusercontent.com/ml4ai/skema/adarshp/nom_error_handling/data/gromet/python/while1/FN_0.1.6/while1--Gromet-FN-auto.json' },
+        { text: 'cond1', value: 'https://raw.githubusercontent.com/ml4ai/skema/adarshp/nom_error_handling/data/gromet/python/cond1/FN_0.1.6/cond1--Gromet-FN-auto.json' },
         { text: 'fun1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/fun1/FN_0.1.6/fun1--Gromet-FN-auto.json' },
         { text: 'fun4', value: 'https://raw.githubusercontent.com/ml4ai/skema/adarshp/nom_error_handling/data/gromet/python/fun4/FN_0.1.6/fun4--Gromet-FN-auto.json' },
         { text: 'exp1', value: 'https://raw.githubusercontent.com/ml4ai/skema/main/data/gromet/python/exp1/FN_0.1.6/exp1--Gromet-FN-auto.json' },
@@ -185,17 +186,41 @@ export default {
         const parts = target.id.split('-');
         const lastPart = parts.pop();
         const numberMatch = lastPart.match(/\d+$/);
+        const svgContainer = d3.select('#mainsvg');
+        svgContainer.selectAll("#highlightRect").remove();
         if (numberMatch) {
           this.selectedNode = numberMatch[0];
         } else {
           this.selectedNode = null;
         }
-        // eslint-disable-next-line
-        console.log(this.selectedNode);
         if (this.selectedNode === 0 || this.selectedNode === '0') {
           this.highlightNode = ['res.fn'];
         } else {
           this.highlightNode = [`res.fn_array[${this.selectedNode - 1}]`];
+        }
+        if (this.selectedNode !== null) {
+          const increasedWidth = target.width.baseVal.value + 7;
+          const increasedHeight = target.height.baseVal.value + 7;
+
+          const parentD3Selection = d3.select(target.parentNode);
+          const rectSelection = parentD3Selection.append('rect');
+          rectSelection
+            .attr('id', 'highlightRect')
+            .attr('x', target.x.baseVal.value - 3.5)
+            .attr('y', target.y.baseVal.value - 3.5)
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .attr('width', increasedWidth)
+            .attr('height', increasedHeight)
+            .style("fill", "none")
+            .style("stroke", "red")
+            .style("stroke-width", 38)
+            .style("stroke-opacity", 0.2);
+
+          // Add event listener to remove the rectangle on mouseout using D3
+          // d3.select(target).on('mouseout', () => {
+          //   parentD3Selection.select('#highlightRect').remove();
+          // });
         }
       }
     },
