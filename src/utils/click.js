@@ -9,9 +9,9 @@ import * as d3 from "d3";
 
 export function handleClick(fnS, body, body_num, sourceid, color, clicked, direction) {
   console.log(direction, "direction");
-  const transitionTime1 = 920;
-  const transitionTime2 = 720;
-  const transitionTime3 = 200;
+  const transitionTime1 = 0;
+  const transitionTime2 = 0;
+  const transitionTime3 = 0;
   const openFlag = d3.select("#boxid" + String(body_num)).select("#" + String(sourceid));
   // console.log(openFlag.attr("data-opened"));
   if (clicked || openFlag.attr("data-opened") === "true") {
@@ -129,8 +129,6 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
   //   treeLayout[d.data.oName] = [d.x, d.y, d.data.size[1], d.data.size[0] * 1];
   // });
   const nodeNames = Object.keys(treeLayout);
-
-  console.log(treeLayout);
   let differenceX = treeLayout[newLabel][0] - treeLayout[body_num][0];
   let differenceY = treeLayout[newLabel][1] - (treeLayout[body_num][1]);
   
@@ -237,7 +235,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
         nodeID = nodeID.split('_')[0];
         d3.select(this)
           .transition()
-          .duration(720)
+          .duration(0)
           .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5})`);
       }
     }

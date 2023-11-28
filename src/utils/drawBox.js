@@ -263,6 +263,7 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   .attr("ry", 15)
   .attr("data-body", node_body)
   .attr("data-opened", "neo")
+  .attr("data-clicked", "false")
   .style("fill", "rgba(0, 0, 255, 0)")
   .style("stroke", color)
   .style("cursor", "pointer")
@@ -280,6 +281,7 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     selection.on("click", function(){
       handleClick(fnS, node.body, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
+      this.setAttribute("data-clicked", clicked.toString());
     });
   }
 }
@@ -308,6 +310,7 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "r
   .attr("ry", 15)
   .attr("data-body", node_body)
   .attr("data-opened", "neo")
+  .attr("data-clicked", "false")
   .style("fill", "rgba(0, 0, 255, 0)")
   .style("cursor", "pointer")
   .style("stroke", color)
@@ -325,6 +328,7 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "r
     selection.on("click", function(){
       handleClick(fnS, node.body, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
+      this.setAttribute("data-clicked", clicked.toString());
     });
   }
 }
@@ -352,6 +356,7 @@ function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   .attr("rx", 15)
   .attr("ry", 15)
   .attr("data-body", node_body_cond)
+  .attr("data-clicked", "false")
   .style("fill", "rgba(0, 0, 255, 0)")
   .style("stroke", color)
   .style("cursor", "pointer")
@@ -369,6 +374,7 @@ function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     selection.on("click", function(){
       handleClickCond(fnS, node.condition, node.body_if, node.body_else, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
+      this.setAttribute("data-clicked", clicked.toString());
     });
   }
 }
@@ -396,6 +402,7 @@ function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   .attr("rx", 15)
   .attr("ry", 15)
   .attr("data-body", node_body)
+  .attr("data-clicked", "false")
   .style("fill", "rgba(0, 0, 255, 0)")
   .style("cursor", "pointer")
   .style("stroke", color)
@@ -413,6 +420,7 @@ function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     selection.on("click", function(){
       handleClickCond(fnS, node.condition, node.body_if, node.body_else, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
+      this.setAttribute("data-clicked", clicked.toString());
     });
   }
 }
@@ -440,6 +448,7 @@ function drawBLs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   .attr("rx", 15)
   .attr("ry", 15)
   .attr("data-body", node_body_cond)
+  .attr("data-clicked", "false")
   .style("fill", "rgba(0, 0, 255, 0)")
   .style("stroke", color)
   .style("cursor", "pointer")
@@ -457,6 +466,7 @@ function drawBLs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     selection.on("click", function(){
       handleClickLoop(fnS, node.condition, node.pre, node.body, node.post, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
+      this.setAttribute("data-clicked", clicked.toString());
     });
   }
 }
@@ -484,6 +494,7 @@ function drawBLs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   .attr("rx", 15)
   .attr("ry", 15)
   .attr("data-body", node_body)
+  .attr("data-clicked", "false")
   .style("fill", "rgba(0, 0, 255, 0)")
   .style("cursor", "pointer")
   .style("stroke", color)
@@ -501,6 +512,7 @@ function drawBLs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     selection.on("click", function(){
       handleClickLoop(fnS, node.body, body_num, nodeId, color, clicked, direction);
       clicked = !clicked;
+      this.setAttribute("data-clicked", clicked.toString());
     });
   }
 }

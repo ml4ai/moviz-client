@@ -39,11 +39,14 @@
             {{ num }}
           </option>
         </select>
+        <!-- &nbsp;&nbsp;&nbsp;&nbsp; -->
+        <!-- <button @click="isExpandClicked = !isExpandClicked">Select Node to View</button> -->
         <vue-json-pretty
           :data="highlightedJson"
           :editable="true"
           :highlight-array="highlightNode"
-          :deep="selectedDeep">
+          :deep="selectedDeep"
+          @click.native="jsonClick">
         </vue-json-pretty>
       </div>
       <div class="svg-container">
@@ -90,6 +93,8 @@ export default {
       highlightedJson: null,
       selectedNode: null,
       highlightNode: null,
+      routePair: {0:"0"},
+      boxTypePair: {},
       options: [
         { text: 'Clay1', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/get_beta--Gromet-FN-auto2.json' },
         { text: 'core_dynamics', value: 'https://raw.githubusercontent.com/hconhisway/webcrawler/master/core_dynamics_pack2.json' },
@@ -118,9 +123,7 @@ export default {
           const response = await axios.get(grometUrl);
           this.gromet = response.data;
           this.skemaVersion = this.gromet.schema_version;
-          this.highlightedJson = this.gromet.modules[0];
-          delete this.highlightedJson.metadata_collection;
-          delete this.highlightedJson.metadata;
+          this.processJson();
           this.drawMoviz();
         } catch (error) {
           console.error(error);
@@ -145,14 +148,40 @@ export default {
       const layout = getBoxLayout(fn0);
       drawBox(layout, fnS, 0);
     },
+    processJson() {
+      this.highlightedJson = this.gromet.modules[0];
+      this.highlightedJson.fn = {
+        hi_there: "--- Click to expand Moviz ---  0",
+        ...this.highlightedJson.fn
+      };
+      this.getAllChildBody(this.highlightedJson.fn, "0", "0");
+      delete this.highlightedJson.metadata_collection;
+      delete this.highlightedJson.metadata;
+    },
+    getAllChildBody(objJson, currentRoute, altRoute) {
+      if ("bf" in objJson) {
+        for (let i=0; i<objJson.bf.length; i++) {
+          if ("body" in objJson.bf[i]) {
+            let currentNodeNum = objJson.bf[i].body - 1;
+            let newRoute = currentRoute + `-${currentNodeNum + 1}`;
+            let newAltRoute = altRoute + `-${i}`
+            const clickPrompt = "--- Click to expand Moviz ---  " + newAltRoute;
+            this.routePair[newAltRoute] = newRoute;
+            this.highlightedJson.fn_array[currentNodeNum] = {
+              hi_there: clickPrompt,
+              ...this.highlightedJson.fn_array[currentNodeNum]
+            };
+            this.getAllChildBody(this.highlightedJson.fn_array[currentNodeNum], newRoute, newAltRoute);
+          }
+        }
+      }
+    },
     async fetchData() {
       try {
         const response = await axios.get(this.selectedOption);
         this.gromet = response.data;
         this.skemaVersion = this.gromet.schema_version;
-        this.highlightedJson = this.gromet.modules[0];
-        delete this.highlightedJson.metadata_collection;
-        delete this.highlightedJson.metadata;
+        this.processJson();
         this.drawMoviz();
       } catch (error) {
         // eslint-disable-next-line
@@ -171,9 +200,7 @@ export default {
           try {
             this.gromet = JSON.parse(e.target.result);
             this.skemaVersion = this.gromet.schema_version;
-            this.highlightedJson = this.gromet.modules[0];
-            delete this.highlightedJson.metadata_collection;
-            delete this.highlightedJson.metadata;
+            this.processJson();
             this.drawMoviz();
           } catch (error) {
             // eslint-disable-next-line
@@ -194,8 +221,6 @@ export default {
           this.selectedNode = null;
         }
       }
-      // eslint-disable-next-line
-      console.log(this.selectedNode);
     },
     handleMouseOverDelegate(event) {
       const target = event.target;
@@ -241,6 +266,33 @@ export default {
         }
       }
     },
+    jsonClick() {
+      let spanText = event.target.textContent;
+      let prefix = "--- Click to expand Moviz ---  ";
+      if (spanText.startsWith('\"--- Click to expand Moviz ---')) {
+        let numbersString = spanText.replace(prefix, "").trim();
+        let trimmedNum = numbersString.replace(/^['"]+|['"]+$/g, '');
+        let routeNumbers = trimmedNum.split('-').map(Number);
+        let altRouteNumbers = this.routePair[trimmedNum].split('-').map(Number);
+        let currentBox = "0";
+        for (let i=0;i<routeNumbers.length;i++) {
+          if (i===0) {
+            continue;
+          } else {
+            let boxId = "boxid" + currentBox;
+            const nodeId = "bf-" + String(routeNumbers[i]);
+            this.triggerClickEvent(boxId, nodeId);
+            currentBox = currentBox + "-" + String(altRouteNumbers[i]);
+          }
+        }
+      }
+    },
+    triggerClickEvent(boxId, nodeId) {
+      const element = d3.select("#sumGroup").select("#" + boxId).select("#" + nodeId);
+      if (element && element.attr("data-clicked") === "false") {
+        element.dispatch('click');
+      }
+    },
     downloadSVG() {
       const svgElement = document.getElementById('mainsvg');
       const svgData = new XMLSerializer().serializeToString(svgElement);
@@ -258,9 +310,7 @@ export default {
         const response = await axios.get(this.url);
         this.gromet = response.data;
         this.skemaVersion = this.gromet.schema_version;
-        this.highlightedJson = this.gromet.modules[0];
-        delete this.highlightedJson.metadata_collection;
-        delete this.highlightedJson.metadata;
+        this.processJson();
         this.drawMoviz();
       } catch (error) {
         // eslint-disable-next-line

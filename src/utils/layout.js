@@ -819,7 +819,6 @@ export function getBoxLayout(data) {
   // execute layout calculation
   graph.setGraph({ ranksep: 30, rankdir: 'BT' });
   dagre.layout(graph);
-  console.log(graph);
   // console.log(superNodes);
   // if (Object.keys(superNodes).length>1000) {
   //   arrangeSuperNodes(graph,superNodes);
@@ -832,7 +831,6 @@ export function getBoxLayout(data) {
   };
   graph.nodes().forEach((nodeId) => {
     const node = graph.node(nodeId);
-    console.log(node)
     layout.nodes[nodeId] = {
       x: node.x,
       y: node.y,
