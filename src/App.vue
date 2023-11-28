@@ -23,6 +23,7 @@
       class="btn btn-primary" @click="triggerFileInput">
           Choose File
       </button>
+      <button class="btn btn-primary download-button" @click="downloadSVG" >downloadSVG</button>
     </div>
     <div class="content">
       <div class="editor-box">
@@ -110,6 +111,22 @@ export default {
   beforeDestroy() {
     this.$refs.svgMoviz.removeEventListener('mouseover', this.handleMouseOverDelegate);
   },
+  async created() {
+      const grometUrl = this.$route.query.gromet_url;
+      if (grometUrl) {
+        try {
+          const response = await axios.get(grometUrl);
+          this.gromet = response.data;
+          this.skemaVersion = this.gromet.schema_version;
+          this.highlightedJson = this.gromet.modules[0];
+          delete this.highlightedJson.metadata_collection;
+          delete this.highlightedJson.metadata;
+          this.drawMoviz();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    },
   methods: {
     drawMoviz() {
       d3.selectAll('g').remove();
