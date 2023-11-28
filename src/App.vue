@@ -79,7 +79,7 @@ export default {
     return {
       skemaVersion: '',
       url: '',
-      selectedDeep: 2,
+      selectedDeep: 3,
       possibleDepths: [1, 2, 3, 4, 5, 6, 7],
       blockStyle: {
         backgroundColor: 'rgba(255, 255, 120, 0)',
@@ -151,7 +151,7 @@ export default {
     processJson() {
       this.highlightedJson = this.gromet.modules[0];
       this.highlightedJson.fn = {
-        hi_there: "--- Click to expand Moviz ---  0",
+        hi_there: "--- Click <HERE> to expand Moviz ---  0",
         ...this.highlightedJson.fn
       };
       this.getAllChildBody(this.highlightedJson.fn, "0", "0");
@@ -165,7 +165,7 @@ export default {
             let currentNodeNum = objJson.bf[i].body - 1;
             let newRoute = currentRoute + `-${currentNodeNum + 1}`;
             let newAltRoute = altRoute + `-${i}`
-            const clickPrompt = "--- Click to expand Moviz ---  " + newAltRoute;
+            const clickPrompt = "--- Click <HERE> to expand Moviz ---  " + newAltRoute;
             this.routePair[newAltRoute] = newRoute;
             this.highlightedJson.fn_array[currentNodeNum] = {
               hi_there: clickPrompt,
@@ -210,18 +210,18 @@ export default {
         reader.readAsText(this.selectedFile); // 读取文件内容为文本
       }
     },
-    handleMouseOver(event) {
-      if (event.target.tagName === 'g' && event.target.id.startsWith('boxid')) {
-        const parts = event.target.id.split('-');
-        const lastPart = parts.pop();
-        const numberMatch = lastPart.match(/\d+$/); // Matches the last number in a string
-        if (numberMatch) {
-          this.selectedNode = numberMatch[0];
-        } else {
-          this.selectedNode = null;
-        }
-      }
-    },
+    // handleMouseOver(event) {
+    //   if (event.target.tagName === 'g' && event.target.id.startsWith('boxid')) {
+    //     const parts = event.target.id.split('-');
+    //     const lastPart = parts.pop();
+    //     const numberMatch = lastPart.match(/\d+$/); // Matches the last number in a string
+    //     if (numberMatch) {
+    //       this.selectedNode = numberMatch[0];
+    //     } else {
+    //       this.selectedNode = null;
+    //     }
+    //   }
+    // },
     handleMouseOverDelegate(event) {
       const target = event.target;
       if (target.id && target.id.startsWith('frame')) {
@@ -268,8 +268,8 @@ export default {
     },
     jsonClick() {
       let spanText = event.target.textContent;
-      let prefix = "--- Click to expand Moviz ---  ";
-      if (spanText.startsWith('\"--- Click to expand Moviz ---')) {
+      let prefix = "--- Click <HERE> to expand Moviz ---  ";
+      if (spanText.startsWith('\"--- Click <HERE> to expand Moviz ---')) {
         let numbersString = spanText.replace(prefix, "").trim();
         let trimmedNum = numbersString.replace(/^['"]+|['"]+$/g, '');
         let routeNumbers = trimmedNum.split('-').map(Number);
@@ -284,6 +284,39 @@ export default {
             this.triggerClickEvent(boxId, nodeId);
             currentBox = currentBox + "-" + String(altRouteNumbers[i]);
           }
+        }
+        const target = d3.select('#mainsvg').select("#sumGroup").select("#boxid"+currentBox).select("#frame"+currentBox);
+        const svgContainer = d3.select('#mainsvg');
+        svgContainer.selectAll("#highlightRect").remove();
+        this.selectedNode = altRouteNumbers[altRouteNumbers.length - 1];
+        if (this.selectedNode === 0 || this.selectedNode === '0') {
+          this.highlightNode = ['res.fn'];
+        } else {
+          this.highlightNode = [`res.fn_array[${this.selectedNode - 1}]`];
+        }
+        if (this.selectedNode !== null) {
+          const increasedWidth = Number(target.attr("width")) + 7;
+          const increasedHeight = Number(target.attr("height")) + 7;
+
+          const parentD3Selection = d3.select('#mainsvg').select("#boxid"+currentBox);
+          const rectSelection = parentD3Selection.append('rect');
+          rectSelection
+            .attr('id', 'highlightRect')
+            .attr('x', Number(target.attr("x")) - 3.5)
+            .attr('y', Number(target.attr("y")) - 3.5)
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .attr('width', increasedWidth)
+            .attr('height', increasedHeight)
+            .style("fill", "none")
+            .style("stroke", "red")
+            .style("stroke-width", 38)
+            .style("stroke-opacity", 0.2);
+
+          // Add event listener to remove the rectangle on mouseout using D3
+          // d3.select(target).on('mouseout', () => {
+          //   parentD3Selection.select('#highlightRect').remove();
+          // });
         }
       }
     },

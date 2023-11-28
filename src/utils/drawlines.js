@@ -587,15 +587,15 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
     }
     let path1 = g.select("#path1")
     .datum(data1)
-    .transition()
-    .duration(0)
+    .transition('transition10')
+    .duration(720)
     .attr("d", area1)
     .attr("fill", color);
 
     let path2 = g.select("#path2")
     .datum(data2)
-    .transition()
-    .duration(0)
+    .transition('transition11')
+    .duration(720)
     .attr("d", area2)
     .attr("fill", color);
 
@@ -610,16 +610,16 @@ export function updateLines(sourceid, targetid, locationTransform, body_num_sour
           const targetXforSL= Number(d3.select("#" + targetid).attr('x')) + locationTransform[0];
           const targetYforSL = Number(d3.select("#" + targetid).attr('y')) + locationTransform[1] + Number(d3.select("#" + targetid).attr('height')) / 2;
           g.select("circle")
-            .transition()
-            .duration(0)
+            .transition('transition12')
+            .duration(720)
             .attr("cx", targetXforSL)
             .attr("cy", targetYforSL)
             .attr("r", 7)  // 设置圆的半径
             .attr("fill", color);  // 设置圆的颜色
 
           g.select("line")
-            .transition()
-            .duration(0)
+            .transition('transition13')
+            .duration(720)
             .attr("x1", sourceXforSL)
             .attr("y1", sourceYforSL)
             .attr("x2", targetXforSL)
@@ -706,8 +706,8 @@ export function updateLinesDashArrow(treeLayout, sourceID, targetID, color, labe
   }
   const g = d3.select('svg').select('#sumGroup').select("#" + lineID);
   g.select("line")
-    .transition()
-    .duration(0)
+    .transition('transition14')
+    .duration(720)
     .attr("x1", sourceX)
     .attr("y1", sourceY)
     .attr("x2", targetX)
@@ -720,8 +720,8 @@ export function updateLinesDashArrow(treeLayout, sourceID, targetID, color, labe
   let midX = (sourceX + targetX) / 2 - 45;
   let midY = (sourceY + targetY) / 2 - 5;
   g.select("text")
-    .transition()
-    .duration(0)
+    .transition('transition15')
+    .duration(720)
     .attr("x", midX)
     .attr("y", midY)
     .text(label)

@@ -9,9 +9,9 @@ import * as d3 from "d3";
 
 export function handleClick(fnS, body, body_num, sourceid, color, clicked, direction) {
   console.log(direction, "direction");
-  const transitionTime1 = 0;
-  const transitionTime2 = 0;
-  const transitionTime3 = 0;
+  const transitionTime1 = 920;
+  const transitionTime2 = 720;
+  const transitionTime3 = 200;
   const openFlag = d3.select("#boxid" + String(body_num)).select("#" + String(sourceid));
   // console.log(openFlag.attr("data-opened"));
   if (clicked || openFlag.attr("data-opened") === "true") {
@@ -30,7 +30,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
         const node2Parts = node2.split('-');
         if (arraysAreEqual(node1Parts, deleteParts)) {
           d3.select(this)
-            .transition()        // 开始一个过渡
+            .transition('transition1')        // 开始一个过渡
             .duration(transitionTime3)      // 设置过渡的持续时间
             .style('opacity', 0) // 逐渐变透明
             .end()
@@ -42,7 +42,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
           const firstNParts = node1Parts.slice(0, deleteParts.length);
           if (JSON.stringify(firstNParts) === JSON.stringify(deleteParts)) {
             d3.select(this)
-            .transition()        // 开始一个过渡
+            .transition('transition2')        // 开始一个过渡
             .duration(transitionTime3)      // 设置过渡的持续时间
             .style('opacity', 0) // 逐渐变透明
             .end()
@@ -55,7 +55,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
         if (!deleteFlag) {
           if (arraysAreEqual(node2Parts, deleteParts)) {
             d3.select(this)
-            .transition()        // 开始一个过渡
+            .transition('transition3')        // 开始一个过渡
             .duration(transitionTime3)      // 设置过渡的持续时间
             .style('opacity', 0) // 逐渐变透明
             .end()
@@ -66,7 +66,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
             const firstNParts = node2Parts.slice(0, deleteParts.length);
             if (JSON.stringify(firstNParts) === JSON.stringify(deleteParts)) {
               d3.select(this)
-            .transition()        // 开始一个过渡
+            .transition('transition4')        // 开始一个过渡
             .duration(transitionTime3)      // 设置过渡的持续时间
             .style('opacity', 0) // 逐渐变透明
             .end()
@@ -80,7 +80,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
         const GIDParts = GID.split('-');
         if (arraysAreEqual(GIDParts, deleteParts)) {
           d3.select(this)
-            .transition()        // 开始一个过渡
+            .transition('transition5')        // 开始一个过渡
             .duration(transitionTime3)      // 设置过渡的持续时间
             .style('opacity', 0) // 逐渐变透明
             .end()
@@ -91,7 +91,7 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
           const firstNParts = GIDParts.slice(0, deleteParts.length);
           if (JSON.stringify(firstNParts) === JSON.stringify(deleteParts)) {
             d3.select(this)
-            .transition()        // 开始一个过渡
+            .transition('transition6')        // 开始一个过渡
             .duration(transitionTime3)      // 设置过渡的持续时间
             .style('opacity', 0) // 逐渐变透明
             .end()
@@ -143,12 +143,12 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
           .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5})`)
           .attr("opacity", 0);
         d3.select(this)
-          .transition()
+          .transition('transition7')
           .duration(transitionTime1)
           .style("opacity", 1);
       } else {
         d3.select(this)
-          .transition()
+          .transition('transition8')
           .duration(transitionTime2)
           .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5})`);
       }
@@ -234,8 +234,8 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
         nodeID = nodeID.replace("line", "");
         nodeID = nodeID.split('_')[0];
         d3.select(this)
-          .transition()
-          .duration(0)
+          .transition('transition9')
+          .duration(720)
           .attr("transform", `translate(${treeLayout[nodeID][0] + padding},${treeLayout[nodeID][1] + padding *7.5})`);
       }
     }
