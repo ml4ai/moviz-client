@@ -141,7 +141,11 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         }
       }
       else if (isPofNode || isPifNode || isOpiNode || isOpoNode || isPicNode || isPocNode || isPilNode || isPolNode) {
-        drawPorts(node, nodeId, g, "black");
+        if (node.label==="err") {
+          drawPorts(node, nodeId, g, "red", "red");
+        } else {
+          drawPorts(node, nodeId, g, "black");
+        }
       }
     }
     // 绘制箭头
@@ -621,14 +625,14 @@ function drawLiteral_nfull(node, nodeId, g, color, ranksep) {
   }
 }
 
-function drawPorts(node, nodeId, g, color) {
+function drawPorts(node, nodeId, g, color, fill="white") {
   g.append("rect")
     .attr("id", nodeId)
     .attr("x", node.x - node.width / 2)
     .attr("y", node.y - node.height / 2)
     .attr("width", node.width)
     .attr("height", node.height)
-    .style("fill", "white")
+    .style("fill", fill)
     .style("stroke", color)
     .style("stroke-width", 2);
     if (node.label !== undefined){
