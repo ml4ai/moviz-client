@@ -115,6 +115,8 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
               drawLiteral_full(node, nodeId, g, "red", ranksep);
             } else if (node.type == "LANGUAGE_PRIMITIVE") {
               drawLPrimitive_full(node, nodeId, g, "red", ranksep);
+            } else if (node.type == "ABSTRACT") {
+              drawBFs_full(node, nodeId, g, "yellow", ranksep);
             } else if (node.type == "IMPORTED") {
               const imported = true;
               drawBFs_full(node, nodeId, g, "gray", ranksep, fnS, body_num, realOuterBox, imported);
@@ -131,6 +133,8 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
             drawLiteral_nfull(node, nodeId, g, "red", ranksep);
           } else if (node.type == "LANGUAGE_PRIMITIVE") {
             drawLPrimitive_nfull(node, nodeId, g, "red", ranksep);
+          } else if (node.type == "ABSTRACT") {
+            drawBFs_nfull(node, nodeId, g, "yellow", ranksep);
           } else if (node.type == "IMPORTED") {
             const imported = true;
             drawBFs_nfull(node, nodeId, g, "gray", ranksep, fnS, body_num, realOuterBox, imported);
@@ -208,6 +212,8 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "green", body_num);
       } else if (layout.meta.type === "PREDICATE") {
         drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "Magenta", body_num);
+      } else if (layout.meta.type == "ABSTRACT") {
+        drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "yellow", body_num);
       } else if (layout.meta.type === "IMPORTED") {
         const imported = true;
         drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "gray", body_num, imported);
@@ -224,6 +230,8 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "green", body_num);
       } else if (layout.meta.type === "PREDICATE") {
         drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "Magenta", body_num);
+      } else if (layout.meta.type == "ABSTRACT") {
+        drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "yellow", body_num);
       } else if (layout.meta.type === "IMPORTED") {
         const imported = true;
         drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "gray", body_num, imported);
@@ -240,6 +248,8 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "green", body_num);
       } else if (layout.meta.type === "PREDICATE") {
         drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "Magenta", body_num);
+      } else if (layout.meta.type == "ABSTRACT") {
+        drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "yellow", body_num);
       } else if (layout.meta.type === "IMPORTED") {
         const imported = true;
         drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "gray", body_num, imported);
@@ -256,6 +266,8 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "green", body_num);
       } else if (layout.meta.type === "PREDICATE") {
         drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "Magenta", body_num);
+      } else if (layout.meta.type == "ABSTRACT") {
+        drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "yellow", body_num);
       } else if (layout.meta.type === "IMPORTED") {
         const imported = true;
         drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "gray", body_num, imported);

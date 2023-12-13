@@ -154,7 +154,7 @@ export default {
         currentFN = fnS[this.startingFN-1];
       }
       const layout = getBoxLayout(currentFN);
-      drawBox(layout, fnS, currentFN);
+      drawBox(layout, fnS, 0);
       // test
       // drawBox(getBoxLayout(fnS[104]), fnS, 0);
       // console.log(fnS[104]);
