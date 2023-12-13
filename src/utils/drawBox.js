@@ -115,6 +115,12 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
               drawLiteral_full(node, nodeId, g, "red", ranksep);
             } else if (node.type == "LANGUAGE_PRIMITIVE") {
               drawLPrimitive_full(node, nodeId, g, "red", ranksep);
+            } else if (node.type == "IMPORTED") {
+              const imported = true;
+              drawBFs_full(node, nodeId, g, "gray", ranksep, fnS, body_num, realOuterBox, imported);
+            } else if (node.type == "IMPORTED_METHOD") {
+              const imported = true;
+              drawBFs_full(node, nodeId, g, "purple", ranksep, fnS, body_num, realOuterBox, imported);
             }
         } else {
           if (node.type == "FUNCTION") {
@@ -125,6 +131,12 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
             drawLiteral_nfull(node, nodeId, g, "red", ranksep);
           } else if (node.type == "LANGUAGE_PRIMITIVE") {
             drawLPrimitive_nfull(node, nodeId, g, "red", ranksep);
+          } else if (node.type == "IMPORTED") {
+            const imported = true;
+            drawBFs_nfull(node, nodeId, g, "gray", ranksep, fnS, body_num, realOuterBox, imported);
+          } else if (node.type == "IMPORTED_METHOD") {
+            const imported = true;
+            drawBFs_nfull(node, nodeId, g, "purple", ranksep, fnS, body_num, realOuterBox, imported);
           }
         }
       } else if (isBcNode) {
@@ -196,6 +208,12 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "green", body_num);
       } else if (layout.meta.type === "PREDICATE") {
         drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "Magenta", body_num);
+      } else if (layout.meta.type === "IMPORTED") {
+        const imported = true;
+        drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "gray", body_num, imported);
+      } else if (layout.meta.type === "IMPORTED_METHOD") {
+        const imported = true;
+        drawOuterBoxFull(g, bbox, width, height, padding, ranksep, "purple", body_num, imported);
       }
     } else if ('opo-0' in nodes && !('opi-0' in nodes)) {
       if (layout.meta.type === "MODULE"){
@@ -206,6 +224,12 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "green", body_num);
       } else if (layout.meta.type === "PREDICATE") {
         drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "Magenta", body_num);
+      } else if (layout.meta.type === "IMPORTED") {
+        const imported = true;
+        drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "gray", body_num, imported);
+      } else if (layout.meta.type === "IMPORTED_METHOD") {
+        const imported = true;
+        drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, "purple", body_num, imported);
       }
     } else if (!('opo-0' in nodes) && 'opi-0' in nodes) {
       if (layout.meta.type === "MODULE"){
@@ -216,6 +240,12 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "green", body_num);
       } else if (layout.meta.type === "PREDICATE") {
         drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "Magenta", body_num);
+      } else if (layout.meta.type === "IMPORTED") {
+        const imported = true;
+        drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "gray", body_num, imported);
+      } else if (layout.meta.type === "IMPORTED_METHOD") {
+        const imported = true;
+        drawOuterBoxTop(g, bbox, width, height, padding, ranksep, "purple", body_num, imported);
       }
     } else {
       if (layout.meta.type === "MODULE"){
@@ -226,6 +256,12 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
         drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "green", body_num);
       } else if (layout.meta.type === "PREDICATE") {
         drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "Magenta", body_num);
+      } else if (layout.meta.type === "IMPORTED") {
+        const imported = true;
+        drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "gray", body_num, imported);
+      } else if (layout.meta.type === "IMPORTED_METHOD") {
+        const imported = true;
+        drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, "purple", body_num, imported);
       }
     }
     g.attr("width", g.node().getBBox().width)
@@ -235,7 +271,7 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
     }
   }
 
-function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
+function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox="right", imported=false) {
   let clicked = false;
   let node_body = null;
   if (node.body !== undefined) {
@@ -268,6 +304,9 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   .style("stroke", color)
   .style("cursor", "pointer")
   .style("stroke-width", 5);
+  if (imported) {
+    selection.style("stroke-dasharray", "10, 5");
+  }
   if (node.label !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x)
@@ -286,10 +325,14 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
   }
 }
 
-function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "right") {
+function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "right", imported = false) {
   let node_body = null;
   if (node.body !== undefined) {
     node_body = node.body;
+  }
+  if (imported===true) {
+    console.log(node);
+    console.log(node.body);
   }
   let clicked = false;
   const outerRight = bbox.x + bbox.width;
@@ -315,6 +358,9 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "r
   .style("cursor", "pointer")
   .style("stroke", color)
   .style("stroke-width", 5);
+  if (imported) {
+    selection.style("stroke-dasharray", "10, 5");
+  }
   if (node.label !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x)
@@ -658,9 +704,9 @@ function drawPorts(node, nodeId, g, color, fill="white") {
     }
 }
 
-function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_num) {
+function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_num, imported=false) {
   // 绘制外框
-  g.insert("rect", ":first-child")
+  const selection = g.insert("rect", ":first-child")
   .attr("id", "frame" + body_num)
   .attr("x", bbox.x - padding)
   .attr("y", bbox.y - padding + ranksep)
@@ -672,11 +718,14 @@ function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_
   .style("stroke", color)
   .style("stroke-width", 5)
   .lower();
+  if (imported) {
+    selection.style("stroke-dasharray", "10,5");
+  }
 }
 
-function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, body_num) {
+function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, body_num, imported=false) {
   // 绘制外框
-  g.insert("rect", ":first-child")
+  const selection = g.insert("rect", ":first-child")
     .attr("id", "frame" + body_num)
     .attr("x", bbox.x - padding)
     .attr("y", bbox.y - padding - ranksep / 10)
@@ -688,11 +737,14 @@ function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, bod
     .style("stroke", color)
     .style("stroke-width", 5)
     .lower();
+    if (imported) {
+      selection.style("stroke-dasharray", "10,5");
+    }
 }
 
-function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_num) {
+function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_num, imported=false) {
   // 绘制外框
-  g.insert("rect", ":first-child")
+  const selection = g.insert("rect", ":first-child")
     .attr("id", "frame" + body_num)
     .attr("x", bbox.x - padding)
     .attr("y", bbox.y - padding + ranksep * 2)
@@ -704,11 +756,20 @@ function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_n
     .style("stroke", color)
     .style("stroke-width", 5)
     .lower();
+    if (imported) {
+      selection.style("stroke-dasharray", "10,5");
+    }
 }
 
-function drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, color, body_num) {
+function drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, color, body_num, imported=false) {
   // 绘制外框
-  g.insert("rect", ":first-child")
+  if (bbox.x===Infinity || bbox.x === -Infinity){
+    bbox.x = 100;
+    bbox.y = 100;
+    width = 200;
+    height = 200;
+  }
+  const selection = g.insert("rect", ":first-child")
     .attr("id", "frame" + body_num)
     .attr("x", bbox.x - padding)
     .attr("y", bbox.y - padding)
@@ -720,5 +781,8 @@ function drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, color, body
     .style("stroke", color)
     .style("stroke-width", 5)
     .lower();
+    if (imported) {
+      selection.style("stroke-dasharray", "10,5");
+    }
 }
   
