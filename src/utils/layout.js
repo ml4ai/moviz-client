@@ -17,7 +17,8 @@ export function getBoxLayout(data) {
       const type = node.function_type;
       const value = node.value;
       const body = node.body;
-      graph.setNode(nodeId, { label, value, type, body });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, value, type, body,metadata });
       // add auxi node for each bf
       const auxLabel = 'aux';
       const width = 1;
@@ -35,7 +36,8 @@ export function getBoxLayout(data) {
       const label = node.name;
       const width = 50;
       const height = 50;
-      graph.setNode(nodeId, { label, width, height });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
       graph.setParent(nodeId, `bf-${node.box - 1}`);
     }
   }
@@ -48,7 +50,8 @@ export function getBoxLayout(data) {
       const label = node.name;
       const width = 50;
       const height = 50;
-      graph.setNode(nodeId, { label, width, height });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
       graph.setParent(nodeId, `bf-${node.box - 1}`);
     }
   }
@@ -61,7 +64,8 @@ export function getBoxLayout(data) {
       const label = node.name;
       const width = 50;
       const height = 50;
-      graph.setNode(nodeId, { label, width, height });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
       // graph.setParent(nodeId, `bf-${node.box - 1}`);
     }
   }
@@ -74,7 +78,8 @@ export function getBoxLayout(data) {
       const label = node.name;
       const width = 50;
       const height = 50;
-      graph.setNode(nodeId, { label, width, height });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
       // graph.setParent(nodeId, `bf-${node.box - 1}`);
     }
   }
@@ -231,7 +236,8 @@ export function getBoxLayout(data) {
       const condition = node.condition;
       const body_if = node.body_if;
       const body_else = node.body_else;
-      graph.setNode(nodeId, { label, value, type, condition, body_if, body_else });
+      const metadata = node.metadata; 
+      graph.setNode(nodeId, { label, value, type, condition, body_if, body_else, metadata });
       // add auxi node for each bc
       const auxLabel = 'aux';
       const width = 1;
@@ -249,7 +255,8 @@ export function getBoxLayout(data) {
       const label = node.name;
       const width = 50;
       const height = 50;
-      graph.setNode(nodeId, { label, width, height });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
       graph.setParent(nodeId, `bc-${node.box - 1}`);
     }
   }
@@ -262,7 +269,8 @@ export function getBoxLayout(data) {
       const label = node.name;
       const width = 50;
       const height = 50;
-      graph.setNode(nodeId, { label, width, height });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
       graph.setParent(nodeId, `bc-${node.box - 1}`);
     }
   }
@@ -454,7 +462,8 @@ export function getBoxLayout(data) {
       const pre = node.pre;
       const body = node.body;
       const post = node.post;
-      graph.setNode(nodeId, { label, value, type, condition, pre, body, post });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, value, type, condition, pre, body, post, metadata });
       // add auxi node for each bl
       const auxLabel = 'aux';
       const width = 1;
@@ -472,7 +481,8 @@ export function getBoxLayout(data) {
       const label = node.name;
       const width = 50;
       const height = 50;
-      graph.setNode(nodeId, { label, width, height });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
       graph.setParent(nodeId, `bl-${node.box - 1}`);
     }
   }
@@ -485,7 +495,8 @@ export function getBoxLayout(data) {
       const label = node.name;
       const width = 50;
       const height = 50;
-      graph.setNode(nodeId, { label, width, height });
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
       graph.setParent(nodeId, `bl-${node.box - 1}`);
     }
   }
@@ -844,7 +855,8 @@ export function getBoxLayout(data) {
       body_if: node.body_if,
       body_else: node.body_else,
       pre: node.pre,
-      post: node.post
+      post: node.post,
+      metadata: node.metadata
     };
   });
   graph.edges().forEach((edge, i) => {
@@ -910,6 +922,7 @@ export function getBoxLayout(data) {
   layout.meta.name = data.b[0].name;
   layout.meta.identifier = `${data.b[0].function_type}-${data.b[0].metadata}`;
   layout.meta.type = data.b[0].function_type;
+  layout.meta.metadata = data.b[0].metadata;
   return layout;
 }
 

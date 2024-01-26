@@ -166,8 +166,15 @@ export default {
         ...this.highlightedJson.fn
       };
       this.getAllChildBody(this.highlightedJson.fn, "0", "0");
-      delete this.highlightedJson.metadata_collection;
-      delete this.highlightedJson.metadata;
+      for (let i=0; i<this.highlightedJson.metadata_collection.length;i++) {
+        const currentNum = i+1;
+        this.highlightedJson.metadata_collection[i] = {
+          num: "#" + currentNum,
+          ...this.highlightedJson.metadata_collection[i]
+        };
+      }
+      // delete this.highlightedJson.metadata_collection;
+      // delete this.highlightedJson.metadata;
       for (let i=0; i<this.highlightedJson.fn_array.length;i++) {
         const currentEntry = i+1;
         this.highlightedJson.fn_array[i] = {
