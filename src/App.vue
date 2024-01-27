@@ -50,6 +50,7 @@
         </vue-json-pretty>
       </div>
       <div class="svg-container">
+        <div id="tooltip" class="tooltip" style="opacity: 0;"></div>
         <!-- <svg width="100" height="100">
           <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" :fill="svgColor"/>
         </svg> -->
@@ -71,7 +72,9 @@ import VueJsonPretty from 'vue-json-pretty-highlight-row';
 import 'vue-json-pretty-highlight-row/lib/styles.css';
 import { getBoxLayout } from './utils/layout';
 import { drawBox } from './utils/drawBox';
-
+import { setGromet } from './utils/global.js';
+// import Vue from 'vue';
+// Vue.prototype.$gromet = { data: null };
 export default {
   name: 'App',
   components: {
@@ -147,12 +150,14 @@ export default {
         .on('zoom', handleZoom);
       svg.call(zoom);
       const graphData = this.gromet.modules[0];
+      setGromet(graphData);
       const fn0 = graphData.fn;
       const fnS = graphData.fn_array;
       let currentFN = fn0;
       if (this.startingFN !== 0){
         currentFN = fnS[this.startingFN-1];
       }
+      // console.log(graphData)
       const layout = getBoxLayout(currentFN);
       drawBox(layout, fnS, 0);
       // test
@@ -548,4 +553,18 @@ pre {
 span {
     text-align: left !important;
 }
+
+.tooltip {
+  position: absolute;
+  text-align: left;
+  width: auto;
+  height: auto;
+  padding: 5px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none; /* 确保用户可以与下面的元素交互 */
+}
+
 </style>

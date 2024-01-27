@@ -3,14 +3,17 @@ import * as d3 from "d3";
 import { handleClick } from "./click";
 import { handleClickCond, handleClickLoop } from "./clickCond";
 import { computeBoundingRectangle, getOuterBox } from "./utilities"
+import { getGromet } from './global.js';
 
 export function drawBox(layout, fnS, body_num, directionO = "right") {
+  // console.log(this.$gromet)
     // 创建SVG元素
     // debugger
     const svg = d3.select("#mainsvg").select("#sumGroup");
     const g = svg.append("g").attr('id', "boxid" + String(body_num)).attr("class", "drawer").attr("direction", directionO);
     const ranksep = 37;
     const padding = 22.5; // 设置padding的大小
+
     // 绘制节点
     const nodes = layout.nodes;
     console.log(layout)
@@ -330,6 +333,9 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox="righ
     .style("font-size", "12px")
     .text(node.label);
   }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
   if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 17)
@@ -337,7 +343,17 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox="righ
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata)
+    .on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });
   }
   if (node.body !== undefined) {
     selection.on("click", function(){
@@ -393,6 +409,9 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "r
     .style("font-size", "12px")
     .text(node.label);
   }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
   if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 17)
@@ -400,7 +419,17 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "r
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata)
+    .on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });
   }
   if (node.body !== undefined) {
     selection.on("click", function(){
@@ -448,6 +477,9 @@ function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .style("font-size", "12px")
     .text(node.label);
   }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
   if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 17)
@@ -455,7 +487,17 @@ function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata)
+    .on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });;
   }
   if (node.condition !== undefined) {
     selection.on("click", function(){
@@ -503,6 +545,9 @@ function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .style("font-size", "12px")
     .text(node.label);
   }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
   if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 17)
@@ -510,7 +555,17 @@ function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata)
+    .on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });;
   }
   if (node.body !== undefined) {
     selection.on("click", function(){
@@ -558,6 +613,9 @@ function drawBLs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .style("font-size", "12px")
     .text(node.label);
   }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
   if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 17)
@@ -565,7 +623,17 @@ function drawBLs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata)
+    .on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });;
   }
   if (node.condition !== undefined) {
     selection.on("click", function(){
@@ -613,6 +681,9 @@ function drawBLs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .style("font-size", "12px")
     .text(node.label);
   }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
   if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 17)
@@ -620,7 +691,16 @@ function drawBLs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata).on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });;
   }
   if (node.body !== undefined) {
     selection.on("click", function(){
@@ -650,6 +730,9 @@ function drawLiteral_full(node, nodeId, g, color, ranksep) {
     .style("font-size", "12px")
     .text(node.label);
   }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
   if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 17)
@@ -657,7 +740,16 @@ function drawLiteral_full(node, nodeId, g, color, ranksep) {
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata).on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });;
   }
   if (node.value !== undefined){
     g.append("text") // 添加节点的label
@@ -688,14 +780,27 @@ function drawLPrimitive_full(node, nodeId, g, color, ranksep) {
     .attr("dominant-baseline", "middle")
     .style("font-size", "20px")
     .text(node.label);
-  }if (node.metadata !== undefined){
+  }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
+  if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 17)
     .attr("y", node.y - node.height / 2 + ranksep + 17 )
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata).on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });;
   }
   if (node.value !== undefined){
     g.append("text") // 添加节点的label
@@ -726,14 +831,27 @@ function drawLPrimitive_nfull(node, nodeId, g, color, ranksep) {
     .attr("dominant-baseline", "middle")
     .style("font-size", "12px")
     .text(node.label);
-  }if (node.metadata !== undefined){
+  }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
+  if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 17)
     .attr("y", node.y - node.height / 2 - ranksep + 17 )
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata).on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });;
   }
   if (node.value !== undefined){
     g.append("text") // 添加节点的label
@@ -764,14 +882,27 @@ function drawLiteral_nfull(node, nodeId, g, color, ranksep) {
     .attr("dominant-baseline", "middle")
     .style("font-size", "12px")
     .text(node.label);
-  }if (node.metadata !== undefined){
+  }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
+  if (node.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", node.x + node.width / 2 - 27)
     .attr("y", node.y - node.height / 2 - ranksep + 17 )
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
-    .text(node.metadata);
+    .text(node.metadata).on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });;
   }
   if (node.value !== undefined){
     g.append("text") // 添加节点的label
@@ -794,6 +925,9 @@ function drawPorts(node, nodeId, g, color, fill="white") {
     .style("fill", fill)
     .style("stroke", color)
     .style("stroke-width", 2);
+    var tooltip = d3.select("#tooltip");
+    const gromet = getGromet();
+    const metadata_collection = gromet.metadata_collection;
     if (node.metadata !== undefined){
       g.append("text") // 添加节点的label
       .attr("x", node.x + node.width / 2 - 12)
@@ -801,7 +935,16 @@ function drawPorts(node, nodeId, g, color, fill="white") {
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .style("font-size", "15px")
-      .text(node.metadata);
+      .text(node.metadata).on("mouseover", function(d) {
+        var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+        tooltip.style("opacity", 0.9)
+              .html("<pre>" + formattedJson + "</pre>")
+              .style("left", "0px") // 在text宽度的基础上加上一些偏移
+              .style("top", "70px");
+      })
+      .on("mouseout", function(d) {
+        tooltip.style("opacity", 0);
+      });;
     }
     if (node.label !== undefined){
       g.append("text") // 添加节点的label
@@ -831,6 +974,9 @@ function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_
   if (imported) {
     selection.style("stroke-dasharray", "10,5");
   }
+  var tooltip = d3.select("#tooltip");
+  const gromet = getGromet();
+  const metadata_collection = gromet.metadata_collection;
   if (layout.meta.metadata !== undefined){
     g.append("text") // 添加节点的label
     .attr("x", bbox.x - padding + (width - 2*padding) - 17)
@@ -838,7 +984,16 @@ function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "17px")
-    .text(layout.meta.metadata);
+    .text(layout.meta.metadata).on("mouseover", function(d) {
+      var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata], null, 2);
+      tooltip.style("opacity", 0.9)
+            .html("<pre>" + formattedJson + "</pre>")
+            .style("left", "0px") // 在text宽度的基础上加上一些偏移
+            .style("top", "70px");
+    })
+    .on("mouseout", function(d) {
+      tooltip.style("opacity", 0);
+    });;
   }
 }
 
@@ -856,6 +1011,9 @@ function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, bod
     .style("stroke", color)
     .style("stroke-width", 5)
     .lower();
+    var tooltip = d3.select("#tooltip");
+    const gromet = getGromet();
+    const metadata_collection = gromet.metadata_collection;
     if (layout.meta.metadata !== undefined){
       g.append("text") // 添加节点的label
       .attr("x", bbox.x - padding + (width - 2*padding) - 17)
@@ -863,7 +1021,16 @@ function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, bod
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .style("font-size", "17px")
-      .text(layout.meta.metadata);
+      .text(layout.meta.metadata).on("mouseover", function(d) {
+        var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata], null, 2);
+        tooltip.style("opacity", 0.9)
+              .html("<pre>" + formattedJson + "</pre>")
+              .style("left", "0px") // 在text宽度的基础上加上一些偏移
+              .style("top", "70px");
+      })
+      .on("mouseout", function(d) {
+        tooltip.style("opacity", 0);
+      });;
     }
     if (imported) {
       selection.style("stroke-dasharray", "10,5");
@@ -884,6 +1051,9 @@ function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_n
     .style("stroke", color)
     .style("stroke-width", 5)
     .lower();
+    var tooltip = d3.select("#tooltip");
+    const gromet = getGromet();
+    const metadata_collection = gromet.metadata_collection;
     if (layout.meta.metadata !== undefined){
       g.append("text") // 添加节点的label
       .attr("x", bbox.x - padding + (width - 2*padding) - 17)
@@ -891,7 +1061,16 @@ function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_n
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .style("font-size", "17px")
-      .text(layout.meta.metadata);
+      .text(layout.meta.metadata).on("mouseover", function(d) {
+        var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata], null, 2);
+        tooltip.style("opacity", 0.9)
+              .html("<pre>" + formattedJson + "</pre>")
+              .style("left", "0px") // 在text宽度的基础上加上一些偏移
+              .style("top", "70px");
+      })
+      .on("mouseout", function(d) {
+        tooltip.style("opacity", 0);
+      });;
     }
     if (imported) {
       selection.style("stroke-dasharray", "10,5");
@@ -918,6 +1097,9 @@ function drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, color, body
     .style("stroke", color)
     .style("stroke-width", 5)
     .lower();
+    var tooltip = d3.select("#tooltip");
+    const gromet = getGromet();
+    const metadata_collection = gromet.metadata_collection;
     if (layout.meta.metadata !== undefined){
       g.append("text") // 添加节点的label
       .attr("x", bbox.x - padding + (width - 2*padding) - 17)
@@ -925,7 +1107,16 @@ function drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, color, body
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .style("font-size", "17px")
-      .text(layout.meta.metadata);
+      .text(layout.meta.metadata).on("mouseover", function(d) {
+        var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata], null, 2);
+        tooltip.style("opacity", 0.9)
+              .html("<pre>" + formattedJson + "</pre>")
+              .style("left", "0px") // 在text宽度的基础上加上一些偏移
+              .style("top", "70px");
+      })
+      .on("mouseout", function(d) {
+        tooltip.style("opacity", 0);
+      });;
     }
     if (imported) {
       selection.style("stroke-dasharray", "10,5");
