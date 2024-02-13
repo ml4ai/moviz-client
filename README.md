@@ -2,7 +2,7 @@
 
 > moviz client version
 
-Try [`Online Demo`](https://hconhisway.github.io/moviz-client/#/).
+Try [`Online Demo`](https://ml4ai.github.io/moviz-client/#/).
 
 ## Environment Setup
 

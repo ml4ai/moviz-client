@@ -345,7 +345,7 @@ function drawBFs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox="righ
     .style("font-size", "15px")
     .text(node.metadata)
     .on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -421,7 +421,7 @@ function drawBFs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox = "r
     .style("font-size", "15px")
     .text(node.metadata)
     .on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -489,7 +489,7 @@ function drawBCs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .style("font-size", "15px")
     .text(node.metadata)
     .on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -557,7 +557,7 @@ function drawBCs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .style("font-size", "15px")
     .text(node.metadata)
     .on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -625,7 +625,7 @@ function drawBLs_full(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .style("font-size", "15px")
     .text(node.metadata)
     .on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -692,7 +692,7 @@ function drawBLs_nfull(node, nodeId, g, color, ranksep, fnS, body_num, bbox) {
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
     .text(node.metadata).on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -741,7 +741,7 @@ function drawLiteral_full(node, nodeId, g, color, ranksep) {
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
     .text(node.metadata).on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -792,7 +792,7 @@ function drawLPrimitive_full(node, nodeId, g, color, ranksep) {
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
     .text(node.metadata).on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -843,7 +843,7 @@ function drawLPrimitive_nfull(node, nodeId, g, color, ranksep) {
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
     .text(node.metadata).on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -894,7 +894,7 @@ function drawLiteral_nfull(node, nodeId, g, color, ranksep) {
     .attr("dominant-baseline", "middle")
     .style("font-size", "15px")
     .text(node.metadata).on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -936,7 +936,7 @@ function drawPorts(node, nodeId, g, color, fill="white") {
       .attr("dominant-baseline", "middle")
       .style("font-size", "15px")
       .text(node.metadata).on("mouseover", function(d) {
-        var formattedJson = JSON.stringify(metadata_collection[node.metadata], null, 2);
+        var formattedJson = JSON.stringify(metadata_collection[node.metadata-1], null, 2);
         tooltip.style("opacity", 0.9)
               .html("<pre>" + formattedJson + "</pre>")
               .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -985,7 +985,7 @@ function drawOuterBoxFull(g, bbox, width, height, padding, ranksep, color, body_
     .attr("dominant-baseline", "middle")
     .style("font-size", "17px")
     .text(layout.meta.metadata).on("mouseover", function(d) {
-      var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata], null, 2);
+      var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata-1], null, 2);
       tooltip.style("opacity", 0.9)
             .html("<pre>" + formattedJson + "</pre>")
             .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -1022,7 +1022,7 @@ function drawOuterBoxBottom(g, bbox, width, height, padding, ranksep, color, bod
       .attr("dominant-baseline", "middle")
       .style("font-size", "17px")
       .text(layout.meta.metadata).on("mouseover", function(d) {
-        var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata], null, 2);
+        var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata-1], null, 2);
         tooltip.style("opacity", 0.9)
               .html("<pre>" + formattedJson + "</pre>")
               .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -1062,7 +1062,7 @@ function drawOuterBoxTop(g, bbox, width, height, padding, ranksep, color, body_n
       .attr("dominant-baseline", "middle")
       .style("font-size", "17px")
       .text(layout.meta.metadata).on("mouseover", function(d) {
-        var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata], null, 2);
+        var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata-1], null, 2);
         tooltip.style("opacity", 0.9)
               .html("<pre>" + formattedJson + "</pre>")
               .style("left", "0px") // 在text宽度的基础上加上一些偏移
@@ -1108,7 +1108,7 @@ function drawOuterBoxEmpty(g, bbox, width, height, padding, ranksep, color, body
       .attr("dominant-baseline", "middle")
       .style("font-size", "17px")
       .text(layout.meta.metadata).on("mouseover", function(d) {
-        var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata], null, 2);
+        var formattedJson = JSON.stringify(metadata_collection[layout.meta.metadata-1], null, 2);
         tooltip.style("opacity", 0.9)
               .html("<pre>" + formattedJson + "</pre>")
               .style("left", "0px") // 在text宽度的基础上加上一些偏移

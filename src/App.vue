@@ -24,6 +24,11 @@
           Choose File
       </button>
       <button class="btn btn-primary download-button" @click="downloadSVG" >downloadSVG</button>
+
+      <!-- <button
+      :style="{ margin: '0 30px', backgroundColor: 'purple', color: 'white', border: 'none' }"
+      class="btn btn-primary" @click="toggleDraggable">Toggle Draggable
+      </button> -->
     </div>
     <div class="content">
       <div class="editor-box">
@@ -156,10 +161,15 @@ export default {
       let currentFN = fn0;
       if (this.startingFN !== 0){
         currentFN = fnS[this.startingFN-1];
+        const layout = getBoxLayout(currentFN);
+        drawBox(layout, fnS, "0");
+      } else {
+        const layout = getBoxLayout(currentFN);
+        drawBox(layout, fnS, 0);
       }
       // console.log(graphData)
-      const layout = getBoxLayout(currentFN);
-      drawBox(layout, fnS, 0);
+      // const layout = getBoxLayout(currentFN);
+      // drawBox(layout, fnS, 0);
       // test
       // drawBox(getBoxLayout(fnS[104]), fnS, 0);
       // console.log(fnS[104]);
@@ -174,12 +184,45 @@ export default {
       for (let i=0; i<this.highlightedJson.metadata_collection.length;i++) {
         const currentNum = i+1;
         this.highlightedJson.metadata_collection[i] = {
-          num: "#" + currentNum,
+          // num: "#" + currentNum,
           ...this.highlightedJson.metadata_collection[i]
         };
+        if (this.highlightedJson.metadata_collection[i].hasOwnProperty("0")) {
+          delete this.highlightedJson.metadata_collection[i]["0"].metadata_type;
+          delete this.highlightedJson.metadata_collection[i]["0"].source_language;
+          delete this.highlightedJson.metadata_collection[i]["0"].source_language_version;
+          delete this.highlightedJson.metadata_collection[i]["0"].data_type;
+          delete this.highlightedJson.metadata_collection[i]["0"].provenance;
+          delete this.highlightedJson.metadata_collection[i]["0"].col_begin;
+          delete this.highlightedJson.metadata_collection[i]["0"].col_end;
+          delete this.highlightedJson.metadata_collection[i]["0"].code_file_reference_uid;
+        }
+        if (this.highlightedJson.metadata_collection[i].hasOwnProperty("1")) {
+          delete this.highlightedJson.metadata_collection[i]["1"].metadata_type;
+          delete this.highlightedJson.metadata_collection[i]["1"].source_language;
+          delete this.highlightedJson.metadata_collection[i]["1"].source_language_version;
+          delete this.highlightedJson.metadata_collection[i]["1"].data_type;
+          delete this.highlightedJson.metadata_collection[i]["1"].provenance;
+          delete this.highlightedJson.metadata_collection[i]["1"].col_begin;
+          delete this.highlightedJson.metadata_collection[i]["1"].col_end;
+          delete this.highlightedJson.metadata_collection[i]["1"].code_file_reference_uid;
+        }
+        if (this.highlightedJson.metadata_collection[i].hasOwnProperty("2")) {
+          delete this.highlightedJson.metadata_collection[i]["2"].metadata_type;
+          delete this.highlightedJson.metadata_collection[i]["2"].source_language;
+          delete this.highlightedJson.metadata_collection[i]["2"].source_language_version;
+          delete this.highlightedJson.metadata_collection[i]["2"].data_type;
+          delete this.highlightedJson.metadata_collection[i]["2"].provenance;
+          delete this.highlightedJson.metadata_collection[i]["2"].col_begin;
+          delete this.highlightedJson.metadata_collection[i]["2"].col_end;
+          delete this.highlightedJson.metadata_collection[i]["2"].code_file_reference_uid;
+        }
       }
       // delete this.highlightedJson.metadata_collection;
       // delete this.highlightedJson.metadata;
+      // for (let i=0; i<this.highlightedJson.metadata_collection.length;i++) {
+
+      // }
       for (let i=0; i<this.highlightedJson.fn_array.length;i++) {
         const currentEntry = i+1;
         this.highlightedJson.fn_array[i] = {
