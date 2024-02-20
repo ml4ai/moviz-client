@@ -24,6 +24,11 @@
           Choose File
       </button>
       <button class="btn btn-primary download-button" @click="downloadSVG" >downloadSVG</button>
+      <button
+      :style="{ margin: '0 30px', backgroundColor: 'green', color: 'white', border: 'none' }"
+      class="btn btn-primary" @click="showPreviousBox">
+          Previous Box
+      </button>
 
       <!-- <button
       :style="{ margin: '0 30px', backgroundColor: 'purple', color: 'white', border: 'none' }"
@@ -103,6 +108,7 @@ export default {
       path: 'res',
       highlightedJson: null,
       selectedNode: null,
+      // selectedBoxIdNum:null,
       highlightNode: null,
       routePair: {0:"0"},
       routePairC: {0:"0"},
@@ -159,10 +165,63 @@ export default {
       const fn0 = graphData.fn;
       const fnS = graphData.fn_array;
       let currentFN = fn0;
+      console.log(this.routePair)
       if (this.startingFN !== 0){
-        currentFN = fnS[this.startingFN-1];
+        let prefix = "--- Click <HERE> to visualize this FN ---  ";
+        let numbersString = fnS[this.startingFN-1].hi_there.replace(prefix, "").trim();
+        let trimmedNum = numbersString.replace(/^['"]+|['"]+$/g, '');
+        let routeNumbers = trimmedNum.split('-').map(Number);
+        let altRouteNumbers = this.routePair[trimmedNum].split('-').map(Number);
+        let currentBox = "0";
         const layout = getBoxLayout(currentFN);
-        drawBox(layout, fnS, "0");
+        drawBox(layout, fnS, 0);
+        for (let i=0;i<routeNumbers.length;i++) {
+          if (i===0) {
+            continue;
+          } else {
+            let boxId = "boxid" + currentBox;
+            const nodeId = "bf-" + String(routeNumbers[i]);
+            this.triggerClickEvent(boxId, nodeId);
+            currentBox = currentBox + "-" + String(altRouteNumbers[i]);
+          }
+        }
+        const target = d3.select('#mainsvg').select("#sumGroup").select("#boxid"+currentBox).select("#frame"+currentBox);
+        const svgContainer = d3.select('#mainsvg');
+        svgContainer.selectAll("#highlightRect").remove();
+        this.selectedNode = altRouteNumbers[altRouteNumbers.length - 1];
+        if (this.selectedNode === 0 || this.selectedNode === '0') {
+          this.highlightNode = ['res.fn'];
+        } else {
+          this.highlightNode = [`res.fn_array[${this.selectedNode - 1}]`];
+        }
+        if (this.selectedNode !== null) {
+          const increasedWidth = Number(target.attr("width")) + 7;
+          const increasedHeight = Number(target.attr("height")) + 7;
+
+          const parentD3Selection = d3.select('#mainsvg').select("#boxid"+currentBox);
+          const rectSelection = parentD3Selection.append('rect');
+          rectSelection
+            .attr('id', 'highlightRect')
+            .attr('x', Number(target.attr("x")) - 3.5)
+            .attr('y', Number(target.attr("y")) - 3.5)
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .attr('width', increasedWidth)
+            .attr('height', increasedHeight)
+            .style("fill", "none")
+            .style("stroke", "red")
+            .style("stroke-width", 38)
+            .style("stroke-opacity", 0.2);
+        }
+        const selectedBoxId = "boxid" + this.routePair[trimmedNum];
+        d3.select("#sumGroup").selectChildren().each(function() {
+          if (this.id !== selectedBoxId) {
+            d3.select(this).style('display', 'none');
+          }
+        })
+        // console.log(trimmedNum2)
+        // const layout = getBoxLayout(currentFN);
+        // drawBox(layout, fnS, this.routePair[trimmedNum]);
       } else {
         const layout = getBoxLayout(currentFN);
         drawBox(layout, fnS, 0);
@@ -498,6 +557,45 @@ export default {
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
+    },
+    showPreviousBox() {
+      if(this.selectedNode !== null && this.selectedNode !== 0 && this.selectedNode !== 1) {
+        let prefix = "--- Click <HERE> to visualize this FN ---  ";
+        let numbersString = this.gromet.modules[0].fn_array[this.selectedNode-1].hi_there.replace(prefix, "").trim();
+        let trimmedNum = this.routePair[numbersString.replace(/^['"]+|['"]+$/g, '')];
+        let partsNum = trimmedNum.split('-');
+        partsNum.pop();
+        let newTrimmedNum = partsNum.join('-');
+        let selectedBoxId = "boxid" + trimmedNum;
+        let PreSelectedBoxId = "boxid" + newTrimmedNum;
+        let selectedLineId = "line" + newTrimmedNum + "_" + trimmedNum; 
+        console.log(selectedLineId)
+        d3.select("#sumGroup").selectChildren().each(function() {
+          if (this.id === PreSelectedBoxId) {
+            d3.select(this).style('display', null);
+          } else if (this.id === selectedLineId) {
+            d3.select(this).style('display', null);
+          }
+        })
+      } else if (this.selectedNode === 1) {
+        let prefix = "--- Click <HERE> to visualize this FN ---  ";
+        let numbersString = this.gromet.modules[0].fn.hi_there.replace(prefix, "").trim();
+        let trimmedNum = this.routePair[numbersString.replace(/^['"]+|['"]+$/g, '')];
+        let partsNum = trimmedNum.split('-');
+        partsNum.pop();
+        let newTrimmedNum = partsNum.join('-');
+        let selectedBoxId = "boxid" + trimmedNum;
+        let PreSelectedBoxId = "boxid" + newTrimmedNum;
+        let selectedLineId = "line" + newTrimmedNum + "_" + trimmedNum; 
+        console.log(selectedLineId)
+        d3.select("#sumGroup").selectChildren().each(function() {
+          if (this.id === PreSelectedBoxId) {
+            d3.select(this).style('display', null);
+          } else if (this.id === selectedLineId) {
+            d3.select(this).style('display', null);
+          }
+        })
+      }
     },
     async submitUrl() {
       try {
