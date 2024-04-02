@@ -842,11 +842,17 @@ export function getBoxLayout(data) {
   };
   graph.nodes().forEach((nodeId) => {
     const node = graph.node(nodeId);
+    // if (node.height = undefined){
+    //   node.height = 100;
+    // }
+    // if (node.width = undefined){
+    //   node.width = 100;
+    // }
     layout.nodes[nodeId] = {
       x: node.x,
       y: node.y,
-      width: node.width,
-      height: node.height,
+      width: node.width?node.width:100,
+      height: node.height?node.height:100,
       label: node.label,
       type: node.type,
       value: node.value,

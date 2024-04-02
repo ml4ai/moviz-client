@@ -2,7 +2,7 @@
 import * as d3 from "d3";
 import { handleClick } from "./click";
 import { handleClickCond, handleClickLoop } from "./clickCond";
-import { computeBoundingRectangle, getOuterBox } from "./utilities"
+import { computeBoundingRectangle, getOuterBox, relayoutPorts } from "./utilities"
 import { getGromet } from './global.js';
 
 export function drawBox(layout, fnS, body_num, directionO = "right") {
@@ -16,7 +16,31 @@ export function drawBox(layout, fnS, body_num, directionO = "right") {
 
     // 绘制节点
     const nodes = layout.nodes;
+
     console.log(layout)
+    let opoNode = {};
+    let opiNode = {};
+    for (const nodeId in nodes) {
+      const node = nodes[nodeId];
+      const [type, index] = nodeId.split("-");
+      const isOpoNode = (type === 'opo');
+      const isOpiNode = (type === 'opi');
+      if (isOpiNode){
+        opiNode[nodeId] = node;
+      }
+      if (isOpoNode){
+        opoNode[nodeId] = node;
+      }
+    }
+    console.log(opiNode);
+    console.log(opoNode)
+    if (Object.keys(opiNode).length>1){
+      opiNode = relayoutPorts(opiNode);
+    }
+    if (Object.keys(opoNode).length>1){
+      opoNode = relayoutPorts(opoNode);
+    }
+    
     let opoNodeFlag = false;
     let opiNodeFlag = false;
     const minValue = Math.min(...Object.values(layout.nodes).map(obj => obj.y));

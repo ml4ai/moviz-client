@@ -13,6 +13,68 @@ export function arraysAreEqual(array1, array2) {
     return true;
 }
 
+export function relayoutPorts(nodesObject) {
+    let overlap = false;
+    let leftLimit = false;
+    const nodes = Object.values(nodesObject);
+    console.log(nodes);
+    nodes.sort(function(a, b){
+        return a.x - b.x;
+    });
+    let previousX = -999999;
+    nodes.forEach(function(node, index){
+        // if (node.x-previousX>54){
+        //     previousX = node.x;
+        // } else {
+        //     overlap = true;
+        //     if (node.x - 55 < 0) {
+        //         leftLimit = true;
+        //     } else {
+        //         nodes[index-1].x = node.x - 55;
+        //     }
+        // }
+        if (node.x-previousX<57){
+            overlap = true;
+        } else {
+            previousX = node.x;
+        }
+    })
+    while (overlap==true) {
+        overlap = false;
+        if (leftLimit==false){
+            previousX = -999999;
+            nodes.forEach(function(node, index){
+                if (node.x-previousX>57){
+                    previousX = node.x;
+                } else {
+                    overlap = true;
+                    if (node.x - 60 < 0) {
+                        leftLimit = true;
+                    } else {
+                        nodes[index-1].x = node.x - 60;
+                    }
+                }
+            })
+        } else {
+            nodes.forEach(function(node, index){
+                previousX = -999999;
+                if (node.x-previousX>57){
+                    previousX = node.x;
+                } else {
+                    overlap = true;
+                    if (node.x - 60 < 0) {
+                        leftLimit = true;
+                    } else {
+                        node.x = previousX + 60;
+                    }
+                }
+            })
+        }
+    }
+    console.log(nodes)
+    return nodes;
+}
+
 export function loopOverHierarchy(d, callback) {
     callback(d);
     if (d.children) d.children.forEach(c => loopOverHierarchy(c, callback));

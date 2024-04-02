@@ -27,7 +27,7 @@
       <button
       :style="{ margin: '0 30px', backgroundColor: 'green', color: 'white', border: 'none' }"
       class="btn btn-primary" @click="showPreviousBox">
-          Previous Box
+          Parent Box
       </button>
 
       <!-- <button
@@ -295,6 +295,86 @@ export default {
         for (let i=0; i<objJson.bf.length; i++) {
           if ("body" in objJson.bf[i]) {
             let currentNodeNum = objJson.bf[i].body - 1;
+            let newRoute = currentRoute + `-${currentNodeNum + 1}`;
+            let newAltRoute = altRoute + `-${i}`
+            const clickPrompt = "--- Click <HERE> to visualize this FN ---  " + newAltRoute;
+            this.routePair[newAltRoute] = newRoute;
+            this.highlightedJson.fn_array[currentNodeNum] = {
+              hi_there: clickPrompt,
+              ...this.highlightedJson.fn_array[currentNodeNum]
+            };
+            this.getAllChildBody(this.highlightedJson.fn_array[currentNodeNum], newRoute, newAltRoute);
+          }
+        }
+      }
+      if ("bl" in objJson) {
+        for (let i=0; i<objJson.bl.length; i++) {
+          if ("body" in objJson.bl[i]) {
+            let currentNodeNum = objJson.bl[i].body - 1;
+            let newRoute = currentRoute + `-${currentNodeNum + 1}`;
+            let newAltRoute = altRoute + `-${i}`
+            const clickPrompt = "--- Click <HERE> to visualize this FN ---  " + newAltRoute;
+            this.routePair[newAltRoute] = newRoute;
+            this.highlightedJson.fn_array[currentNodeNum] = {
+              hi_there: clickPrompt,
+              ...this.highlightedJson.fn_array[currentNodeNum]
+            };
+            this.getAllChildBody(this.highlightedJson.fn_array[currentNodeNum], newRoute, newAltRoute);
+          }
+          if ("condition" in objJson.bl[i]) {
+            let currentNodeNum = objJson.bl[i].condition - 1;
+            let newRoute = currentRoute + `-${currentNodeNum + 1}`;
+            let newAltRoute = altRoute + `-${i}`
+            const clickPrompt = "--- Click <HERE> to visualize this FN ---  " + newAltRoute;
+            this.routePair[newAltRoute] = newRoute;
+            this.highlightedJson.fn_array[currentNodeNum] = {
+              hi_there: clickPrompt,
+              ...this.highlightedJson.fn_array[currentNodeNum]
+            };
+            this.getAllChildBody(this.highlightedJson.fn_array[currentNodeNum], newRoute, newAltRoute);
+          }
+        }
+      }
+      if ("bc" in objJson) {
+        for (let i=0; i<objJson.bc.length; i++) {
+          if ("body" in objJson.bc[i]) {
+            let currentNodeNum = objJson.bc[i].body - 1;
+            let newRoute = currentRoute + `-${currentNodeNum + 1}`;
+            let newAltRoute = altRoute + `-${i}`
+            const clickPrompt = "--- Click <HERE> to visualize this FN ---  " + newAltRoute;
+            this.routePair[newAltRoute] = newRoute;
+            this.highlightedJson.fn_array[currentNodeNum] = {
+              hi_there: clickPrompt,
+              ...this.highlightedJson.fn_array[currentNodeNum]
+            };
+            this.getAllChildBody(this.highlightedJson.fn_array[currentNodeNum], newRoute, newAltRoute);
+          }
+          if ("condition" in objJson.bc[i]) {
+            let currentNodeNum = objJson.bc[i].condition - 1;
+            let newRoute = currentRoute + `-${currentNodeNum + 1}`;
+            let newAltRoute = altRoute + `-${i}`
+            const clickPrompt = "--- Click <HERE> to visualize this FN ---  " + newAltRoute;
+            this.routePair[newAltRoute] = newRoute;
+            this.highlightedJson.fn_array[currentNodeNum] = {
+              hi_there: clickPrompt,
+              ...this.highlightedJson.fn_array[currentNodeNum]
+            };
+            this.getAllChildBody(this.highlightedJson.fn_array[currentNodeNum], newRoute, newAltRoute);
+          }
+          if ("body_if" in objJson.bc[i]) {
+            let currentNodeNum = objJson.bc[i].body_if - 1;
+            let newRoute = currentRoute + `-${currentNodeNum + 1}`;
+            let newAltRoute = altRoute + `-${i}`
+            const clickPrompt = "--- Click <HERE> to visualize this FN ---  " + newAltRoute;
+            this.routePair[newAltRoute] = newRoute;
+            this.highlightedJson.fn_array[currentNodeNum] = {
+              hi_there: clickPrompt,
+              ...this.highlightedJson.fn_array[currentNodeNum]
+            };
+            this.getAllChildBody(this.highlightedJson.fn_array[currentNodeNum], newRoute, newAltRoute);
+          }
+          if ("body_else" in objJson.bc[i]) {
+            let currentNodeNum = objJson.bc[i].body_else - 1;
             let newRoute = currentRoute + `-${currentNodeNum + 1}`;
             let newAltRoute = altRoute + `-${i}`
             const clickPrompt = "--- Click <HERE> to visualize this FN ---  " + newAltRoute;
