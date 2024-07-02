@@ -29,6 +29,11 @@
       class="btn btn-primary" @click="showPreviousBox">
           Parent Box
       </button>
+      <button
+      :style="{ margin: '0 30px', backgroundColor: 'gray', color: 'white', border: 'none' }"
+      class="btn btn-primary" @click="runChecking">
+          Check Errors
+      </button>
 
       <!-- <button
       :style="{ margin: '0 30px', backgroundColor: 'purple', color: 'white', border: 'none' }"
@@ -60,12 +65,13 @@
         </vue-json-pretty>
       </div>
       <div class="svg-container">
-        <div id="tooltip" class="tooltip" style="opacity: 0;"></div>
+        <div id="tooltip" class="tooltip"></div>
         <!-- <svg width="100" height="100">
           <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" :fill="svgColor"/>
         </svg> -->
         <label for="startingFN">Initial #(Entry): </label>
         <input v-model="startingFN" @keyup.enter="drawMoviz">
+        <div id="errorFrame" class="errorFrame"></div>
         <svg id="mainsvg" width="1200" height="1000" overflow="visible" ref="svgMoviz">
           <g id="sumGroup"></g>
         </svg>
@@ -83,6 +89,7 @@ import 'vue-json-pretty-highlight-row/lib/styles.css';
 import { getBoxLayout } from './utils/layout';
 import { drawBox } from './utils/drawBox';
 import { setGromet } from './utils/global.js';
+import { errorChecking } from './utils/utilities.js';
 // import Vue from 'vue';
 // Vue.prototype.$gromet = { data: null };
 export default {
@@ -167,61 +174,65 @@ export default {
       let currentFN = fn0;
       console.log(this.routePair)
       if (this.startingFN !== 0){
-        let prefix = "--- Click <HERE> to visualize this FN ---  ";
-        let numbersString = fnS[this.startingFN-1].hi_there.replace(prefix, "").trim();
-        let trimmedNum = numbersString.replace(/^['"]+|['"]+$/g, '');
-        let routeNumbers = trimmedNum.split('-').map(Number);
-        let altRouteNumbers = this.routePair[trimmedNum].split('-').map(Number);
-        let currentBox = "0";
-        const layout = getBoxLayout(currentFN);
-        drawBox(layout, fnS, 0);
-        for (let i=0;i<routeNumbers.length;i++) {
-          if (i===0) {
-            continue;
-          } else {
-            let boxId = "boxid" + currentBox;
-            const nodeId = "bf-" + String(routeNumbers[i]);
-            this.triggerClickEvent(boxId, nodeId);
-            currentBox = currentBox + "-" + String(altRouteNumbers[i]);
-          }
-        }
-        const target = d3.select('#mainsvg').select("#sumGroup").select("#boxid"+currentBox).select("#frame"+currentBox);
-        const svgContainer = d3.select('#mainsvg');
-        svgContainer.selectAll("#highlightRect").remove();
-        this.selectedNode = altRouteNumbers[altRouteNumbers.length - 1];
-        if (this.selectedNode === 0 || this.selectedNode === '0') {
-          this.highlightNode = ['res.fn'];
-        } else {
-          this.highlightNode = [`res.fn_array[${this.selectedNode - 1}]`];
-        }
-        if (this.selectedNode !== null) {
-          const increasedWidth = Number(target.attr("width")) + 7;
-          const increasedHeight = Number(target.attr("height")) + 7;
-
-          const parentD3Selection = d3.select('#mainsvg').select("#boxid"+currentBox);
-          const rectSelection = parentD3Selection.append('rect');
-          rectSelection
-            .attr('id', 'highlightRect')
-            .attr('x', Number(target.attr("x")) - 3.5)
-            .attr('y', Number(target.attr("y")) - 3.5)
-            .attr('rx', 5)
-            .attr('ry', 5)
-            .attr('width', increasedWidth)
-            .attr('height', increasedHeight)
-            .style("fill", "none")
-            .style("stroke", "red")
-            .style("stroke-width", 38)
-            .style("stroke-opacity", 0.2);
-        }
-        const selectedBoxId = "boxid" + this.routePair[trimmedNum];
-        d3.select("#sumGroup").selectChildren().each(function() {
-          if (this.id !== selectedBoxId) {
-            d3.select(this).style('display', 'none');
-          }
-        })
-        // console.log(trimmedNum2)
+        // let prefix = "--- Click <HERE> to visualize this FN ---  ";
+        // let numbersString = fnS[this.startingFN-1].hi_there.replace(prefix, "").trim();
+        // let trimmedNum = numbersString.replace(/^['"]+|['"]+$/g, '');
+        // let routeNumbers = trimmedNum.split('-').map(Number);
+        // let altRouteNumbers = this.routePair[trimmedNum].split('-').map(Number);
+        // let currentBox = "0";
         // const layout = getBoxLayout(currentFN);
-        // drawBox(layout, fnS, this.routePair[trimmedNum]);
+        // drawBox(layout, fnS, 0);
+        // for (let i=0;i<routeNumbers.length;i++) {
+        //   if (i===0) {
+        //     continue;
+        //   } else {
+        //     let boxId = "boxid" + currentBox;
+        //     const nodeId = "bf-" + String(routeNumbers[i]);
+        //     this.triggerClickEvent(boxId, nodeId);
+        //     currentBox = currentBox + "-" + String(altRouteNumbers[i]);
+        //   }
+        // }
+        // const target = d3.select('#mainsvg').select("#sumGroup").select("#boxid"+currentBox).select("#frame"+currentBox);
+        // const svgContainer = d3.select('#mainsvg');
+        // svgContainer.selectAll("#highlightRect").remove();
+        // this.selectedNode = altRouteNumbers[altRouteNumbers.length - 1];
+        // if (this.selectedNode === 0 || this.selectedNode === '0') {
+        //   this.highlightNode = ['res.fn'];
+        // } else {
+        //   this.highlightNode = [`res.fn_array[${this.selectedNode - 1}]`];
+        // }
+        // if (this.selectedNode !== null) {
+        //   const increasedWidth = Number(target.attr("width")) + 7;
+        //   const increasedHeight = Number(target.attr("height")) + 7;
+
+        //   const parentD3Selection = d3.select('#mainsvg').select("#boxid"+currentBox);
+        //   const rectSelection = parentD3Selection.append('rect');
+        //   rectSelection
+        //     .attr('id', 'highlightRect')
+        //     .attr('x', Number(target.attr("x")) - 3.5)
+        //     .attr('y', Number(target.attr("y")) - 3.5)
+        //     .attr('rx', 5)
+        //     .attr('ry', 5)
+        //     .attr('width', increasedWidth)
+        //     .attr('height', increasedHeight)
+        //     .style("fill", "none")
+        //     .style("stroke", "red")
+        //     .style("stroke-width", 38)
+        //     .style("stroke-opacity", 0.2);
+        // }
+        // const selectedBoxId = "boxid" + this.routePair[trimmedNum];
+        // d3.select("#sumGroup").selectChildren().each(function() {
+        //   if (this.id !== selectedBoxId) {
+        //     d3.select(this).style('display', 'none');
+        //   }
+        // })
+
+
+
+        // console.log(trimmedNum2)
+        currentFN = fnS[this.startingFN - 1];
+        const layout = getBoxLayout(currentFN);
+        drawBox(layout, fnS, this.startingFN - 1);
       } else {
         const layout = getBoxLayout(currentFN);
         drawBox(layout, fnS, 0);
@@ -518,6 +529,48 @@ export default {
           // });
         }
       }
+      if (event.target.id !== "mainsvg") {
+          // 查找或创建floating-tag div
+          let floatingTag = document.getElementById("floating-tag");
+          if (!floatingTag) {
+            floatingTag = document.createElement("div");
+            floatingTag.id = "floating-tag";
+            document.body.appendChild(floatingTag);
+          }
+  
+          // 设置floating-tag div的样式
+          floatingTag.style.position = "absolute";
+          floatingTag.style.zIndex = "10000"; // 高z-index确保不被遮挡
+          floatingTag.style.background = "white"; // 白色背景
+          floatingTag.style.padding = "2px 8px";
+          floatingTag.style.borderRadius = "4px";
+          // floatingTag.innerHTML = `<span style="color: blue;">${event.target.tagName}</span>#<span style="color: red;">${event.target.id}</span>`;
+          floatingTag.innerHTML = `<span style="color: green;">${event.target.id}</span>`;
+          floatingTag.style.boxShadow = "0 0 7px -2px #0000008f";
+          floatingTag.style.fontWeight = "bold";
+  
+          // 获取元素的相对视口的位置
+          const rect = event.target.getBoundingClientRect();
+  
+          // 计算元素的绝对位置
+          const absoluteX = rect.left + window.scrollX;
+          const absoluteY = rect.top + window.scrollY;
+  
+          // 调整floating-tag的位置
+          floatingTag.style.left = `${absoluteX}px`;
+          floatingTag.style.top = `${absoluteY - 36}px`;
+        }
+        if (target.id && this.highlightNode && this.highlightNode.length) {
+          if (this.selectedNode === 0 || this.selectedNode === "0") {
+            this.highlightNode = ["res.fn"];
+          } else {
+            this.highlightNode = [`res.fn_array[${this.selectedNode - 1}]`];
+          }
+          this.highlightNode = [
+            this.highlightNode[0],
+            `${this.highlightNode[0]}.${target.id.split("-")[0]}[${target.id.split("-")[1]}]`
+          ];
+        }
     },
     jsonClick() {
       let spanText = event.target.textContent;
@@ -638,6 +691,66 @@ export default {
       downloadLink.click();
       document.body.removeChild(downloadLink);
     },
+    runChecking() {
+      let listOfErrBox = [];
+      const firstBox = this.gromet.modules[0].fn;
+      const errInFirstBox = errorChecking(firstBox);
+      if (errInFirstBox.length!==0){
+        listOfErrBox.push(
+        {
+          ["fn"]: errInFirstBox
+        }
+        );
+      }
+      for (let i=0; i< this.gromet.modules[0].fn_array.length; i++){
+        const boxData = this.gromet.modules[0].fn_array[i];
+        const currentIndex = i + 1;
+        const errInBoxData = errorChecking(boxData);
+        if (errInBoxData.length!==0){
+          listOfErrBox.push(
+          {
+            ["fn_array-" + String(currentIndex)]: errInBoxData
+          }
+          );
+        }
+      }
+      const errorFrame = document.getElementById("errorFrame");
+      listOfErrBox.forEach(item => {
+        Object.entries(item).forEach(([key, values]) => {
+            const element = document.createElement('div');
+            element.className = 'elementERR';
+
+            const name = document.createElement('div');
+            name.className = 'elementERR-name';
+            name.textContent = key;
+            const self = this;
+            name.onclick = function() {
+              if (this.textContent === "fn"){ 
+                self.startingFN = 0;
+                self.drawMoviz();
+              }
+              else {
+                self.startingFN = this.textContent.split("-")[1];
+                self.drawMoviz();
+              }
+              console.log(this.textContent)     
+            };
+
+            const valueList = document.createElement('div');
+            valueList.className = 'elementERR-values';
+            values.forEach(value => {
+                const valueItem = document.createElement('div');
+                valueItem.textContent = value;
+                valueList.appendChild(valueItem);
+            });
+
+            element.appendChild(name);
+            element.appendChild(valueList);
+            errorFrame.appendChild(element);
+        });
+      });
+      
+    },
     showPreviousBox() {
       if(this.selectedNode !== null && this.selectedNode !== 0 && this.selectedNode !== 1) {
         let prefix = "--- Click <HERE> to visualize this FN ---  ";
@@ -717,6 +830,7 @@ export default {
     height: 80vh;
     /* overflow: hidden; */
     overflow: auto;
+    text-align: left;
   }
   .svg-container {
     border: 5px solid #4b4a4a;
@@ -786,6 +900,35 @@ span {
   border: 0px;
   border-radius: 8px;
   pointer-events: none; /* 确保用户可以与下面的元素交互 */
+}
+
+.errorFrame {
+    position: absolute; /* 设置绝对定位，相对于最近的相对定位父容器 */
+    margin-left: 80%;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    max-width: 300px; /* 最大宽度，可根据需要调整 */
+    max-height: 500px; /* 最大高度，可根据需要调整 */
+    overflow-y: auto; /* 如果内容超出高度，自动显示滚动条 */
+}
+
+.elementERR {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.elementERR-name {
+    font-weight: bold !important;
+    color: #fd0000 !important; 
+}
+
+.elementERR-values {
+    margin-top: 5px;
+    color: #666;
 }
 
 </style>

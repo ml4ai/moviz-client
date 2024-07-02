@@ -5,12 +5,12 @@ import { handleClickCond, handleClickLoop } from "./clickCond";
 import { computeBoundingRectangle, getOuterBox, relayoutPorts } from "./utilities"
 import { getGromet } from './global.js';
 
-export function drawBox(layout, fnS, body_num, directionO = "right") {
+export function drawBox(layout, fnS, body_num, directionO = "right", parentCoord = [0, 0]) {
   // console.log(this.$gromet)
     // 创建SVG元素
     // debugger
     const svg = d3.select("#mainsvg").select("#sumGroup");
-    const g = svg.append("g").attr('id', "boxid" + String(body_num)).attr("class", "drawer").attr("direction", directionO);
+    const g = svg.append("g").attr('id', "boxid" + String(body_num)).attr("class", "drawer").attr("direction", directionO).attr("parentCoord", parentCoord);
     const ranksep = 37;
     const padding = 22.5; // 设置padding的大小
 

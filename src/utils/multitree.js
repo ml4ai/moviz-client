@@ -16,7 +16,7 @@ function processTree(hierarchies) {
     do {
         let subtrees = findAllSubtrees(hierarchies);
         let currentLayout = [...subtrees.right, ...subtrees.down, ...subtrees.mix];
-        // console.log(currentLayout, "current");
+        console.log(subtrees, "current");
         // console.log(treeLayout, "currentT");
         let mergedCL = currentLayout.reduce((acc, obj) => ({...acc, ...obj}), {});
         if (hasProperties(treeLayout)) {

@@ -52,6 +52,9 @@ export default function flextree(options) {
       get numChildren() {
         return this.hasChildren ? this.children.length : 0;
       }
+      get childNodes() {
+        return this.children;
+      }
       get hasChildren() { return !this.noChildren; }
       get noChildren() { return this.children === null; }
       get firstChild() {
@@ -96,6 +99,7 @@ export default function flextree(options) {
           relX: 0, prelim: 0, shift: 0, change: 0,
           lExt: this, lExtRelX: 0, lThr: null,
           rExt: this, rExtRelX: 0, rThr: null,
+          parentChange: data.data.parentCoordinates,
         });
       }
       get size() { return nodeSize(this.data); }
@@ -105,11 +109,24 @@ export default function flextree(options) {
       get y() { return this.data.y; }
       set y(v) { this.data.y = v; }
       update() {
+        setPrelimforLeafs(this);
         layoutChildren(this);
         resolveX(this);
         return this;
       }
     };
+  }
+
+  function setPrelimforLeafs(w) {
+    if (w.hasChildren) {
+      w.childNodes.forEach(setPrelimforLeafs);
+    }
+    if (w.noChildren) {
+      const prelim = w.parentChange;
+      Object.assign(w, {
+        prelim,
+      });
+    }
   }
 
   function wrap(FlexClass, treeData, children) {
@@ -172,9 +189,12 @@ export default function flextree(options) {
 
 const layoutChildren = (w, y = 0) => {
   w.y = y;
+  // let inumtest = 0;
   (w.children || []).reduce((acc, kid) => {
     const [i, lastLows] = acc;
     layoutChildren(kid, w.y + w.ySize);
+    // kid.relX += inumtest * 500;
+    // inumtest++;
     // The lowest vertical coordinate while extreme nodes still point
     // in current subtree.
     const lowY = (i === 0 ? kid.lExt : kid.rExt).bottom;
@@ -182,7 +202,8 @@ const layoutChildren = (w, y = 0) => {
     const lows = updateLows(lowY, i, lastLows);
     return [i + 1, lows];
   }, [0, null]);
-  shiftChange(w);
+  // shiftChange(w);
+  console.log(w);
   positionRoot(w);
   return w;
 };
@@ -227,7 +248,7 @@ const separate = (w, i, lows) => {
   let rSumMods = lSib.relX;
   let lContour = curSubtree;
   let lSumMods = curSubtree.relX;
-  let isFirst = true;
+  let isFirst = false;
   while (rContour && lContour) {
     if (rContour.bottom > lows.lowY) lows = lows.next;
     // How far to the left of the right side of rContour is the left side
@@ -320,12 +341,28 @@ const setRThr = (w, i, rContour, rSumMods) => {
 };
 
 // Position root between children, taking into account their modifiers
+// const positionRoot = w => {
+//   if (w.hasChildren) {
+//     const k0 = w.firstChild;
+//     const kf = w.lastChild;
+//     const prelim = (k0.prelim + k0.relX - k0.xSize / 2 +
+//       kf.relX + kf.prelim + kf.xSize / 2 ) / 2;
+//     Object.assign(w, {
+//       prelim,
+//       lExt: k0.lExt, lExtRelX: k0.lExtRelX,
+//       rExt: kf.rExt, rExtRelX: kf.rExtRelX,
+//     });
+//   }
+// };
+
 const positionRoot = w => {
   if (w.hasChildren) {
+    let prelim = 0;
+    w.childNodes.forEach(child => {
+      prelim += (child.relX + child.prelim - child.parentChange) / w.numChildren;
+    })
     const k0 = w.firstChild;
     const kf = w.lastChild;
-    const prelim = (k0.prelim + k0.relX - k0.xSize / 2 +
-      kf.relX + kf.prelim + kf.xSize / 2 ) / 2;
     Object.assign(w, {
       prelim,
       lExt: k0.lExt, lExtRelX: k0.lExtRelX,

@@ -314,6 +314,12 @@ export function getHierarchy(spaceY) {
             hierarchies.path = routes;
             hierarchies.size = [Number(d3.select(this).attr('width')) + spaceY, Number(d3.select(this).attr('height'))];
             hierarchies.direction = direction;
+            if (direction === "right") {
+                hierarchies.parentCoordinates = d3.select(this).attr('parentCoord').split(',').map(Number)[1];
+            } else { 
+                hierarchies.parentCoordinates = d3.select(this).attr('parentCoord').split(',').map(Number)[0];
+            }
+            
         } else {
             const temp = {}
             temp.name = Number(currentID);
@@ -321,6 +327,12 @@ export function getHierarchy(spaceY) {
             temp.path = routes;
             temp.oName = nodeID;
             temp.direction = direction;
+            temp.parentCoordinates = d3.select(this).attr('parentCoord').split(',').map(Number);
+            if (direction === "right") {
+                temp.parentCoordinates = d3.select(this).attr('parentCoord').split(',').map(Number)[1];
+            } else { 
+                temp.parentCoordinates = d3.select(this).attr('parentCoord').split(',').map(Number)[0];
+            }
             childrens.push(temp);
         }
         }
@@ -336,4 +348,683 @@ export function getHierarchy(spaceY) {
         }
     });
     return hierarchies;
+}
+import * as dagre from 'dagre';
+
+export function errorChecking(data) {
+let graph = new dagre.graphlib.Graph({ compound: true });
+  graph.setGraph({});
+  // eslint-disable-next-line
+  graph.setDefaultEdgeLabel(() => { return {}; });
+      // get pif
+  if ('pif' in data) {
+    for (let i = 0; i < data.pif.length; i += 1) {
+      const node = data.pif[i];
+      const nodeId = `pif-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
+    }
+  }
+
+  // get pof
+  if ('pof' in data) {
+    for (let i = 0; i < data.pof.length; i += 1) {
+      const node = data.pof[i];
+      const nodeId = `pof-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
+    }
+  }
+
+  // get opo
+  if ('opo' in data) {
+    for (let i = 0; i < data.opo.length; i += 1) {
+      const node = data.opo[i];
+      const nodeId = `opo-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
+    }
+  }
+
+  // get opi
+  if ('opi' in data) {
+    for (let i = 0; i < data.opi.length; i += 1) {
+      const node = data.opi[i];
+      const nodeId = `opi-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
+    }
+  }
+
+  // set pic
+  if ('pic' in data) {
+    for (let i = 0; i < data.pic.length; i += 1) {
+      const node = data.pic[i];
+      const nodeId = `pic-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
+    }
+  }
+
+  // set poc
+  if ('poc' in data) {
+    for (let i = 0; i < data.poc.length; i += 1) {
+      const node = data.poc[i];
+      const nodeId = `poc-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
+    }
+  }
+
+  // set pil
+  if ('pil' in data) {
+    for (let i = 0; i < data.pil.length; i += 1) {
+      const node = data.pil[i];
+      const nodeId = `pil-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
+    }
+  }
+
+  // set pol
+  if ('pol' in data) {
+    for (let i = 0; i < data.pol.length; i += 1) {
+      const node = data.pol[i];
+      const nodeId = `pol-${i}`;
+      const label = node.name;
+      const width = 50;
+      const height = 50;
+      const metadata = node.metadata;
+      graph.setNode(nodeId, { label, width, height, metadata });
+    }
+  }
+
+
+
+    if ('wff' in data) {
+        for (let i = 0; i < data.wff.length; i += 1) {
+          const edge = data.wff[i];
+          const srcNodeId = `pif-${edge.src - 1}`;
+          const tgtNodeId = `pof-${edge.tgt - 1}`;
+          if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+            graph.setEdge(srcNodeId, tgtNodeId);
+          } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+            const WnodeId = tgtNodeId;
+            const label = "err";
+            const width = 50;
+            const height = 50;
+            graph.setNode(WnodeId, { label, width, height});
+            graph.setEdge(srcNodeId, tgtNodeId);
+          } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+            const WnodeId = srcNodeId;
+            const label = "err";
+            const width = 50;
+            const height = 50;
+            graph.setNode(WnodeId, { label, width, height});
+            graph.setEdge(srcNodeId, tgtNodeId);
+          } else {
+            const WnodeId1 = srcNodeId;
+            const WnodeId2 = tgtNodeId;
+            const label = "err";
+            const width = 50;
+            const height = 50;
+            graph.setNode(WnodeId1, { label, width, height});
+            graph.setNode(WnodeId2, { label, width, height});
+            graph.setEdge(srcNodeId, tgtNodeId);
+          }
+        }
+      }
+// set edges wfopi
+if ('wfopi' in data) {
+    for (let i = 0; i < data.wfopi.length; i += 1) {
+      const edge = data.wfopi[i];
+      const srcNodeId = `pif-${edge.src - 1}`;
+      const tgtNodeId = `opi-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set edges wfopo
+  if ('wfopo' in data) {
+    for (let i = 0; i < data.wfopo.length; i += 1) {
+      const edge = data.wfopo[i];
+      const srcNodeId = `opo-${edge.src - 1}`;
+      const tgtNodeId = `pof-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set edges wopio
+  if ('wopio' in data) {
+    for (let i = 0; i < data.wopio.length; i += 1) {
+      const edge = data.wopio[i];
+      const srcNodeId = `opo-${edge.src - 1}`;
+      const tgtNodeId = `opi-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+   // set wfc
+   if ('wfc' in data) {
+    for (let i = 0; i < data.wfc.length; i += 1) {
+      const edge = data.wfc[i];
+      const srcNodeId = `pic-${edge.src - 1}`;
+      const tgtNodeId = `pof-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set wcf
+  if ('wcf' in data) {
+    for (let i = 0; i < data.wcf.length; i += 1) {
+      const edge = data.wcf[i];
+      const srcNodeId = `pif-${edge.src - 1}`;
+      const tgtNodeId = `poc-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set wcc
+  if ('wcc' in data) {
+    for (let i = 0; i < data.wcc.length; i += 1) {
+      const edge = data.wcc[i];
+      const srcNodeId = `pic-${edge.src - 1}`;
+      const tgtNodeId = `poc-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set edges wcopi
+  if ('wcopi' in data) {
+    for (let i = 0; i < data.wcopi.length; i += 1) {
+      const edge = data.wcopi[i];
+      const srcNodeId = `pic-${edge.src - 1}`;
+      const tgtNodeId = `opi-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set edges wcopo
+  if ('wcopo' in data) {
+    for (let i = 0; i < data.wcopo.length; i += 1) {
+      const edge = data.wcopo[i];
+      const srcNodeId = `opo-${edge.src - 1}`;
+      const tgtNodeId = `poc-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+// set wfl
+if ('wfl' in data) {
+    for (let i = 0; i < data.wfl.length; i += 1) {
+      const edge = data.wfl[i];
+      const srcNodeId = `pil-${edge.src - 1}`;
+      const tgtNodeId = `pof-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set wcl
+  if ('wcl' in data) {
+    for (let i = 0; i < data.wcl.length; i += 1) {
+      const edge = data.wcl[i];
+      const srcNodeId = `pil-${edge.src - 1}`;
+      const tgtNodeId = `poc-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set wlopi
+  if ('wlopi' in data) {
+    for (let i = 0; i < data.wlopi.length; i += 1) {
+      const edge = data.wlopi[i];
+      const srcNodeId = `pil-${edge.src - 1}`;
+      const tgtNodeId = `opi-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set wll
+  if ('wll' in data) {
+    for (let i = 0; i < data.wll.length; i += 1) {
+      const edge = data.wll[i];
+      const srcNodeId = `pil-${edge.src - 1}`;
+      const tgtNodeId = `pol-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set wlf
+  if ('wlf' in data) {
+    for (let i = 0; i < data.wlf.length; i += 1) {
+      const edge = data.wlf[i];
+      const srcNodeId = `pif-${edge.src - 1}`;
+      const tgtNodeId = `pol-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set wlc
+  if ('wlc' in data) {
+    for (let i = 0; i < data.wlc.length; i += 1) {
+      const edge = data.wlc[i];
+      const srcNodeId = `pic-${edge.src - 1}`;
+      const tgtNodeId = `pol-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+
+  // set wlopo
+  if ('wlopo' in data) {
+    for (let i = 0; i < data.wlopo.length; i += 1) {
+      const edge = data.wlopo[i];
+      const srcNodeId = `opo-${edge.src - 1}`;
+      const tgtNodeId = `pol-${edge.tgt - 1}`;
+      if (graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId)) {
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if (graph.hasNode(srcNodeId) && !graph.hasNode(tgtNodeId)) {
+        const WnodeId = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else if ((!graph.hasNode(srcNodeId) && graph.hasNode(tgtNodeId))) {
+        const WnodeId = srcNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      } else {
+        const WnodeId1 = srcNodeId;
+        const WnodeId2 = tgtNodeId;
+        const label = "err";
+        const width = 50;
+        const height = 50;
+        graph.setNode(WnodeId1, { label, width, height});
+        graph.setNode(WnodeId2, { label, width, height});
+        graph.setEdge(srcNodeId, tgtNodeId);
+      }
+    }
+  }
+//   console.log(graph)
+  let nodesWithTargetLabel = [];
+  graph.nodes().forEach(function(node) {
+    if (graph.node(node).label === "err") {
+      nodesWithTargetLabel.push(node);
+    }
+  });
+  return nodesWithTargetLabel;
+
 }

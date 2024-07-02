@@ -111,7 +111,16 @@ export function handleClick(fnS, body, body_num, sourceid, color, clicked, direc
   const spaceY = 0;
   const padding = 90;
   const newLabel = String(body_num) + '-' + String(body); // new body_num
-  drawBox(layout, fnS, newLabel, direction);
+  
+  // add parent info for moving
+  const parentNode = d3.select("#boxid" + body_num).select("#" + sourceid);
+  const parentFrame = d3.select("#boxid" + body_num).select("#frame" + body_num);
+  const parentNodeCoord = [Number(parentNode.attr("x")) + Number(parentNode.attr('width')) / 2, Number(parentNode.attr("y")) + Number(parentNode.attr('height')) / 2];
+  const parentFrameCoord = [Number(parentFrame.attr("x")) + Number(parentFrame.attr('width')) / 2, Number(parentFrame.attr("y")) + Number(parentFrame.attr('height')) / 2];
+  // console.log(parentNode, parentFrame)
+  // console.log(parentNodeCoord, parentFrameCoord);
+  const parentCoord = [parentNodeCoord[0] - parentFrameCoord[0], parentNodeCoord[1] - parentFrameCoord[1]];
+  drawBox(layout, fnS, newLabel, direction, parentCoord);
   var hierarchies = getHierarchy(spaceY);
   var treeLayout = {};
   treeLayout = getMultiTree(hierarchies);
